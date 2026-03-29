@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuestionarios · Ingeniería Informática</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d1117;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 16px 64px;
+      font-family: 'Georgia', 'Times New Roman', serif;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 720px;
+    }
+
+    .header {
+      margin-bottom: 40px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+      font-family: monospace;
+    }
+
+    h1 {
+      color: #e6edf3;
+      font-size: 38px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #8b949e;
+      font-size: 14px;
+      font-family: monospace;
+    }
+
+    .section-label {
+      color: #8b949e;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      font-family: monospace;
+    }
+
+    .grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Asignatura activa */
+    .subject-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 18px 20px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+    }
+
+    .subject-card:hover {
+      background: #1c2128;
+      border-color: #58a6ff;
+    }
+
+    .subject-card:hover .subject-name {
+      color: #58a6ff;
+    }
+
+    /* Asignatura deshabilitada */
+    .subject-card.disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+
+    .subject-card.disabled:hover {
+      background: #161b22;
+      border-color: #30363d;
+    }
+
+    .subject-card.disabled:hover .subject-name {
+      color: #8b949e;
+    }
+
+    .subject-num {
+      width: 32px;
+      height: 32px;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #8b949e;
+      font-size: 13px;
+      font-family: monospace;
+      flex-shrink: 0;
+    }
+
+    .subject-info {
+      flex: 1;
+    }
+
+    .subject-name {
+      color: #e6edf3;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+      transition: color 0.15s;
+    }
+
+    .subject-status {
+      color: #8b949e;
+      font-size: 12px;
+      font-family: monospace;
+      margin-top: 3px;
+    }
+
+    .subject-status.active {
+      color: #3fb950;
+    }
+
+    .subject-arrow {
+      color: #8b949e;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .subject-card:not(.disabled):hover .subject-arrow {
+      color: #58a6ff;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="badge">Ingeniería Informática</div>
+      <h1>Cuestionarios<br />de Segundo Curso</h1>
+      <p class="subtitle">¡¡Elige una asignatura y pon a prueba tus conocimientos!!</p>
+    </div>
+
+    <div class="section-label">Asignaturas</div>
+    <div class="grid">
+
+      <a class="subject-card disabled" tabindex="-1">
+        <div class="subject-info">
+          <div class="subject-name">Estadística</div>
+          <div class="subject-status">Próximamente</div>
+        </div>
+        <div class="subject-arrow">›</div>
+      </a>
+
+      <a class="subject-card disabled" tabindex="-1">
+        <div class="subject-info">
+          <div class="subject-name">Programación 3</div>
+          <div class="subject-status">Próximamente</div>
+        </div>
+        <div class="subject-arrow">›</div>
+      </a>
+
+      <a class="subject-card disabled" tabindex="-1">
+        <div class="subject-info">
+          <div class="subject-name">Sistemas Operativos</div>
+          <div class="subject-status">Próximamente</div>
+        </div>
+        <div class="subject-arrow">›</div>
+      </a>
+
+      <a class="subject-card disabled" tabindex="-1">
+        <div class="subject-info">
+          <div class="subject-name">Diseño de Bases de Datos</div>
+          <div class="subject-status">Próximamente</div>
+        </div>
+        <div class="subject-arrow">›</div>
+      </a>
+
+      <a class="subject-card disabled" tabindex="-1">
+        <div class="subject-info">
+          <div class="subject-name">Redes de Computadores</div>
+          <div class="subject-status">Próximamente</div>
+        </div>
+        <div class="subject-arrow">›</div>
+      </a>
+
+      <a class="subject-card disabled" tabindex="-1">
+        <div class="subject-info">
+          <div class="subject-name">Programación y Estructuras de Datos</div>
+          <div class="subject-status">Próximamente</div>
+        </div>
+        <div class="subject-arrow">›</div>
+      </a>
+
+      <a class="subject-card disabled" tabindex="-1">
+        <div class="subject-info">
+          <div class="subject-name">Lenguajes y Paradigmas de Programación</div>
+          <div class="subject-status">Próximamente</div>
+        </div>
+        <div class="subject-arrow">›</div>
+      </a>
+
+      <a class="subject-card" href="cuestionario_ada.html">
+        <div class="subject-info">
+          <div class="subject-name">Análisis y Diseño de Algoritmos</div>
+          <div class="subject-status active">● Disponible</div>
+        </div>
+        <div class="subject-arrow">›</div>
+      </a>
+
+      <a class="subject-card disabled" tabindex="-1">
+        <div class="subject-info">
+          <div class="subject-name">Herramientas Avanzadas para el Desarrollo de Aplicaciones</div>
+          <div class="subject-status">Próximamente</div>
+        </div>
+        <div class="subject-arrow">›</div>
+      </a>
+
+      <a class="subject-card disabled" tabindex="-1">
+        <div class="subject-info">
+          <div class="subject-name">Arquitectura de Computadores</div>
+          <div class="subject-status">Próximamente</div>
+        </div>
+        <div class="subject-arrow">›</div>
+      </a>
+
+    </div>
+  </div>
+</body>
+</html>

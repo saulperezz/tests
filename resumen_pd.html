@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resumen · Programación Dinámica</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d1117;
+      min-height: 100vh;
+      padding: 40px 16px 64px;
+      font-family: 'Georgia', 'Times New Roman', serif;
+      color: #c9d1d9;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .back {
+      display: inline-block;
+      color: #8b949e;
+      font-size: 13px;
+      font-family: monospace;
+      text-decoration: none;
+      margin-bottom: 20px;
+      letter-spacing: 0.3px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      font-family: monospace;
+    }
+
+    h1 {
+      color: #e6edf3;
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .meta {
+      color: #8b949e;
+      font-size: 13px;
+      font-family: monospace;
+      margin-bottom: 36px;
+    }
+
+    .concept {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 24px 26px;
+      margin-bottom: 14px;
+    }
+
+    .concept-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .concept-num {
+      background: #1f6feb;
+      color: #fff;
+      border-radius: 10px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: monospace;
+      flex-shrink: 0;
+    }
+
+    .concept-title {
+      color: #e6edf3;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .label {
+      color: #58a6ff;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-family: monospace;
+    }
+
+    .concepto-text {
+      color: #e6edf3;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      background: #21262d;
+      border-left: 3px solid #1f6feb;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .explicacion-text {
+      color: #c9d1d9;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .explicacion-text strong {
+      color: #e6edf3;
+    }
+
+    .explicacion-text em {
+      color: #8b949e;
+      font-style: italic;
+    }
+
+    .explicacion-text code {
+      font-family: monospace;
+      background: #21262d;
+      border: 1px solid #30363d;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #79c0ff;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+
+    ul li {
+      margin-bottom: 4px;
+      color: #c9d1d9;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    ul li strong {
+      color: #e6edf3;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #21262d;
+      margin: 10px 0 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back" href="javascript:window.close()">← Volver al test</a>
+    <h1>Programación Dinámica</h1>
+    <p class="meta">17 conceptos clave</p>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">1</div>
+        <div class="concept-title">Programación Dinámica (PD)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Técnica de diseño de algoritmos que mejora soluciones recursivas ineficientes guardando los resultados de subproblemas ya resueltos para no volver a calcularlos.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Se aplica cuando un problema puede resolverse basándose en subproblemas que comparten subsubproblemas (subproblemas superpuestos), y cuando la solución óptima del problema global se construye a partir de las soluciones óptimas de sus subproblemas. Evita la explosión combinatoria propia de soluciones recursivas ingenuas (naive) que generan complejidades exponenciales. Se dice, coloquialmente, que en PD se <strong>"sustituyen los paréntesis por corchetes"</strong> al pasar de recursivo a iterativo.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">2</div>
+        <div class="concept-title">Subproblemas Superpuestos (Overlapping Subproblems)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Propiedad de un problema que indica que sus subproblemas se repiten múltiples veces durante la resolución recursiva.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">A diferencia de Divide y Vencerás (donde los subproblemas son disjuntos), en PD los mismos subproblemas aparecen repetidamente en el árbol de llamadas recursivas. Por ejemplo, en el cálculo del coeficiente binomial C(n, r), el nodo C(n-1, r-1) puede ser solicitado por múltiples ramas del árbol. Esta repetición es la causa principal de la ineficiencia de la solución ingenua y la razón de ser del almacén de resultados.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">3</div>
+        <div class="concept-title">Subestructura Óptima / Principio de Optimalidad</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Un problema tiene subestructura óptima si una solución óptima del problema puede construirse eficientemente a partir de las soluciones óptimas de sus subproblemas.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Es condición <strong>necesaria</strong> para aplicar Programación Dinámica (también para Divide y Vencerás). Se demuestra mediante el argumento <strong>"cut and paste"</strong>: si existiera una solución mejor para un subproblema, se podría sustituir en la solución global para obtener una solución mejor que la supuesta óptima, lo que lleva a contradicción. Por ejemplo, en la mochila 0/1, si (x1,...,xn) es la secuencia óptima para knapsack(n,W), entonces (x1,...,x_{n-1}) es óptima para el subproblema correspondiente.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">4</div>
+        <div class="concept-title">Memoización (Memoization)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Técnica que consiste en almacenar en un almacén (tabla/diccionario) el resultado de cada subproblema la primera vez que se calcula, y recuperarlo directamente en llamadas posteriores sin recalcularlo.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Es la versión recursiva (top-down) de la Programación Dinámica. Requiere:</p>
+      <ul>
+        <li>Identificar los parámetros que caracterizan de forma única cada subproblema.</li>
+        <li>Definir una estructura de almacenamiento (p.ej. <code>vector&lt;vector&lt;double&gt;&gt; M</code>).</li>
+        <li>Elegir un valor centinela que indique "aún no calculado" (p.ej. <code>-1.0</code>) distinto de cualquier valor válido.</li>
+        <li>Antes de calcular, comprobar si el resultado ya está en el almacén; si es así, devolverlo directamente.</li>
+      </ul>
+      <p class="explicacion-text" style="margin-top:8px">La complejidad temporal mejora drásticamente: de exponencial a polinómica.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">5</div>
+        <div class="concept-title">Almacén de Resultados Parciales (Tabla / Storage)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Estructura de datos (normalmente una matriz o vector) donde se guardan las soluciones de todos los subproblemas para evitar recalcularlos.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Es el elemento central de PD. Su tamaño y dimensiones vienen determinados por los parámetros que identifican únicamente cada subproblema. Por ejemplo, en la mochila 0/1 el almacén es <code>M[n+1][W+1]</code>, donde <code>M[i][j]</code> representa la ganancia máxima usando los primeros i objetos con capacidad j. El "contorno" o "perfil" de la tabla corresponde a los casos base. Las celdas no accedidas en la versión recursiva representan ahorro computacional.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">6</div>
+        <div class="concept-title">PD Recursiva (Top-Down) vs. PD Iterativa (Bottom-Up)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Dos formas de implementar Programación Dinámica: descendente (top-down, con memoización) y ascendente (bottom-up, con relleno iterativo de la tabla).</div>
+      <div class="label">Explicación</div>
+      <ul>
+        <li><strong>Top-Down (recursiva + memoización):</strong> Parte del problema original y desciende hacia los subproblemas. Solo resuelve los subproblemas que necesita (puede ser más eficiente para problemas con muchas celdas no necesarias, como en la mochila 0/1).</li>
+        <li><strong>Bottom-Up (iterativa):</strong> Resuelve primero los subproblemas más pequeños y los almacena, construyendo hacia arriba hasta el problema original. Debe resolver todos los subproblemas aunque algunos no se necesiten. Su ventaja es que puede reducir la complejidad espacial más fácilmente.</li>
+        <li>Ambas tienen la misma complejidad temporal asintótica en general.</li>
+        <li>Históricamente, PD se asocia al enfoque iterativo (los primeros lenguajes no admitían recursividad).</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">7</div>
+        <div class="concept-title">Recorrido Ascendente (Bottom-Up Traversal)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Estrategia de resolución de subproblemas en orden de menor a mayor tamaño, de modo que cuando se va a resolver un subproblema, sus dependencias ya están resueltas y almacenadas.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Es el orden de relleno de la tabla en la versión iterativa. La enumeración de subproblemas debe cumplir: todo subproblema del que depende <code>p</code> debe aparecer antes que <code>p</code> en la enumeración, y el problema original P debe ser el último. En la mochila 0/1, el bucle exterior recorre los objetos de 1 a n, y el interior la capacidad de 1 a W.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">8</div>
+        <div class="concept-title">Extracción de la Solución Óptima (Parse / Backtracking sobre la tabla)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Procedimiento para recuperar la secuencia de decisiones óptimas a partir del almacén, una vez calculado el valor óptimo.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Una vez construida la tabla, se recorre en sentido descendente (de mayor a menor índice) desde la celda que contiene la solución global. En cada paso se determina qué decisión dio lugar al valor almacenado (p.ej., si el objeto i fue tomado o rechazado en la mochila), y se avanza a la celda correspondiente. El recorrido tiene complejidad <strong>Θ(n)</strong>. Requiere conservar la tabla completa (no es compatible con la reducción de complejidad espacial).</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">9</div>
+        <div class="concept-title">Complejidad Temporal de la Solución PD</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Coste en tiempo de una solución de Programación Dinámica, habitualmente polinómica frente a la exponencial de la solución naive.</div>
+      <div class="label">Explicación</div>
+      <ul>
+        <li><strong>Mochila 0/1:</strong> T(n,W) ∈ Θ(nW). Es pseudopolinómica (depende del valor numérico de W, no solo del tamaño de la entrada). Si W es muy grande, puede ser inviable.</li>
+        <li><strong>Corte de tubos:</strong> T(n) ∈ O(n²). La solución naive es O(2^n).</li>
+        <li><strong>Coeficiente binomial:</strong> T(n,r) ∈ Θ(rn). La solución naive es O(2^min(r,n-r)).</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">10</div>
+        <div class="concept-title">Complejidad Espacial y su Reducción</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Coste en memoria del almacén de resultados parciales, y técnicas para reducirlo cuando no todas las filas/columnas anteriores son necesarias para calcular la siguiente.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">En la mochila 0/1, la tabla completa es Θ(nW), pero para calcular la fila n solo se necesita la fila n-1, por lo que se puede reducir a <strong>Θ(W)</strong> usando dos vectores alternados (<code>swap</code>). Esta reducción impide la extracción de la solución óptima (ya que se pierde información). En el corte de tubos, la complejidad espacial no se puede reducir porque cada subproblema depende de todos los anteriores.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">11</div>
+        <div class="concept-title">Problema de la Mochila 0/1 (Knapsack Problem)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Problema de optimización clásico: dado un conjunto de n objetos con valores vᵢ y pesos wᵢ, y una mochila con capacidad máxima W, se busca la selección de objetos (sin fraccionar) que maximiza el valor total sin superar W.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">La variante 0/1 (objetos no fraccionables) es la más difícil; no se conoce ningún algoritmo polinómico para el caso general (posiblemente sea NP-completo). La simplificación de pesos discretos permite abordarlo con PD. La recurrencia es:</p>
+      <ul style="margin-top:8px">
+        <li><code>knapsack(0, W) = 0</code></li>
+        <li><code>knapsack(n, W) = max(knapsack(n-1, W), knapsack(n-1, W-wₙ) + vₙ)</code> si W ≥ wₙ</li>
+      </ul>
+      <p class="explicacion-text" style="margin-top:8px">La solución ingenua es O(2^n); con PD se reduce a Θ(nW).</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">12</div>
+        <div class="concept-title">Problema del Corte de Tubos (Rod Cutting)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Dado un tubo de longitud n y una tabla de precios pᵢ para tubos de longitud i, encontrar la forma de cortar el tubo que maximiza el precio total de venta.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Hay 2^(n-1) formas de cortar, por lo que la búsqueda exhaustiva es exponencial. La recurrencia es:</p>
+      <ul style="margin-top:8px">
+        <li><code>r₀ = 0</code></li>
+        <li><code>rₙ = max_{1≤i≤n}(pᵢ + rₙ₋ᵢ)</code></li>
+      </ul>
+      <p class="explicacion-text" style="margin-top:8px">Se asume subestructura óptima: el resto del tubo (longitud n-i) se ha cortado de forma óptima. La solución naive es O(2^n); con PD (memoización o iterativa) se reduce a <strong>O(n²)</strong>. A diferencia de la mochila, la complejidad espacial no se puede reducir.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">13</div>
+        <div class="concept-title">Coeficiente Binomial (Identidad de Pascal)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">El coeficiente binomial C(n,r) cuenta el número de formas de elegir r elementos de un conjunto de n, y satisface la recurrencia de Pascal: C(n,r) = C(n-1,r-1) + C(n-1,r), con C(n,0) = C(n,n) = 1.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">La solución recursiva directa tiene complejidad O(2^min(r,n-r)), inaceptable para valores moderados. Con memoización o PD iterativa se reduce a <strong>Θ(rn)</strong>. El "contorno" de la tabla se inicializa con los casos base (primera columna y diagonal). Los subproblemas se resuelven <strong>por columnas de izquierda a derecha</strong>. La complejidad espacial es Θ(rn), mejorable hasta O(min(r,n-r)) usando uno o dos vectores.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">14</div>
+        <div class="concept-title">Solución Ingenua / Naive</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Transcripción literal de la recurrencia matemática en código recursivo, sin ningún mecanismo para evitar recalcular subproblemas.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Es el punto de partida antes de aplicar PD. Es formalmente elegante y compacta, pero computacionalmente inviable para entradas grandes debido a su complejidad exponencial. El árbol de llamadas recursivas tiene subproblemas repetidos, lo que causa el crecimiento exponencial. <strong>No es la recursividad en sí el problema, sino la repetición de cálculos.</strong></p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">15</div>
+        <div class="concept-title">Valor Centinela (Sentinel Value)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Valor especial que se usa para inicializar el almacén y que permite detectar si un subproblema ya ha sido resuelto o no.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Debe ser un valor que no pueda ser resultado válido del subproblema (p.ej. <code>-1.0</code> para ganancias no negativas, <code>0</code> cuando 0 no es una solución válida). Al inicio de cada llamada recursiva, se comprueba si el resultado almacenado es el centinela: si no lo es, el subproblema ya fue resuelto y se devuelve directamente; si lo es, se procede a calcularlo.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">16</div>
+        <div class="concept-title">Esquema General de PD: Identificación</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Proceso para determinar si un problema es candidato a ser resuelto con Programación Dinámica.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Los pasos son:</p>
+      <ul style="margin-top:8px">
+        <li>Diseñar una solución recursiva (top-down).</li>
+        <li>Analizar su complejidad: si es prohibitiva (exponencial) por subproblemas superpuestos y reparto no equitativo de tamaños.</li>
+        <li>Si el problema es de optimización, verificar que cumple la subestructura óptima.</li>
+      </ul>
+      <p class="explicacion-text" style="margin-top:8px">Si se cumplen estas condiciones, PD es aplicable.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">17</div>
+        <div class="concept-title">Aplicaciones Clásicas de la Programación Dinámica</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Conjunto de problemas canónicos donde PD resulta especialmente eficaz.</div>
+      <div class="label">Explicación</div>
+      <ul>
+        <li><strong>Mochila 0/1</strong> (con pesos discretos).</li>
+        <li><strong>Números de Fibonacci</strong> (evitando el cálculo exponencial de la versión naive).</li>
+        <li><strong>Longest Common Subsequence (LCS):</strong> subsecuencia común máxima de dos cadenas.</li>
+        <li><strong>Edit Distance (distancia de edición):</strong> mínimo número de operaciones para transformar una cadena en otra.</li>
+        <li><strong>Travelling Salesman Problem (TSP):</strong> viajante de comercio.</li>
+        <li><strong>Algoritmo de Dijkstra:</strong> caminos más cortos desde un vértice.</li>
+        <li><strong>Algoritmo de Warshall:</strong> existencia de camino entre cualquier par de vértices.</li>
+        <li><strong>Algoritmo de Floyd:</strong> caminos más cortos entre todos los pares de vértices.</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>

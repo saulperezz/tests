@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cuestionario · Análisis y Diseño de Algoritmos</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- ── Añadir aquí un <script> por cada tema nuevo ── -->
+  <script src="preguntas_pd.js"></script>
+  <script src="preguntas_voraces.js"></script>
+
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0d1117; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const temas = window.TEMAS_ADA || [];
+
+    function Quiz() {
+      const [activeTema, setActiveTema]     = useState(null);
+      const [activeQuestions, setActiveQuestions] = useState([]);
+      const [current, setCurrent]           = useState(0);
+      const [selected, setSelected]         = useState(null);
+      const [confirmed, setConfirmed]       = useState(false);
+      const [score, setScore]               = useState(0);
+      const [wrong, setWrong]               = useState([]);
+      const [finished, setFinished]         = useState(false);
+      const [started, setStarted]           = useState(false);
+      const [reviewMode, setReviewMode]     = useState(false);
+
+      const startQuiz = (tema) => {
+        const shuffled = [...tema.preguntas]
+          .sort(() => Math.random() - 0.5)
+          .map((q) => {
+            const correctText = q.options[q.correct];
+            const shuffledOptions = [...q.options].sort(() => Math.random() - 0.5);
+            return { ...q, options: shuffledOptions, correct: shuffledOptions.indexOf(correctText) };
+          });
+        setActiveTema(tema);
+        setActiveQuestions(shuffled);
+        setCurrent(0);
+        setSelected(null);
+        setConfirmed(false);
+        setScore(0);
+        setWrong([]);
+        setFinished(false);
+        setStarted(true);
+        setReviewMode(false);
+      };
+
+      const handleSelect = (idx) => {
+        if (confirmed) return;
+        setSelected(idx);
+      };
+
+      const handleConfirm = () => {
+        if (selected === null) return;
+        setConfirmed(true);
+        if (selected === activeQuestions[current].correct) {
+          setScore((s) => s + 1);
+        } else {
+          setWrong((w) => [...w, { ...activeQuestions[current], chosen: selected }]);
+        }
+      };
+
+      const handleNext = () => {
+        if (current + 1 >= activeQuestions.length) {
+          setFinished(true);
+        } else {
+          setCurrent((c) => c + 1);
+          setSelected(null);
+          setConfirmed(false);
+        }
+      };
+
+      const q = activeQuestions[current];
+      const pct = activeQuestions.length > 0
+        ? Math.round(((current + (confirmed ? 1 : 0)) / activeQuestions.length) * 100)
+        : 0;
+      const scorePct = activeQuestions.length > 0
+        ? Math.round((score / activeQuestions.length) * 100)
+        : 0;
+      const optionLabel = ["A", "B", "C"];
+
+      // ── MENÚ ──
+      if (!started) {
+        return (
+          <div style={styles.shell}>
+            <div style={styles.card}>
+              <a href="index.html" style={styles.backLink}>← Inicio</a>
+              <br /><br />
+              <div style={styles.badge}>Ingeniería Informática</div>
+              <h1 style={styles.title}>Análisis y Diseño<br />de Algoritmos</h1>
+              <div style={styles.filterLabel}>Selecciona el tema a estudiar:</div>
+              <div style={styles.filterGrid}>
+                {temas.map((tema, i) => (
+                  <button key={i} style={styles.filterBtn} onClick={() => startQuiz(tema)}>
+                    <span style={styles.filterIcon}>⚡</span>
+                    <span style={styles.filterBtnText}>Tema {tema.tema} · {tema.nombre}</span>
+                    <span style={styles.filterCount}>{tema.preguntas.length} preg.</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // ── RESULTADOS ──
+      if (finished) {
+        const grade = scorePct >= 90 ? "Sobresaliente"
+          : scorePct >= 70 ? "Notable"
+          : scorePct >= 50 ? "Aprobado"
+          : "Suspendido";
+        const gradeColor = scorePct >= 90 ? "#4ade80"
+          : scorePct >= 70 ? "#60a5fa"
+          : scorePct >= 50 ? "#fbbf24"
+          : "#f87171";
+        return (
+          <div style={styles.shell}>
+            <div style={styles.card}>
+              <div style={styles.badge}>Resultado final</div>
+              <div style={{ ...styles.scoreCircle, borderColor: gradeColor }}>
+                <span style={{ ...styles.scoreNum, color: gradeColor }}>{scorePct}%</span>
+                <span style={styles.scoreSub}>{score}/{activeQuestions.length}</span>
+              </div>
+              <div style={{ ...styles.gradeTag, background: gradeColor }}>{grade}</div>
+              {wrong.length > 0 && (
+                <div style={styles.wrongSection}>
+                  <div style={styles.wrongTitle}>Preguntas falladas ({wrong.length})</div>
+                  {!reviewMode ? (
+                    <button style={styles.reviewBtn} onClick={() => setReviewMode(true)}>Ver repaso</button>
+                  ) : (
+                    wrong.map((w, i) => (
+                      <div key={i} style={styles.wrongItem}>
+                        <div style={styles.wrongConcept}>{w.concept}</div>
+                        <div style={styles.wrongQ}>{w.question}</div>
+                        <div style={styles.wrongAns}>
+                          <span style={styles.wrongChosen}>✗ Tu respuesta: {w.options[w.chosen]}</span>
+                          <span style={styles.wrongCorrect}>✓ Correcta: {w.options[w.correct]}</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              )}
+              <div style={styles.finishBtns}>
+                <button style={styles.primaryBtn} onClick={() => startQuiz(activeTema)}>Repetir</button>
+                <button style={styles.secondaryBtn} onClick={() => setStarted(false)}>Menú</button>
+              </div>
+            </div>
+          </div>
+        );
+      }
+
+      // ── PREGUNTA ──
+      return (
+        <div style={styles.shell}>
+          <div style={styles.card}>
+            <div style={styles.header}>
+              <button style={styles.backBtn} onClick={() => setStarted(false)}>← Menú</button>
+              <div style={styles.progress}>
+                <div style={styles.progressTrack}>
+                  <div style={{ ...styles.progressFill, width: `${pct}%` }} />
+                </div>
+                <span style={styles.progressText}>{current + 1}/{activeQuestions.length}</span>
+              </div>
+              <div style={styles.scoreTag}>✓ {score}</div>
+            </div>
+
+            <div style={styles.conceptChip}>
+              <span style={styles.conceptNum}>{q.conceptIndex}</span>
+              {q.concept}
+            </div>
+
+            <div style={styles.questionBox}>
+              <p style={styles.questionText}>{q.question}</p>
+            </div>
+
+            <div style={styles.options}>
+              {q.options.map((opt, i) => {
+                let style = styles.option;
+                if (confirmed) {
+                  if (i === q.correct)                    style = { ...styles.option, ...styles.optionCorrect };
+                  else if (i === selected && i !== q.correct) style = { ...styles.option, ...styles.optionWrong };
+                  else                                    style = { ...styles.option, ...styles.optionDim };
+                } else if (selected === i) {
+                  style = { ...styles.option, ...styles.optionSelected };
+                }
+                return (
+                  <button key={i} style={style} onClick={() => handleSelect(i)}>
+                    <span style={styles.optLabel}>{optionLabel[i]}</span>
+                    <span style={styles.optText}>{opt}</span>
+                    {confirmed && i === q.correct && <span style={styles.tick}>✓</span>}
+                    {confirmed && i === selected && i !== q.correct && <span style={styles.cross}>✗</span>}
+                  </button>
+                );
+              })}
+            </div>
+
+            <div style={styles.actions}>
+              <a href={activeTema.resumenUrl} target="_blank" style={styles.resumenLink}>
+                Ver resumen
+              </a>
+              {!confirmed ? (
+                <button
+                  style={selected !== null ? styles.primaryBtn : styles.disabledBtn}
+                  onClick={handleConfirm}
+                  disabled={selected === null}
+                >
+                  Confirmar respuesta
+                </button>
+              ) : (
+                <button style={styles.primaryBtn} onClick={handleNext}>
+                  {current + 1 >= activeQuestions.length ? "Ver resultados →" : "Siguiente →"}
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const styles = {
+      backLink: {
+        display: "inline-block",
+        color: "#8b949e",
+        fontSize: 13,
+        fontFamily: "monospace",
+        textDecoration: "none",
+        marginBottom: 16,
+        letterSpacing: 0.5,
+      },
+      shell: {
+        minHeight: "100vh",
+        background: "#0d1117",
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        padding: "24px 16px 48px",
+        fontFamily: "'Georgia', 'Times New Roman', serif",
+      },
+      card: {
+        width: "100%",
+        maxWidth: 680,
+        background: "#161b22",
+        border: "1px solid #30363d",
+        borderRadius: 16,
+        padding: "28px 28px 32px",
+        boxShadow: "0 8px 48px rgba(0,0,0,0.6)",
+      },
+      badge: {
+        display: "inline-block",
+        background: "#21262d",
+        border: "1px solid #30363d",
+        color: "#8b949e",
+        fontSize: 11,
+        letterSpacing: 2,
+        textTransform: "uppercase",
+        padding: "4px 10px",
+        borderRadius: 20,
+        marginBottom: 16,
+      },
+      title: {
+        color: "#e6edf3",
+        fontSize: 36,
+        fontWeight: 700,
+        lineHeight: 1.15,
+        margin: "0 0 24px",
+        letterSpacing: -0.5,
+      },
+      filterLabel: {
+        color: "#8b949e",
+        fontSize: 12,
+        letterSpacing: 1,
+        textTransform: "uppercase",
+        marginBottom: 12,
+      },
+      filterGrid: {
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+      },
+      filterBtn: {
+        display: "flex",
+        alignItems: "center",
+        gap: 10,
+        background: "#1f6feb",
+        border: "none",
+        borderRadius: 10,
+        padding: "14px 18px",
+        cursor: "pointer",
+        textAlign: "left",
+        color: "#e6edf3",
+        fontSize: 15,
+        fontWeight: 600,
+        fontFamily: "'Georgia', serif",
+        transition: "opacity 0.15s",
+      },
+      filterIcon: { fontSize: 18 },
+      filterBtnText: { flex: 1 },
+      filterCount: {
+        color: "rgba(255,255,255,0.55)",
+        fontSize: 12,
+        fontFamily: "monospace",
+      },
+      header: {
+        display: "flex",
+        alignItems: "center",
+        gap: 12,
+        marginBottom: 20,
+      },
+      backBtn: {
+        background: "transparent",
+        border: "1px solid #30363d",
+        color: "#8b949e",
+        borderRadius: 8,
+        padding: "5px 10px",
+        cursor: "pointer",
+        fontSize: 12,
+        fontFamily: "'Georgia', serif",
+        flexShrink: 0,
+      },
+      progress: {
+        flex: 1,
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+      },
+      progressTrack: {
+        flex: 1,
+        height: 5,
+        background: "#21262d",
+        borderRadius: 3,
+        overflow: "hidden",
+      },
+      progressFill: {
+        height: "100%",
+        background: "linear-gradient(90deg, #1f6feb, #58a6ff)",
+        borderRadius: 3,
+        transition: "width 0.4s ease",
+      },
+      progressText: {
+        color: "#8b949e",
+        fontSize: 12,
+        fontFamily: "monospace",
+        flexShrink: 0,
+      },
+      scoreTag: {
+        background: "#1a3a2a",
+        border: "1px solid #2ea04326",
+        color: "#3fb950",
+        fontSize: 12,
+        fontFamily: "monospace",
+        padding: "4px 10px",
+        borderRadius: 8,
+        flexShrink: 0,
+      },
+      conceptChip: {
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        background: "#21262d",
+        border: "1px solid #30363d",
+        borderRadius: 20,
+        padding: "4px 12px 4px 6px",
+        fontSize: 12,
+        color: "#8b949e",
+        marginBottom: 16,
+        fontFamily: "monospace",
+      },
+      conceptNum: {
+        background: "#1f6feb",
+        color: "#fff",
+        borderRadius: 12,
+        width: 20,
+        height: 20,
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 10,
+        fontWeight: 700,
+        flexShrink: 0,
+      },
+      questionBox: {
+        background: "#21262d",
+        border: "1px solid #30363d",
+        borderRadius: 12,
+        padding: "18px 20px",
+        marginBottom: 16,
+      },
+      questionText: {
+        color: "#e6edf3",
+        fontSize: 16,
+        lineHeight: 1.6,
+        margin: 0,
+      },
+      options: {
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+        marginBottom: 20,
+      },
+      option: {
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 12,
+        background: "#21262d",
+        border: "1px solid #30363d",
+        borderRadius: 10,
+        padding: "12px 14px",
+        cursor: "pointer",
+        textAlign: "left",
+        transition: "border-color 0.15s, background 0.15s",
+        fontFamily: "'Georgia', serif",
+      },
+      optionSelected: {
+        background: "#161f3a",
+        border: "1px solid #1f6feb",
+      },
+      optionCorrect: {
+        background: "#122d1f",
+        border: "1px solid #3fb950",
+        cursor: "default",
+      },
+      optionWrong: {
+        background: "#2d1212",
+        border: "1px solid #f85149",
+        cursor: "default",
+      },
+      optionDim: {
+        background: "#1a1f26",
+        border: "1px solid #21262d",
+        opacity: 0.55,
+        cursor: "default",
+      },
+      optLabel: {
+        flexShrink: 0,
+        width: 24,
+        height: 24,
+        background: "#30363d",
+        borderRadius: 6,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontSize: 11,
+        fontWeight: 700,
+        color: "#8b949e",
+        fontFamily: "monospace",
+        marginTop: 1,
+      },
+      optText: {
+        flex: 1,
+        color: "#c9d1d9",
+        fontSize: 14,
+        lineHeight: 1.55,
+      },
+      tick:  { color: "#3fb950", fontSize: 16, flexShrink: 0, marginTop: 2 },
+      cross: { color: "#f85149", fontSize: 16, flexShrink: 0, marginTop: 2 },
+      actions: {
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+      },
+      resumenLink: {
+        color: "#8b949e",
+        fontSize: 13,
+        fontFamily: "monospace",
+        textDecoration: "none",
+        borderBottom: "1px solid #30363d",
+        paddingBottom: 1,
+        letterSpacing: 0.3,
+      },
+      primaryBtn: {
+        background: "#1f6feb",
+        color: "#fff",
+        border: "none",
+        borderRadius: 10,
+        padding: "11px 22px",
+        cursor: "pointer",
+        fontSize: 14,
+        fontWeight: 600,
+        fontFamily: "'Georgia', serif",
+        transition: "opacity 0.15s",
+      },
+      secondaryBtn: {
+        background: "transparent",
+        color: "#8b949e",
+        border: "1px solid #30363d",
+        borderRadius: 10,
+        padding: "11px 22px",
+        cursor: "pointer",
+        fontSize: 14,
+        fontFamily: "'Georgia', serif",
+      },
+      disabledBtn: {
+        background: "#21262d",
+        color: "#484f58",
+        border: "1px solid #30363d",
+        borderRadius: 10,
+        padding: "11px 22px",
+        cursor: "not-allowed",
+        fontSize: 14,
+        fontFamily: "'Georgia', serif",
+      },
+      scoreCircle: {
+        width: 130,
+        height: 130,
+        borderRadius: "50%",
+        border: "4px solid",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        margin: "20px auto",
+      },
+      scoreNum: {
+        fontSize: 34,
+        fontWeight: 700,
+        lineHeight: 1,
+      },
+      scoreSub: {
+        color: "#8b949e",
+        fontSize: 13,
+        fontFamily: "monospace",
+        marginTop: 4,
+      },
+      gradeTag: {
+        display: "block",
+        textAlign: "center",
+        margin: "0 auto 24px",
+        borderRadius: 20,
+        padding: "5px 20px",
+        fontWeight: 700,
+        fontSize: 14,
+        color: "#0d1117",
+        width: "fit-content",
+      },
+      wrongSection: {
+        background: "#21262d",
+        border: "1px solid #30363d",
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 20,
+      },
+      wrongTitle: {
+        color: "#f85149",
+        fontSize: 13,
+        fontWeight: 600,
+        fontFamily: "monospace",
+        marginBottom: 12,
+      },
+      reviewBtn: {
+        background: "#21262d",
+        border: "1px solid #30363d",
+        color: "#8b949e",
+        borderRadius: 8,
+        padding: "7px 14px",
+        cursor: "pointer",
+        fontSize: 13,
+        fontFamily: "'Georgia', serif",
+      },
+      wrongItem: {
+        borderTop: "1px solid #30363d",
+        paddingTop: 12,
+        marginTop: 12,
+      },
+      wrongConcept: {
+        color: "#8b949e",
+        fontSize: 10,
+        letterSpacing: 1,
+        textTransform: "uppercase",
+        fontFamily: "monospace",
+        marginBottom: 4,
+      },
+      wrongQ: {
+        color: "#c9d1d9",
+        fontSize: 13,
+        lineHeight: 1.5,
+        marginBottom: 8,
+      },
+      wrongAns: {
+        display: "flex",
+        flexDirection: "column",
+        gap: 4,
+      },
+      wrongChosen:  { color: "#f85149", fontSize: 12, lineHeight: 1.4 },
+      wrongCorrect: { color: "#3fb950", fontSize: 12, lineHeight: 1.4 },
+      finishBtns: {
+        display: "flex",
+        gap: 10,
+        justifyContent: "center",
+      },
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<Quiz />);
+  </script>
+</body>
+</html>

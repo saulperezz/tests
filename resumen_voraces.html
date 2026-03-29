@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resumen · Algoritmos Voraces</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d1117;
+      min-height: 100vh;
+      padding: 40px 16px 64px;
+      font-family: 'Georgia', 'Times New Roman', serif;
+      color: #c9d1d9;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 780px;
+      margin: 0 auto;
+    }
+
+    .back {
+      display: inline-block;
+      color: #8b949e;
+      font-size: 13px;
+      font-family: monospace;
+      text-decoration: none;
+      margin-bottom: 20px;
+      letter-spacing: 0.3px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+      font-family: monospace;
+    }
+
+    h1 {
+      color: #e6edf3;
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .meta {
+      color: #8b949e;
+      font-size: 13px;
+      font-family: monospace;
+      margin-bottom: 36px;
+    }
+
+    .concept {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      padding: 24px 26px;
+      margin-bottom: 14px;
+    }
+
+    .concept-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .concept-num {
+      background: #1f6feb;
+      color: #fff;
+      border-radius: 10px;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      font-family: monospace;
+      flex-shrink: 0;
+    }
+
+    .concept-title {
+      color: #e6edf3;
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .label {
+      color: #58a6ff;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      font-family: monospace;
+    }
+
+    .concepto-text {
+      color: #e6edf3;
+      font-size: 14px;
+      line-height: 1.7;
+      margin-bottom: 16px;
+      padding: 12px 16px;
+      background: #21262d;
+      border-left: 3px solid #1f6feb;
+      border-radius: 0 8px 8px 0;
+    }
+
+    .explicacion-text {
+      color: #c9d1d9;
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .explicacion-text strong {
+      color: #e6edf3;
+    }
+
+    .explicacion-text em {
+      color: #8b949e;
+      font-style: italic;
+    }
+
+    .explicacion-text code {
+      font-family: monospace;
+      background: #21262d;
+      border: 1px solid #30363d;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #79c0ff;
+    }
+
+    ul {
+      padding-left: 20px;
+      margin: 8px 0;
+    }
+
+    ul li {
+      margin-bottom: 4px;
+      color: #c9d1d9;
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    ul li strong {
+      color: #e6edf3;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      font-size: 13px;
+      font-family: monospace;
+    }
+
+    th {
+      background: #21262d;
+      color: #8b949e;
+      padding: 7px 12px;
+      text-align: left;
+      border: 1px solid #30363d;
+    }
+
+    td {
+      padding: 7px 12px;
+      border: 1px solid #30363d;
+      color: #c9d1d9;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back" href="javascript:window.close()">← Volver al test</a>
+    <h1>Algoritmos Voraces</h1>
+    <p class="meta">21 conceptos clave</p>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">1</div>
+        <div class="concept-title">Algoritmo Voraz (Greedy Algorithm) — Definición</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Un algoritmo voraz es aquel que, para resolver un problema de optimización por selección, toma decisiones siguiendo un criterio de selección que siempre escoge la alternativa localmente óptima, con la esperanza de que esta estrategia conduzca a la solución global óptima.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Los algoritmos voraces construyen la solución paso a paso: en cada etapa eligen el elemento que parece "mejor" en ese momento sin reconsiderar decisiones pasadas ni contemplar consecuencias futuras. Son eficientes (habitualmente <strong>O(n log n)</strong>) y fáciles de implementar debido al carácter irreversible de sus decisiones. Sin embargo, no todos los problemas admiten esta estrategia: la elección de óptimos locales no siempre conduce al óptimo global. Para cada problema hay que <strong>demostrar formalmente</strong> que el criterio elegido garantiza el óptimo ante cualquier instancia.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">2</div>
+        <div class="concept-title">Criterio de Selección Voraz</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Regla que determina, en cada etapa del algoritmo, qué elemento del conjunto de candidatos se elige para incorporar (o descartar) de la solución. Siempre selecciona la alternativa localmente óptima según alguna medida de calidad.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">El criterio de selección es la pieza clave del diseño de un algoritmo voraz y el que determina si el algoritmo encontrará siempre la solución óptima o solo una aproximación. Ejemplos de criterios:</p>
+      <ul>
+        <li>Mochila continua: seleccionar el objeto con mayor <strong>valor específico</strong> (vᵢ/wᵢ).</li>
+        <li>Problema del cambio: seleccionar la <strong>moneda de mayor valor</strong> que no supere la cantidad restante.</li>
+        <li>Prim: seleccionar la <strong>arista de menor peso</strong> que conecte un vértice visitado con uno no visitado.</li>
+        <li>Kruskal: seleccionar la <strong>arista de menor peso</strong> que no forme ciclos.</li>
+        <li>Fontanero diligente: atender primero la tarea de <strong>menor duración</strong>.</li>
+      </ul>
+      <p class="explicacion-text" style="margin-top:8px">La elección del criterio correcto es la parte más difícil del diseño voraz y requiere demostración formal de corrección.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">3</div>
+        <div class="concept-title">Solución Factible vs. Solución Óptima</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Una <strong>solución factible</strong> es aquella que satisface todas las restricciones del problema. Una <strong>solución óptima</strong> es la solución factible que maximiza (o minimiza) la función objetivo.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">En el esquema voraz, cuando se considera añadir un candidato a la solución, se comprueba si la solución resultante sigue siendo factible (función <code>esFactible</code>). Si no lo es, el candidato se descarta para siempre. Puede ocurrir que un algoritmo voraz encuentre una solución factible que no sea óptima (como ocurre con la mochila discreta), o incluso que no encuentre ninguna solución factible (como en el problema del cambio con ciertos conjuntos de monedas). La distinción entre ambas es fundamental para valorar la calidad del algoritmo.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">4</div>
+        <div class="concept-title">Función Objetivo</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Expresión matemática que mide la calidad de una solución y que el algoritmo trata de maximizar o minimizar. Define formalmente qué significa "óptimo" en el problema.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Cada problema de optimización tiene su función objetivo específica:</p>
+      <ul>
+        <li><strong>Mochila continua:</strong> maximizar Σ xᵢvᵢ (valor total transportado).</li>
+        <li><strong>Mochila discreta:</strong> maximizar Σ xᵢvᵢ con xᵢ ∈ {0,1}.</li>
+        <li><strong>Problema del cambio:</strong> minimizar |S| (número de monedas usadas).</li>
+        <li><strong>Árbol de recubrimiento mínimo:</strong> minimizar la suma de pesos de las aristas seleccionadas.</li>
+        <li><strong>Fontanero diligente:</strong> minimizar el tiempo medio de espera E(n) = Σ Eᵢ.</li>
+        <li><strong>Asignación de tareas:</strong> minimizar el coste total Σᵢ Σⱼ xᵢⱼ bᵢⱼ.</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">5</div>
+        <div class="concept-title">Decisión Irreversible</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Característica definitoria de los algoritmos voraces: una vez que un elemento ha sido incluido o descartado de la solución, esa decisión no se revisa ni se modifica en ningún paso posterior.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Esta propiedad es la principal causa de la eficiencia de los algoritmos voraces (no hay backtracking ni reconsideración de decisiones pasadas), pero también de su principal limitación (si en algún momento la decisión local no conduce al óptimo global, no hay forma de corregirlo). En el esquema voraz, un candidato <code>y</code> se añade a la solución si es factible, o se descarta si no lo es: en ambos casos <code>y</code> se elimina del conjunto de candidatos y no se vuelve a considerar.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">6</div>
+        <div class="concept-title">Esquema General Voraz (Greedy Template)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Estructura algorítmica común a todos los algoritmos voraces, que describe el flujo de construcción de la solución mediante selección iterativa de candidatos.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">El esquema es:</p>
+      <ul>
+        <li><code>prepararDatos(problema)</code> → ordena o preprocesa los candidatos para facilitar la selección.</li>
+        <li>Bucle mientras queden candidatos y no se haya llegado a la solución:
+          <ul>
+            <li><code>selecciona(y)</code> → elige el mejor candidato según el criterio voraz.</li>
+            <li><code>esFactible(y, solución)</code> → comprueba si añadir y mantiene la factibilidad.</li>
+            <li>Si es factible: <code>añadeElemento(y, solución)</code>.</li>
+            <li>En cualquier caso: <code>quitaElemento(y, candidatos)</code> (decisión irreversible).</li>
+          </ul>
+        </li>
+        <li>Devolver la solución construida.</li>
+      </ul>
+      <p class="explicacion-text" style="margin-top:8px">La función <code>prepararDatos</code> suele incluir una ordenación, que generalmente es la operación dominante en la complejidad temporal.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">7</div>
+        <div class="concept-title">Problema de la Mochila Continua (Fractional Knapsack)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Variante del problema de la mochila en la que los objetos <strong>sí pueden fraccionarse</strong> (xᵢ ∈ [0,1]), lo que permite siempre llenar la mochila completamente y hace que el algoritmo voraz encuentre siempre la solución óptima.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">A diferencia de la mochila discreta (0/1), en la versión continua se permite tomar una fracción de cada objeto. El criterio voraz óptimo consiste en seleccionar los objetos en orden decreciente de <strong>valor específico</strong> (vᵢ/wᵢ = valor por unidad de peso): se toma el objeto completo mientras quepa, y una fracción del siguiente cuando la mochila se llene a medias. La complejidad es <strong>O(n log n)</strong> dominada por la ordenación. Se puede demostrar formalmente (mediante "exchange argument") que este criterio produce siempre la solución óptima.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">8</div>
+        <div class="concept-title">Valor Específico (Densidad de Valor)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Ratio vᵢ/wᵢ que mide el valor obtenido por unidad de peso de un objeto. Es el criterio de selección óptimo para la mochila continua.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Los tres posibles criterios voraces para la mochila continua son:</p>
+      <ul>
+        <li>Seleccionar por <strong>mayor valor</strong> vᵢ (no garantiza el óptimo).</li>
+        <li>Seleccionar por <strong>menor peso</strong> wᵢ (no garantiza el óptimo).</li>
+        <li>Seleccionar por <strong>mayor valor específico</strong> vᵢ/wᵢ (garantiza el óptimo).</li>
+      </ul>
+      <p class="explicacion-text" style="margin-top:8px">Solo el tercer criterio es correcto. Para el ejemplo del temario (W=12, w=(6,5,2), v=(49,40,20)):</p>
+      <ul>
+        <li>Por valor decreciente: valor = 99.</li>
+        <li>Por peso creciente: valor = 100.8.</li>
+        <li>Por valor específico decreciente: valor = 101 (<strong>óptimo</strong>).</li>
+      </ul>
+      <p class="explicacion-text" style="margin-top:8px">Para la mochila <strong>discreta</strong>, ninguno de estos criterios garantiza el óptimo ante cualquier instancia.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">9</div>
+        <div class="concept-title">Demostración de Corrección de un Algoritmo Voraz</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Prueba formal de que el criterio de selección voraz elegido conduce siempre a la solución global óptima para cualquier instancia del problema.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">No basta con que el algoritmo funcione en los ejemplos probados; hay que demostrar su corrección matemáticamente. La técnica habitual es el <strong>"exchange argument"</strong>: se supone que existe una solución óptima diferente de la producida por el algoritmo y se demuestra que puede transformarse en la solución voraz sin empeorar el valor de la función objetivo (o llegando a una contradicción). En el tema, se demuestra que para la mochila continua, si X es la solución voraz e Y es cualquier otra solución factible, entonces V(X) - V(Y) ≥ 0, lo que prueba que X es óptima.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">10</div>
+        <div class="concept-title">Heurística Voraz</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Aplicación de la estrategia voraz a un problema para el que <strong>no se garantiza</strong> que el criterio elegido conduzca siempre al óptimo, obteniendo una solución aproximada de forma eficiente.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Cuando no se conoce ningún criterio voraz que garantice el óptimo (como en la mochila discreta), el algoritmo voraz se puede usar igualmente como heurística: obtiene una solución factible de calidad razonable en tiempo polinómico. En estos casos hay que ser conscientes de que:</p>
+      <ul>
+        <li>La solución puede no ser óptima.</li>
+        <li>En casos extremos, puede incluso no encontrar ninguna solución factible.</li>
+        <li>Es útil como punto de partida para algoritmos más costosos (p.ej. búsqueda local, branch and bound).</li>
+        <li>Existe un equilibrio entre <strong>eficiencia</strong> (complejidad baja) y <strong>eficacia</strong> (calidad de la solución).</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">11</div>
+        <div class="concept-title">Problema de la Mochila Discreta — Voraz No Funciona</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">En la versión 0/1 de la mochila (sin fraccionamiento), ningún criterio voraz conocido garantiza la solución óptima ante cualquier instancia del problema.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Contraejemplo del temario: W=120, w=(60,60,20), v=(300,300,200), v/w=(5,5,10).</p>
+      <ul>
+        <li>Solución voraz (por valor específico): toma objeto 3 (v/w=10) y objeto 1 ó 2 → valor = <strong>500</strong>.</li>
+        <li>Solución óptima: tomar objetos 1 y 2 → valor = <strong>600</strong>.</li>
+      </ul>
+      <p class="explicacion-text" style="margin-top:8px">El algoritmo voraz produce una solución <strong>subóptima</strong>. Tampoco se ha podido demostrar que no existe ningún criterio voraz que funcione (el problema es NP-completo para el caso general). Por eso se resuelve óptimamente con Programación Dinámica (solo cuando los pesos son discretos y W no es demasiado grande) o se aproxima con heurísticas.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">12</div>
+        <div class="concept-title">Problema del Cambio (Coin Change)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Dado un conjunto de denominaciones de monedas C y una cantidad M, encontrar la forma de obtener exactamente M usando el <strong>menor número de monedas</strong> posible (con repetición).</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">El criterio voraz es: en cada paso, tomar la moneda de <strong>mayor valor posible</strong> que no supere la cantidad restante. Este criterio:</p>
+      <ul>
+        <li>Es <strong>óptimo</strong> para sistemas canónicos de monedas (como el euro o el dólar): C = {1, 5, 25, 50} → óptimo garantizado.</li>
+        <li><strong>No siempre es óptimo</strong> para sistemas no canónicos: C = {1, 5, 11, 25, 50}, M=65 → voraz puede no ser óptimo.</li>
+        <li>Si C = {5, 11, 25, 50}, puede incluso <strong>no encontrar ninguna solución</strong> factible aunque exista.</li>
+        <li>Su complejidad es <strong>O(n)</strong> tras ordenar las monedas.</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">13</div>
+        <div class="concept-title">Árbol de Recubrimiento de Coste Mínimo (MST)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Dado un grafo G=(V,A) no dirigido, conexo, ponderado y con pesos positivos, un árbol de recubrimiento mínimo es un subgrafo que contiene todos los vértices, es conexo, no tiene ciclos (es árbol) y tiene el menor coste total de aristas posible.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Un árbol de recubrimiento de n vértices tiene exactamente <strong>n-1 aristas</strong>. Puede haber más de un MST con el mismo coste mínimo. El MST tiene numerosas aplicaciones prácticas (diseño de redes de comunicación, tuberías, carreteras...). Los dos algoritmos voraces clásicos para resolverlo son <strong>Prim</strong> y <strong>Kruskal</strong>, ambos garantizan encontrar siempre el MST óptimo. Ambos añaden aristas de una en una, con criterios de selección distintos.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">14</div>
+        <div class="concept-title">Algoritmo de Prim</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Algoritmo voraz para el MST que construye el árbol de forma <strong>creciente desde un vértice inicial</strong>, añadiendo en cada paso la arista de menor peso que conecte un vértice ya visitado con uno no visitado todavía.</div>
+      <div class="label">Explicación</div>
+      <ul>
+        <li>Mantiene un conjunto V' de vértices visitados (inicialmente con un vértice aleatorio).</li>
+        <li>En cada paso: selecciona la arista (v, v') de menor peso con v ∈ V-V' y v' ∈ V'; añade la arista y v a la solución.</li>
+        <li>Garantiza ausencia de ciclos: solo añade aristas hacia vértices no visitados.</li>
+        <li>El árbol crece siempre como un <strong>único subárbol conectado</strong>.</li>
+        <li><strong>Complejidad:</strong>
+          <ul>
+            <li>Versión básica (sin índices): O(V³), con min_edge en O(V²) ejecutado V-1 veces.</li>
+            <li>Versión mejorada (con vectores w y f de mínimos): <strong>O(V²)</strong>, actualizando los vectores en O(V) tras cada inserción.</li>
+          </ul>
+        </li>
+        <li><strong>Mejor cuando el grafo es denso</strong> (muchas aristas, E ≈ V²).</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">15</div>
+        <div class="concept-title">Algoritmo de Kruskal</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Algoritmo voraz para el MST que selecciona aristas en orden <strong>creciente de peso</strong>, incorporando cada arista si no forma ciclo con las ya seleccionadas. Puede generar múltiples subárboles que se van fusionando.</div>
+      <div class="label">Explicación</div>
+      <ul>
+        <li>Ordena todas las aristas del grafo por peso creciente.</li>
+        <li>Recorre la lista ordenada: si los dos extremos de la arista pertenecen a componentes conexas distintas, se añade a la solución; si no (formarían ciclo), se descarta.</li>
+        <li>Termina cuando se han seleccionado |V|-1 aristas (árbol completo) o no quedan aristas.</li>
+        <li>A diferencia de Prim, los subárboles parciales pueden estar inicialmente desconectados.</li>
+        <li>Necesita la estructura de <strong>conjuntos disjuntos (Union-Find)</strong> para comprobar eficientemente si dos vértices pertenecen a la misma componente.</li>
+        <li><strong>Complejidad: O(E log E + V log V) = O(E log E)</strong> (dominado por la ordenación).</li>
+        <li><strong>Mejor cuando el grafo es disperso</strong> (pocas aristas, E &lt;&lt; V²).</li>
+      </ul>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">16</div>
+        <div class="concept-title">Conjuntos Disjuntos / Union-Find (TAD Disjoint-Set)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Estructura de datos que mantiene una partición de un conjunto de elementos en grupos disjuntos, soportando eficientemente las operaciones de unión de grupos y búsqueda del grupo al que pertenece un elemento.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">En Kruskal se usa para detectar ciclos: si los dos extremos de una arista pertenecen al mismo grupo (componente conexa), añadir la arista formaría un ciclo. Las tres operaciones son:</p>
+      <ul>
+        <li><strong>Inicializar:</strong> cada elemento en su propio grupo. O(V).</li>
+        <li><strong>find(v):</strong> devuelve el identificador del grupo al que pertenece v. O(1) con vector de etiquetas, O(log V) con implementación en árbol.</li>
+        <li><strong>union(u, v):</strong> fusiona los grupos de u y v en uno solo. O(V) con vector de etiquetas (hay que reetiquear), O(log V) con árbol.</li>
+      </ul>
+      <p class="explicacion-text" style="margin-top:8px">Con una implementación básica (vector de etiquetas): union ∈ O(V), find ∈ O(1). Con implementación avanzada (árboles con compresión de caminos y unión por rango): casi O(1) amortizado para ambas operaciones.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">17</div>
+        <div class="concept-title">Comparativa Prim vs. Kruskal</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Criterio de elección entre los dos algoritmos voraces para el MST en función de la densidad del grafo.</div>
+      <div class="label">Explicación</div>
+      <table>
+        <tr><th>Densidad del grafo</th><th>Algoritmo preferible</th><th>Complejidad</th></tr>
+        <tr><td>Grafo denso (E ≈ V²)</td><td>Prim</td><td>O(V²)</td></tr>
+        <tr><td>Grafo disperso (E &lt;&lt; V²)</td><td>Kruskal</td><td>O(E log E)</td></tr>
+      </table>
+      <p class="explicacion-text" style="margin-top:12px">Kruskal en el peor caso (grafo completo, E ∈ O(V²)): O(V² log V), que es peor que Prim. Para grafos dispersos (E &lt;&lt; V²) es claramente mejor. Con Prim mejorado usando colas de prioridad (montículos de Fibonacci) se puede alcanzar <strong>O(E + V log V)</strong>, lo que lo hace competitivo en todos los casos.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">18</div>
+        <div class="concept-title">El Fontanero Diligente (Planificación de Tareas / Scheduling)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Problema de optimización que consiste en determinar el <strong>orden de atención de n tareas</strong> de duración conocida para minimizar el tiempo total de espera acumulado de todos los clientes.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Si la tarea i tiene duración tᵢ y se atiende en la posición k de la secuencia, el tiempo de espera del cliente i es la suma de las duraciones de todas las tareas anteriores más la suya propia: <strong>Eᵢ = t₁ + t₂ + ... + tₖ</strong>. El objetivo es minimizar E(n) = Σ Eᵢ. El criterio voraz óptimo es la regla <strong>SPT (Shortest Processing Time)</strong>: atender primero la tarea de <strong>menor duración</strong>. Este criterio garantiza el mínimo tiempo de espera total y puede demostrarse formalmente mediante el argumento del intercambio: intercambiar dos tareas adyacentes fuera de orden SPT no mejora el coste total.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">19</div>
+        <div class="concept-title">Problema de Asignación de Tareas (Task Assignment)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Dados n trabajadores y n tareas con costes bᵢⱼ (coste de asignar la tarea j al trabajador i), encontrar la asignación uno-a-uno de tareas a trabajadores que minimiza el coste total.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">La solución se expresa mediante variables xᵢⱼ ∈ {0,1}, donde xᵢⱼ=1 indica que el trabajador i realiza la tarea j. Las restricciones son que cada trabajador realice exactamente una tarea y cada tarea sea asignada a exactamente un trabajador. La función objetivo es minimizar Σᵢ Σⱼ xᵢⱼ bᵢⱼ. El enfoque voraz más simple (asignar a cada trabajador su tarea de menor coste en orden) <strong>no garantiza el óptimo</strong> para el caso general. La solución exacta a este problema requiere el <strong>Algoritmo Húngaro</strong> (O(n³)) o técnicas de Programación Lineal Entera. A menudo se usa el voraz como heurística inicial.</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">20</div>
+        <div class="concept-title">Problemas de Optimización por Selección Discreta</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Categoría de problemas para los que están diseñados los algoritmos voraces: dado un conjunto C de candidatos, encontrar el subconjunto que satisface unas restricciones y optimiza una función objetivo, con decisiones binarias (incluir o no cada elemento).</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">Características formales:</p>
+      <ul>
+        <li><strong>Conjunto de candidatos C:</strong> elementos entre los que se construye la solución.</li>
+        <li><strong>Restricciones:</strong> condiciones que debe cumplir la solución (p.ej. peso ≤ W en la mochila).</li>
+        <li><strong>Función objetivo:</strong> expresión a maximizar o minimizar (p.ej. valor total).</li>
+        <li><strong>Solución factible:</strong> subconjunto de C que cumple las restricciones.</li>
+        <li><strong>Solución óptima:</strong> solución factible que optimiza la función objetivo.</li>
+      </ul>
+      <p class="explicacion-text" style="margin-top:8px">Nota: la mochila continua no pertenece estrictamente a este grupo porque admite selecciones fraccionarias (xᵢ ∈ [0,1] en lugar de xᵢ ∈ {0,1}).</p>
+    </div>
+
+    <div class="concept">
+      <div class="concept-header">
+        <div class="concept-num">21</div>
+        <div class="concept-title">Complejidad Típica de los Algoritmos Voraces</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="concepto-text">Los algoritmos voraces tienen habitualmente complejidad polinómica, siendo O(n log n) el coste más frecuente, dominado por la ordenación previa de los candidatos.</div>
+      <div class="label">Explicación</div>
+      <p class="explicacion-text">El carácter irreversible de las decisiones elimina la necesidad de backtracking, lo que hace que el bucle principal recorra los candidatos una sola vez (<strong>O(n)</strong>). La operación dominante suele ser la <strong>preparación de datos</strong> (ordenación de los candidatos según el criterio voraz), con coste O(n log n). Resumen de complejidades del tema:</p>
+      <ul>
+        <li>Mochila continua: <strong>O(n log n)</strong> (dominada por la ordenación).</li>
+        <li>Problema del cambio: <strong>O(n)</strong> tras ordenar las monedas.</li>
+        <li>Prim (versión mejorada): <strong>O(V²)</strong>.</li>
+        <li>Kruskal: <strong>O(E log E)</strong>.</li>
+        <li>Fontanero diligente: <strong>O(n log n)</strong> (ordenar tareas por duración).</li>
+      </ul>
+    </div>
+
+  </div>
+</body>
+</html>
