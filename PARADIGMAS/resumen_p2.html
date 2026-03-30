@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Práctica 2 — LPP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:          #0d1117;
+      --surface:     #161b22;
+      --border:      #30363d;
+      --border-soft: #21262d;
+      --text:        #e6edf3;
+      --text-muted:  #8b949e;
+      --text-body:   #c9d1d9;
+      --accent:      #58a6ff;
+      --accent-dim:  #1f6feb;
+      --quote-bg:    #1c2333;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text-body);
+      font-family: 'Lora', Georgia, serif;
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+      padding: 0 0 64px;
+    }
+    .nav {
+      padding: 20px 24px 0;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s;
+    }
+    .nav a:hover { color: var(--accent); }
+    .header {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 24px 28px;
+    }
+    .header h1 {
+      font-family: 'Lora', Georgia, serif;
+      font-size: clamp(32px, 7vw, 46px);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .header .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header .meta .dot { color: var(--border); }
+    .cards {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 24px 28px;
+      animation: fadeUp .4s ease both;
+    }
+    .card:nth-child(1) { animation-delay: .04s }
+    .card:nth-child(2) { animation-delay: .08s }
+    .card:nth-child(3) { animation-delay: .12s }
+    .card:nth-child(4) { animation-delay: .16s }
+    .card:nth-child(5) { animation-delay: .20s }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .card-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--accent-dim);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .card-title {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+    .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+    .quote-block {
+      background: var(--quote-bg);
+      border-left: 3px solid var(--accent-dim);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      color: var(--text-body);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+    .explanation {
+      font-size: 15px;
+      color: var(--text-body);
+      line-height: 1.75;
+    }
+    .explanation strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin-top: 14px;
+      margin-bottom: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13.5px;
+      line-height: 1.7;
+      overflow-x: auto;
+      color: var(--text-body);
+    }
+    .kw  { color: #ff7b72; }
+    .fn  { color: #58a6ff; }
+    .lit { color: #79c0ff; }
+    .cm  { color: #8b949e; }
+    .explanation ol, .explanation ul {
+      margin: 10px 0 10px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="nav">
+    <a href="javascript:window.close()">← Volver al test</a>
+  </div>
+  <div class="header">
+    <h1>Práctica 2: Programación Funcional</h1>
+    <div class="meta">
+      <span>LPP · Práctica 2</span>
+      <span class="dot">·</span>
+      <span>5 conceptos clave</span>
+    </div>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">1</div>
+        <div class="card-title">Conversión Binario-Decimal</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Un número binario de 4 bits se convierte a decimal multiplicando cada bit por su potencia de 2 correspondiente y sumando: <code>b3×2³ + b2×2² + b1×2¹ + b0×2⁰</code>.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Cada posición en un número binario representa una potencia de 2. Por ejemplo:
+        <ul>
+          <li><code>1111</code> = 1×8 + 1×4 + 1×2 + 1×1 = 15</li>
+          <li><code>0110</code> = 0×8 + 1×4 + 1×2 + 0×1 = 6</li>
+          <li><code>1000</code> = 1×8 + 0×4 + 0×2 + 0×1 = 8</li>
+        </ul>
+      </div>
+      <div class="label">Expresiones clave</div>
+      <div class="code-block">
+(<span class="fn">binario-a-decimal</span> <span class="lit">1</span> <span class="lit">1</span> <span class="lit">1</span> <span class="lit">1</span>)  <span class="cm">; => 15</span>
+(<span class="fn">binario-a-decimal</span> <span class="lit">0</span> <span class="lit">1</span> <span class="lit">1</span> <span class="lit">0</span>)  <span class="cm">; => 6</span>
+(<span class="fn">binario-a-decimal</span> <span class="lit">1</span> <span class="lit">0</span> <span class="lit">0</span> <span class="lit">0</span>)  <span class="cm">; => 8</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">2</div>
+        <div class="card-title">Conversión Binario-Hexadecimal</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Un número binario se convierte a hexadecimal: primero se convierte a decimal, y luego a carácter hex: 0-9 y A-F.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        La estrategia es composición de funciones: primero convertimos binario a decimal, luego decimal a hexadecimal:
+        <ul>
+          <li>Si el decimal es 0-9, el carácter es el dígito (0, 1, ... 9)</li>
+          <li>Si el decimal es 10-15, el carácter es la letra (A, B, C, D, E, F)</li>
+        </ul>
+      </div>
+      <div class="label">Expresiones clave</div>
+      <div class="code-block">
+(<span class="fn">binario-a-hexadecimal</span> <span class="lit">1</span> <span class="lit">1</span> <span class="lit">1</span> <span class="lit">1</span>)  <span class="cm">; => #\F</span>
+(<span class="fn">binario-a-hexadecimal</span> <span class="lit">0</span> <span class="lit">1</span> <span class="lit">1</span> <span class="lit">0</span>)  <span class="cm">; => #\6</span>
+(<span class="fn">binario-a-hexadecimal</span> <span class="lit">1</span> <span class="lit">0</span> <span class="lit">1</span> <span class="lit">0</span>)  <span class="cm">; => #\A</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">3</div>
+        <div class="card-title">Cifrado César</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        El <strong>cifrado César</strong> desplaza cada letra un número fijo de posiciones en el alfabeto. Un desplazamiento de 3 convierte A→D, B→E, etc.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        La implementación maneja:
+        <ul>
+          <li>Letras minúsculas directamente: desplaza dentro del rango a-z con módulo 26</li>
+          <li>Letras mayúsculas: convierte a minúscula, cifra, y vuelve a mayúscula</li>
+          <li>No-letras: devuelve sin cambios (números, signos, caracteres especiales)</li>
+        </ul>
+        El desplazamiento puede ser negativo (descifrado).
+      </div>
+      <div class="label">Expresiones clave</div>
+      <div class="code-block">
+(<span class="fn">cifra-caracter</span> <span class="lit">#\c</span> <span class="lit">5</span>)    <span class="cm">; => #\h</span>
+(<span class="fn">cifra-caracter</span> <span class="lit">#\z</span> <span class="lit">-1</span>)   <span class="cm">; => #\y</span>
+(<span class="fn">descifra-caracter</span> <span class="lit">#\d</span> <span class="lit">3</span>) <span class="cm">; => #\a</span>
+(<span class="fn">cifra-caracter</span> <span class="lit">#\D</span> <span class="lit">3</span>)    <span class="cm">; => #\G</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">4</div>
+        <div class="card-title">Función Menor de Tres</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Encontrar el menor de tres números puede hacerse con <code>if</code> anidado, o componiendo una función auxiliar <code>menor</code>.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Hay dos enfoques:
+        <ul>
+          <li><strong>Versión 1:</strong> usar <code>if</code> anidado: comparar el primero con el segundo, luego el resultado con el tercero</li>
+          <li><strong>Versión 2:</strong> definir una función <code>menor</code> que compara dos números, luego componer: <code>(menor n1 (menor n2 n3))</code></li>
+        </ul>
+        Ambas producen el mismo resultado, pero la versión 2 es más modular y reutilizable.
+      </div>
+      <div class="label">Expresiones clave</div>
+      <div class="code-block">
+(<span class="fn">menor-de-tres</span> <span class="lit">2</span> <span class="lit">8</span> <span class="lit">1</span>)   <span class="cm">; => 1</span>
+(<span class="fn">menor-de-tres</span> <span class="lit">3</span> <span class="lit">0</span> <span class="lit">3</span>)   <span class="cm">; => 0</span>
+(<span class="fn">menor-de-tres</span> <span class="lit">5</span> <span class="lit">5</span> <span class="lit">5</span>)   <span class="cm">; => 5</span>
+(<span class="fn">menor-de-tres</span> <span class="lit">10</span> <span class="lit">1</span> <span class="lit">100</span>) <span class="cm">; => 1</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">5</div>
+        <div class="card-title">Clasificación de Manos de Cartas</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Una función que clasifica una mano de 3 cartas: trío (todas iguales), pareja (dos iguales), o nada.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        La función extrae el <strong>valor numérico</strong> de cada carta de baraja usando <code>valor-carta</code>, y luego:
+        <ul>
+          <li>Si los tres valores son iguales → <strong>trío</strong></li>
+          <li>Si dos valores son iguales → <strong>pareja</strong></li>
+          <li>Si todos diferentes → <strong>nada</strong></li>
+        </ul>
+        Los ases valen 1, figuras valen 10-12, y número vales su valor (2-9). Los palos no importan.
+      </div>
+      <div class="label">Expresiones clave</div>
+      <div class="code-block">
+(<span class="fn">jugada-mano</span> <span class="lit">'3♥</span> <span class="lit">'3♣</span> <span class="lit">'3♥</span>) <span class="cm">; => "trío de 3"</span>
+(<span class="fn">jugada-mano</span> <span class="lit">'K♦</span> <span class="lit">'7♠</span> <span class="lit">'K♥</span>) <span class="cm">; => "pareja de 12"</span>
+(<span class="fn">jugada-mano</span> <span class="lit">'5♣</span> <span class="lit">'4♣</span> <span class="lit">'6♣</span>) <span class="cm">; => "nada"</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
