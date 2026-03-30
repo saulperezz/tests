@@ -15,6 +15,8 @@
   <script src="preguntas_pd.js"></script>
   <script src="preguntas_voraces.js"></script>
 
+  <script src="../_historial/historial.js"></script>
+
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: #0d1117; }
@@ -26,6 +28,7 @@
   <script type="text/babel">
     const { useState } = React;
 
+    const SUBJECT_KEY = "ADA";
     const temas = window.TEMAS_ADA || [];
 
     function Quiz() {
@@ -39,6 +42,7 @@
       const [finished, setFinished]         = useState(false);
       const [started, setStarted]           = useState(false);
       const [reviewMode, setReviewMode]     = useState(false);
+      const [historialTema, setHistorialTema] = useState([]);
 
       const startQuiz = (tema) => {
         const shuffled = [...tema.preguntas]
@@ -77,6 +81,27 @@
 
       const handleNext = () => {
         if (current + 1 >= activeQuestions.length) {
+          // Calcular score final basado en respuestas incorrectas (más confiable)
+          const isLastCorrect = selected === activeQuestions[current].correct;
+          const numWrongTotal = wrong.length + (isLastCorrect ? 0 : 1);
+          const finalScore = activeQuestions.length - numWrongTotal;
+
+          // Guardar resultado
+          window.Historial?.guardarResultado(SUBJECT_KEY, {
+            temaId: activeTema.id,
+            temaNombre: activeTema.nombre,
+            temaNum: activeTema.tema,
+            score: finalScore,
+            total: activeQuestions.length,
+          });
+
+          // Cargar historial del tema actual
+          const historial = window.Historial?.obtenerHistorial(SUBJECT_KEY) ?? [];
+          const historialDelTema = historial
+            .filter(r => r.temaId === activeTema.id)
+            .slice(0, 5);
+          setHistorialTema(historialDelTema);
+
           setFinished(true);
         } else {
           setCurrent((c) => c + 1);
@@ -137,6 +162,40 @@
                 <span style={styles.scoreSub}>{score}/{activeQuestions.length}</span>
               </div>
               <div style={{ ...styles.gradeTag, background: gradeColor }}>{grade}</div>
+
+              {historialTema.length > 1 && (
+                <div style={styles.historialSection}>
+                  <div style={styles.historialLabel}>HISTORIAL · TEMA {activeTema.tema}</div>
+                  <div style={styles.historialTable}>
+                    {historialTema.map((record, i) => {
+                      const recordGradeColor = record.pct >= 90 ? "#4ade80"
+                        : record.pct >= 70 ? "#60a5fa"
+                        : record.pct >= 50 ? "#fbbf24"
+                        : "#f87171";
+                      const isCurrentAttempt = i === 0;
+                      const date = new Date(record.ts);
+                      const dateStr = `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`;
+
+                      return (
+                        <div
+                          key={i}
+                          style={{
+                            ...styles.historialRow,
+                            ...(isCurrentAttempt ? { borderLeft: `3px solid #1f6feb` } : {}),
+                          }}
+                        >
+                          <span style={styles.historialDate}>{dateStr}</span>
+                          <span style={styles.historialScore}>{record.score}/{record.total}</span>
+                          <span style={{ ...styles.historialPct, color: recordGradeColor }}>
+                            ● {record.pct}%
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
               {wrong.length > 0 && (
                 <div style={styles.wrongSection}>
                   <div style={styles.wrongTitle}>Preguntas falladas ({wrong.length})</div>
@@ -598,6 +657,55 @@
       },
       wrongChosen:  { color: "#f85149", fontSize: 12, lineHeight: 1.4 },
       wrongCorrect: { color: "#3fb950", fontSize: 12, lineHeight: 1.4 },
+      historialSection: {
+        background: "#21262d",
+        border: "1px solid #30363d",
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 20,
+      },
+      historialLabel: {
+        color: "#8b949e",
+        fontSize: 11,
+        letterSpacing: 1.5,
+        textTransform: "uppercase",
+        fontFamily: "monospace",
+        marginBottom: 12,
+      },
+      historialTable: {
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+      },
+      historialRow: {
+        display: "flex",
+        alignItems: "center",
+        gap: 16,
+        paddingLeft: 12,
+        paddingRight: 12,
+        paddingTop: 8,
+        paddingBottom: 8,
+        background: "#161b22",
+        borderRadius: 8,
+        fontSize: 12,
+        transition: "background 0.15s",
+      },
+      historialDate: {
+        color: "#8b949e",
+        fontFamily: "monospace",
+        width: 40,
+        flexShrink: 0,
+      },
+      historialScore: {
+        color: "#c9d1d9",
+        fontFamily: "monospace",
+        width: 50,
+        flexShrink: 0,
+      },
+      historialPct: {
+        fontFamily: "monospace",
+        fontWeight: 600,
+      },
       finishBtns: {
         display: "flex",
         gap: 10,
