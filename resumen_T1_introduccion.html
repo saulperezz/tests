@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introducción — ADA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0d1117;
+      --surface:     #161b22;
+      --border:      #30363d;
+      --border-soft: #21262d;
+      --text:        #e6edf3;
+      --text-muted:  #8b949e;
+      --text-body:   #c9d1d9;
+      --accent:      #58a6ff;
+      --accent-dim:  #1f6feb;
+      --quote-bg:    #1c2333;
+      --tag-bg:      #0d419d22;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-body);
+      font-family: 'Lora', Georgia, serif;
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+      padding: 0 0 64px;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      padding: 20px 24px 0;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s;
+    }
+    .nav a:hover { color: var(--accent); }
+
+    /* ── HEADER ── */
+    .header {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 24px 28px;
+    }
+    .header h1 {
+      font-family: 'Lora', Georgia, serif;
+      font-size: clamp(32px, 7vw, 46px);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .header .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header .meta .dot { color: var(--border); }
+
+    /* ── CARDS ── */
+    .cards {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 24px 28px;
+      animation: fadeUp .4s ease both;
+    }
+    .card:nth-child(1)  { animation-delay: .04s }
+    .card:nth-child(2)  { animation-delay: .08s }
+    .card:nth-child(3)  { animation-delay: .12s }
+    .card:nth-child(4)  { animation-delay: .16s }
+    .card:nth-child(5)  { animation-delay: .20s }
+    .card:nth-child(6)  { animation-delay: .24s }
+    .card:nth-child(7)  { animation-delay: .28s }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* card header row */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .card-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--accent-dim);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .card-title {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    /* section labels */
+    .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    /* quote block */
+    .quote-block {
+      background: var(--quote-bg);
+      border-left: 3px solid var(--accent-dim);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      color: var(--text-body);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    /* explanation text */
+    .explanation {
+      font-size: 15px;
+      color: var(--text-body);
+      line-height: 1.75;
+    }
+    .explanation strong {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    /* ordered list inside explanation */
+    .explanation ol {
+      margin: 10px 0 10px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .explanation ul {
+      margin: 10px 0 10px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* table */
+    .paradigm-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 14px;
+    }
+    .paradigm-table th {
+      background: var(--border-soft);
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .paradigm-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-soft);
+      vertical-align: top;
+      color: var(--text-body);
+      line-height: 1.5;
+    }
+    .paradigm-table tr:last-child td { border-bottom: none; }
+    .paradigm-table td:first-child {
+      color: var(--text);
+      font-weight: 600;
+      white-space: nowrap;
+      font-size: 13.5px;
+    }
+
+    /* divider between sections */
+    .section-sep { margin-bottom: 20px; }
+
+  </style>
+</head>
+<body>
+
+  <div class="nav">
+    <a href="javascript:window.close()">← Volver al test</a>
+  </div>
+
+  <div class="header">
+    <h1>Introducción</h1>
+    <div class="meta">
+      <span>ADA · Tema 1</span>
+      <span class="dot">·</span>
+      <span>7 conceptos clave</span>
+    </div>
+  </div>
+
+  <div class="cards">
+
+    <!-- ── 1. ALGORITMIA ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">1</div>
+        <div class="card-title">Algoritmia</div>
+      </div>
+
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Ciencia que estudia los algoritmos de forma integral: análisis, diseño, implementación y experimentación.
+      </div>
+
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Es un proceso <strong>circular y retroalimentado</strong>: el análisis puede revelar ineficiencias que obligan a rediseñar; la implementación puede descubrir problemas en el diseño; la experimentación puede contradecir el análisis teórico. Ninguna etapa es independiente del resto.
+      </div>
+    </div>
+
+    <!-- ── 2. ALGORITMO ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">2</div>
+        <div class="card-title">Algoritmo</div>
+      </div>
+
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Serie <strong>finita</strong> de instrucciones <strong>no ambiguas</strong> que expresa un método de resolución de un problema.
+      </div>
+
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Sus tres propiedades esenciales son:
+        <ol>
+          <li><strong>Finitud</strong> — termina en un número limitado de pasos.</li>
+          <li><strong>No ambigüedad</strong> — cada instrucción está definida de forma precisa.</li>
+          <li><strong>Corrección</strong> — devuelve un resultado que satisface la especificación para cualquier entrada válida.</li>
+        </ol>
+        El término proviene del matemático persa <strong>Al-Juarismi</strong> (siglo&nbsp;IX).
+      </div>
+    </div>
+
+    <!-- ── 3. ETAPAS ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">3</div>
+        <div class="card-title">Etapas de Resolución de un Problema</div>
+      </div>
+
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Proceso estructurado que transforma un problema real en un resultado computacional correcto y eficiente.
+      </div>
+
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Las etapas son:
+        <ol>
+          <li><strong>Modelización / Especificación:</strong> traducir el problema a una descripción matemática formal (entradas, salidas, restricciones).</li>
+          <li><strong>Diseño:</strong> elegir la estrategia y describir el algoritmo (pseudocódigo, recurrencias…).</li>
+          <li><strong>Análisis y Verificación:</strong> demostrar corrección y medir los recursos que consume.</li>
+          <li><strong>Codificación:</strong> traducir el algoritmo a un lenguaje de programación concreto.</li>
+          <li><strong>Ejecución / Evaluación:</strong> validar empíricamente el comportamiento real.</li>
+        </ol>
+        La asignatura ADA se centra en las etapas de <strong>diseño</strong> y <strong>análisis</strong>.
+      </div>
+    </div>
+
+    <!-- ── 4. ANÁLISIS ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">4</div>
+        <div class="card-title">Análisis de Algoritmos</div>
+      </div>
+
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Disciplina que mide de forma <strong>cuantitativa</strong> los recursos que un algoritmo necesita para su ejecución.
+      </div>
+
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Los dos recursos principales son:
+        <ul>
+          <li><strong>Tiempo:</strong> número de operaciones o pasos que ejecuta el algoritmo.</li>
+          <li><strong>Espacio:</strong> memoria que consume durante su ejecución.</li>
+        </ul>
+        La finalidad es doble: <strong>valorar</strong> un algoritmo («es eficiente», «es prohibitivo») y <strong>comparar</strong> alternativas («A es mejor que B»). Para ello se usan herramientas matemáticas como potencias, logaritmos, series y cálculo infinitesimal (crecimiento asintótico, límites).
+      </div>
+    </div>
+
+    <!-- ── 5. VERIFICACIÓN ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">5</div>
+        <div class="card-title">Verificación de Algoritmos</div>
+      </div>
+
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Disciplina que demuestra <strong>formalmente</strong> que un algoritmo funciona correctamente.
+      </div>
+
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Un algoritmo se considera verificado si se puede probar que: (1) <strong>termina</strong> en un tiempo finito para cualquier entrada válida, y (2) <strong>devuelve un resultado correcto</strong> de acuerdo con su especificación. La verificación va más allá del testing (que solo prueba casos concretos): garantiza la corrección para <strong>todas</strong> las posibles entradas.
+      </div>
+    </div>
+
+    <!-- ── 6. PARADIGMAS ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">6</div>
+        <div class="card-title">Paradigmas de Diseño de Algoritmos</div>
+      </div>
+
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Metodologías o esquemas generales de resolución de problemas que producen algoritmos eficientes, claros y reutilizables.
+      </div>
+
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        A diferencia de la <strong>fuerza bruta</strong> (soluciones ad-hoc, no generalizables y difíciles de adaptar), los paradigmas ofrecen esquemas genéricos que se instancian para cada problema concreto. Los paradigmas estudiados en ADA son:
+
+        <table class="paradigm-table">
+          <thead>
+            <tr>
+              <th>Paradigma</th>
+              <th>Descripción breve</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Divide y Vencerás</td>
+              <td>Dividir el problema en subproblemas independientes, resolver cada uno y combinar.</td>
+            </tr>
+            <tr>
+              <td>Programación Dinámica</td>
+              <td>Evitar recálculos guardando soluciones de subproblemas superpuestos.</td>
+            </tr>
+            <tr>
+              <td>Algoritmos Voraces</td>
+              <td>Tomar decisiones localmente óptimas e irreversibles en cada paso.</td>
+            </tr>
+            <tr>
+              <td>Vuelta Atrás (Backtracking)</td>
+              <td>Explorar el espacio de soluciones deshaciendo decisiones incorrectas.</td>
+            </tr>
+            <tr>
+              <td>Ramificación y Poda</td>
+              <td>Búsqueda sistemática con descarte de ramas no prometedoras.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ── 7. FUERZA BRUTA VS PARADIGMAS ── -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">7</div>
+        <div class="card-title">Fuerza Bruta vs. Paradigmas</div>
+      </div>
+
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Contraste entre resolver un problema de forma directa y exhaustiva (fuerza bruta) frente a aplicar una estrategia de diseño estructurada (paradigma).
+      </div>
+
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        La fuerza bruta genera algoritmos que funcionan pero tiene tres grandes inconvenientes: son <strong>ineficientes</strong> (habitualmente exponenciales), son <strong>específicos</strong> de cada problema y no se pueden generalizar, y son <strong>frágiles</strong> ante cambios en la especificación.<br><br>
+        Los paradigmas, en cambio, producen algoritmos más eficientes (normalmente polinómicos), permiten la <strong>reutilización</strong> del esquema en distintos problemas, y facilitan el <strong>análisis formal</strong> de la solución. Cada instanciación de un esquema general da lugar a un algoritmo distinto.
+      </div>
+    </div>
+
+  </div><!-- /cards -->
+
+</body>
+</html>

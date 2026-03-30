@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Divide y Vencerás — ADA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0d1117;
+      --surface:     #161b22;
+      --border:      #30363d;
+      --border-soft: #21262d;
+      --text:        #e6edf3;
+      --text-muted:  #8b949e;
+      --text-body:   #c9d1d9;
+      --accent:      #58a6ff;
+      --accent-dim:  #1f6feb;
+      --quote-bg:    #1c2333;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-body);
+      font-family: 'Lora', Georgia, serif;
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+      padding: 0 0 64px;
+    }
+
+    .nav {
+      padding: 20px 24px 0;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s;
+    }
+    .nav a:hover { color: var(--accent); }
+
+    .header {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 24px 28px;
+    }
+    .header h1 {
+      font-family: 'Lora', Georgia, serif;
+      font-size: clamp(32px, 7vw, 46px);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .header .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header .meta .dot { color: var(--border); }
+
+    .cards {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 24px 28px;
+      animation: fadeUp .4s ease both;
+    }
+    .card:nth-child(1)  { animation-delay: .04s }
+    .card:nth-child(2)  { animation-delay: .07s }
+    .card:nth-child(3)  { animation-delay: .10s }
+    .card:nth-child(4)  { animation-delay: .13s }
+    .card:nth-child(5)  { animation-delay: .16s }
+    .card:nth-child(6)  { animation-delay: .19s }
+    .card:nth-child(7)  { animation-delay: .22s }
+    .card:nth-child(8)  { animation-delay: .25s }
+    .card:nth-child(9)  { animation-delay: .28s }
+    .card:nth-child(10) { animation-delay: .31s }
+    .card:nth-child(11) { animation-delay: .34s }
+    .card:nth-child(12) { animation-delay: .37s }
+    .card:nth-child(13) { animation-delay: .40s }
+    .card:nth-child(14) { animation-delay: .43s }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .card-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--accent-dim);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .card-title {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .quote-block {
+      background: var(--quote-bg);
+      border-left: 3px solid var(--accent-dim);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      color: var(--text-body);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .formal {
+      background: var(--quote-bg);
+      border-left: 3px solid #3fb950;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin: 10px 0 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #aff3c0;
+      line-height: 1.6;
+    }
+
+    .code-block {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 10px 0 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #adbac7;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .explanation {
+      font-size: 15px;
+      color: var(--text-body);
+      line-height: 1.75;
+    }
+    .explanation strong { color: var(--text); font-weight: 600; }
+    .explanation ol, .explanation ul {
+      margin: 10px 0 10px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 14px;
+    }
+    .data-table th {
+      background: var(--border-soft);
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-soft);
+      vertical-align: top;
+      color: var(--text-body);
+      line-height: 1.5;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .tag {
+      background: #1f6feb22;
+      border: 1px solid #1f6feb55;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .tag-green {
+      background: #3fb95022;
+      border: 1px solid #3fb95055;
+      color: #3fb950;
+    }
+    .tag-red {
+      background: #f8514922;
+      border: 1px solid #f8514955;
+      color: #f85149;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="nav">
+    <a href="javascript:window.close()">← Volver al test</a>
+  </div>
+
+  <div class="header">
+    <h1>Divide y Vencerás</h1>
+    <div class="meta">
+      <span>ADA · Tema 3</span>
+      <span class="dot">·</span>
+      <span>14 conceptos clave</span>
+    </div>
+  </div>
+
+  <div class="cards">
+
+    <!-- 1 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">1</div>
+        <div class="card-title">Paradigma Divide y Vencerás</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Técnica de diseño que resuelve un problema descomponiéndolo en subproblemas de menor tamaño, resolviéndolos de forma <strong>independiente</strong> y <strong>combinando</strong> sus soluciones para obtener la solución al problema original.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Las tres fases son siempre:
+        <ol>
+          <li><strong>Divide:</strong> partir el problema de talla n en h subproblemas de talla n/b.</li>
+          <li><strong>Conquista (resuelve):</strong> resolver cada subproblema recursivamente. Si el problema es suficientemente pequeño (caso base), resolverlo directamente de forma trivial.</li>
+          <li><strong>Combina:</strong> fusionar las soluciones de los subproblemas para producir la solución global.</li>
+        </ol>
+        Para que sea aplicable deben existir: una forma de descomponer el problema, una solución trivial para los casos base y una forma de combinar soluciones. No siempre un subproblema de talla menor es más fácil, ni siempre combinar soluciones es sencillo — estas son las <strong>dos dificultades</strong> del paradigma.
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">2</div>
+        <div class="card-title">Esquema General de Divide y Vencerás</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Plantilla algorítmica que describe la estructura común a cualquier algoritmo Divide y Vencerás, independientemente del problema concreto.
+      </div>
+      <div class="label">Esquema</div>
+      <div class="code-block">Solution DC(Problem p) {
+    if (is_simple(p))            // caso base
+        return trivial(p);
+    list&lt;Solution&gt; s;
+    for (Problem q : divide(p))  // dividir
+        s.push_back(DC(q));      // conquistar (recursión)
+    return combine(s);           // combinar
+}</div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Para <strong>instanciar</strong> este esquema hay que definir cuatro elementos:
+        <ul>
+          <li><code>is_simple(p)</code>: condición de parada (caso trivial).</li>
+          <li><code>trivial(p)</code>: solución directa del caso base.</li>
+          <li><code>divide(p)</code>: cómo partir el problema en subproblemas.</li>
+          <li><code>combine(s)</code>: cómo fusionar las soluciones parciales.</li>
+        </ul>
+        Ejemplo Mergesort: <code>is_simple</code> = tamaño ≤ 1; <code>trivial</code> = devolver sin hacer nada; <code>divide</code> = partir por la mitad; <code>combine</code> = función merge.
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">3</div>
+        <div class="card-title">Ecuación de Recurrencia General de DyV</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Relación matemática que expresa la complejidad de un algoritmo DyV en función del número de subproblemas, su tamaño y el coste de dividir y combinar.
+      </div>
+      <div class="label">Forma general</div>
+      <div class="formal">T(n) = h · T(n/b) + g(n)</div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        <ul>
+          <li><strong>h</strong> = número de subproblemas en que se divide el problema.</li>
+          <li><strong>b</strong> = factor de reducción del tamaño (cada subproblema tiene talla n/b).</li>
+          <li><strong>g(n)</strong> = coste de dividir y combinar, <em>sin contar</em> las llamadas recursivas.</li>
+        </ul>
+        La complejidad final depende del equilibrio entre cuánto trabajo extra genera cada nivel (<code>g(n)</code>) y cuántos subproblemas se producen por nivel (<code>h</code>).
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">4</div>
+        <div class="card-title">Teorema Maestro (Master Theorem)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Fórmula cerrada que resuelve directamente T(n) = h·T(n/b) + g(n) cuando g(n) ∈ Θ(nᵏ), comparando el crecimiento de subproblemas con el del trabajo de combinar.
+      </div>
+      <div class="label">Resultado</div>
+      <div class="explanation">
+        <table class="data-table">
+          <thead><tr><th>Condición</th><th>T(n)</th><th>Intuición</th></tr></thead>
+          <tbody>
+            <tr><td>h &lt; bᵏ</td><td>Θ(nᵏ)</td><td>Domina el trabajo de combinar (nivel raíz)</td></tr>
+            <tr><td>h = bᵏ</td><td>Θ(nᵏ · log_b n)</td><td>Trabajo equilibrado en todos los niveles</td></tr>
+            <tr><td>h &gt; bᵏ</td><td>Θ(n^(log_b h))</td><td>Domina el número de subproblemas (hojas)</td></tr>
+          </tbody>
+        </table>
+        <br>El teorema compara la velocidad de crecimiento del número de subproblemas (hⁱ a nivel i) con la velocidad de decrecimiento del trabajo por subproblema (g(n/bⁱ)). Si h = bᵏ, todos los niveles contribuyen igual y aparece el <strong>factor logarítmico</strong>.
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">5</div>
+        <div class="card-title">Teorema de Reducción (Caso b = h = a)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Simplificación del Teorema Maestro para el caso más favorable: el problema se divide en <strong>a subproblemas del mismo tamaño</strong> (n/a cada uno), con g(n) ∈ Θ(nᵏ).
+      </div>
+      <div class="label">Resultado</div>
+      <div class="explanation">
+        <table class="data-table">
+          <thead><tr><th>Condición</th><th>T(n)</th><th>Ejemplo práctico</th></tr></thead>
+          <tbody>
+            <tr><td>k &gt; 1</td><td>Θ(nᵏ)</td><td>Domina combinar (coste cuadrático o superior)</td></tr>
+            <tr><td>k = 1</td><td>Θ(n log n)</td><td>Mergesort: combinar lineal, caso óptimo habitual</td></tr>
+            <tr><td>k &lt; 1</td><td>Θ(n)</td><td>Combinar sublineal: la recursión sigue siendo lineal</td></tr>
+          </tbody>
+        </table>
+        <br>El resultado más sorprendente es <strong>k &lt; 1</strong>: aunque haya múltiples llamadas recursivas, si el coste de combinar es sublineal, la complejidad total sigue siendo <strong>Θ(n)</strong>.
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">6</div>
+        <div class="card-title">Mergesort</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Algoritmo de ordenación DyV que divide el array por la mitad, ordena cada mitad recursivamente y <strong>fusiona</strong> (merge) las dos mitades ordenadas. Garantiza Θ(n log n) en todos los casos.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        <ul>
+          <li><strong>Divide:</strong> partir el array en dos mitades de igual tamaño (índice medio).</li>
+          <li><strong>Conquista:</strong> llamadas recursivas a mergesort sobre cada mitad.</li>
+          <li><strong>Combina:</strong> función <code>merge</code> que fusiona dos subarrays ordenados en O(n).</li>
+        </ul>
+        <strong>Recurrencia:</strong> T(n) = 2T(n/2) + Θ(n) → con a=2, k=1 en el teorema de reducción: <strong>T(n) ∈ Θ(n log n)</strong>.<br><br>
+        <strong>Complejidad espacial:</strong> Θ(n) — la función merge necesita un array auxiliar. Los bloques de distintos niveles nunca coexisten; el mayor es el del nivel raíz. Más O(log n) de pila de recursión.<br><br>
+        <strong>Diferencia clave con Quicksort:</strong> siempre divide en mitades iguales → garantiza Θ(n log n) en todos los casos, a costa de O(n) de memoria extra.
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">7</div>
+        <div class="card-title">Función Merge</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Subrutina clave de Mergesort que fusiona dos subarrays ya ordenados en un único subarray ordenado usando un array auxiliar temporal.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        El algoritmo recorre simultáneamente los dos subarrays con <strong>dos punteros</strong> (uno por mitad), copiando en cada paso el elemento menor al array auxiliar, hasta agotar una de las mitades; luego copia el resto de la mitad no agotada.<br><br>
+        <strong>Complejidad temporal:</strong> Θ(n) — cada elemento se copia exactamente una vez.<br>
+        <strong>Complejidad espacial:</strong> Θ(n) — necesita un array auxiliar del tamaño total.<br><br>
+        Es la operación de <em>combinar</em> del esquema DyV y la que determina el factor lineal <strong>g(n) = n</strong> en la recurrencia de Mergesort.
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">8</div>
+        <div class="card-title">Quicksort como Divide y Vencerás</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Algoritmo de ordenación DyV donde toda la lógica está en la fase de <strong>dividir</strong> (particionar alrededor del pivote) y no se necesita fase de combinar.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Instanciación del esquema DyV:
+        <ul>
+          <li><code>is_simple</code>: tamaño ≤ 1.</li>
+          <li><code>divide</code>: calcular la posición del pivote. El pivote queda en su posición <strong>definitiva</strong>; los demás elementos quedan a su izquierda (menores) o derecha (mayores).</li>
+          <li><code>combine</code>: <strong>no necesaria</strong> — el array ya queda ordenado in-place.</li>
+        </ul>
+        La división puede ser muy <strong>desigual</strong>:
+        <ul>
+          <li>Mejor caso (pivote = mediana) → subproblemas (n/2, n/2) → <strong>Ω(n log n)</strong>.</li>
+          <li>Peor caso (pivote = mínimo o máximo) → subproblemas (0, n−1) → <strong>O(n²)</strong>.</li>
+        </ul>
+        Sin fase de combinar, la complejidad espacial extra es solo la pila de recursión: O(log n) en el mejor caso y O(n) en el peor.
+      </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">9</div>
+        <div class="card-title">Reduce y Vencerás</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Variante de DyV en la que solo se resuelve <strong>uno de los subproblemas</strong> en cada nivel de recursión, descartando el otro porque se sabe que la solución no está ahí.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Se aplica cuando la lógica del problema permite determinar <em>en cuál</em> de los subproblemas se encuentra la solución sin necesidad de explorar ambos. Como solo hay <strong>una llamada recursiva</strong>, no existe fase de combinar y la recurrencia toma la forma:
+        <div class="formal">T(n) = T(n/b) + g(n)</div>
+        El ejemplo paradigmático es la <strong>búsqueda binaria</strong>: en cada paso se calcula el elemento central, se compara con el buscado y se descarta la mitad irrelevante. Recurrencia: T(n) = T(n/2) + Θ(1) → <strong>T(n) ∈ O(log n)</strong>.
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">10</div>
+        <div class="card-title">Búsqueda Binaria (Búsqueda Dicotómica)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Algoritmo de búsqueda sobre arrays <strong>ordenados</strong> que en cada paso descarta la mitad del array donde no puede estar el elemento buscado, logrando complejidad <strong>O(log n)</strong>.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        <ul>
+          <li><strong>Precondición:</strong> el array debe estar ordenado.</li>
+          <li><strong>Divide:</strong> calcular el índice central (med = first + count/2).</li>
+          <li><strong>Conquista:</strong> si v[med] &lt; val → buscar en mitad derecha; si no → mitad izquierda. Solo se resuelve <strong>uno</strong> de los dos subproblemas.</li>
+          <li><strong>Combina:</strong> no necesaria.</li>
+          <li><strong>Caso base:</strong> count == 0 (intervalo vacío, elemento no encontrado).</li>
+        </ul>
+        <strong>Recurrencia:</strong> T(n) = T(n/2) + Θ(1) → <strong>T(n) ∈ O(log n)</strong>.<br><br>
+        Es <strong>óptima</strong> para arrays ordenados: ningún algoritmo de búsqueda por comparación puede hacerlo en menos de O(log n) en el peor caso.
+      </div>
+    </div>
+
+    <!-- 11 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">11</div>
+        <div class="card-title">Torres de Hanoi</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Problema clásico DyV donde la reducción es <strong>n−1</strong> (no n/b), lo que da lugar a una complejidad exponencial <strong>inevitable</strong>.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Mover n discos de la torre A a la C usando B como auxiliar equivale a:
+        <ol>
+          <li>Mover n−1 discos de A a B.</li>
+          <li>Mover el disco mayor de A a C.</li>
+          <li>Mover n−1 discos de B a C.</li>
+        </ol>
+        <strong>Recurrencia:</strong> T(n) = 2T(n−1) + 1 → por sustitución: T(n) = 2ⁿ − 1 → <strong>T(n) ∈ Θ(2ⁿ)</strong>.<br><br>
+        No se puede aplicar el Teorema Maestro porque la reducción es n−1, no n/b. La complejidad exponencial es <strong>intrínseca</strong> al problema: cualquier algoritmo que lo resuelva necesita <em>al menos</em> 2ⁿ−1 movimientos.
+      </div>
+    </div>
+
+    <!-- 12 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">12</div>
+        <div class="card-title">Quickselect</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Algoritmo basado en el particionado de Quicksort para encontrar el <strong>k-ésimo elemento más pequeño</strong> de un array sin necesidad de ordenarlo completamente.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Aplica el particionado de Quicksort: coloca el pivote en su posición definitiva p y compara con k:
+        <ul>
+          <li>Si k == p → el pivote <strong>es</strong> el k-ésimo elemento, devuelve v[k].</li>
+          <li>Si k &lt; p → el elemento está en la parte izquierda → llamada recursiva solo sobre esa parte.</li>
+          <li>Si k &gt; p → está en la parte derecha → llamada recursiva solo sobre esa parte.</li>
+        </ul>
+        Solo se explora <strong>uno</strong> de los dos subproblemas (Reduce y Vencerás). Complejidades:
+        <ul>
+          <li><strong>Mejor caso:</strong> Ω(n) — el pivote cae exactamente en k.</li>
+          <li><strong>Peor caso:</strong> O(n²) — el pivote siempre cae en un extremo.</li>
+          <li><strong>Caso promedio (pivote en la mitad):</strong> Θ(n) — la más frecuente estadísticamente.</li>
+        </ul>
+        La STL de C++ incluye <code>nth_element</code> con comportamiento equivalente.
+      </div>
+    </div>
+
+    <!-- 13 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">13</div>
+        <div class="card-title">Exponenciación Rápida (Potencia n-ésima)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Algoritmo DyV que calcula xⁿ en tiempo <strong>O(log n)</strong> aprovechando que xⁿ = (x^(n/2))² para n par, evitando las n−1 multiplicaciones del método directo.
+      </div>
+      <div class="label">Recurrencia</div>
+      <div class="formal">xⁿ = 1                              si n = 0
+xⁿ = x^(n/2) · x^(n/2)              si n es par
+xⁿ = x^((n−1)/2) · x^((n−1)/2) · x  si n es impar</div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        La clave está en <strong>reutilizar</strong> el resultado de x^(n/2) calculándolo una sola vez (almacenándolo en una variable). Si se hicieran dos llamadas recursivas separadas, no habría mejora.<br><br>
+        <strong>Recurrencia:</strong> T(n) = T(n/2) + Θ(1) → <strong>T(n) ∈ O(log n)</strong>.<br><br>
+        Frente a la multiplicación directa (O(n) multiplicaciones), la mejora es enorme para exponentes grandes: calcular x¹⁰⁰⁰ requiere solo ~10 multiplicaciones.
+      </div>
+    </div>
+
+    <!-- 14 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">14</div>
+        <div class="card-title">Comparativa: Mergesort vs. Quicksort</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Contraste entre las dos principales instancias del paradigma DyV aplicadas a ordenación, con diferencias en complejidad, memoria y comportamiento práctico.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        <table class="data-table">
+          <thead><tr><th>Característica</th><th>Mergesort</th><th>Quicksort</th></tr></thead>
+          <tbody>
+            <tr><td>División</td><td>Siempre en dos mitades iguales</td><td>Depende del pivote (puede ser desigual)</td></tr>
+            <tr><td>Trabajo principal</td><td>En combinar (merge)</td><td>En dividir (particionar)</td></tr>
+            <tr><td>Complejidad temporal</td><td>Θ(n log n) siempre</td><td>Ω(n log n) mejor, O(n²) peor</td></tr>
+            <tr><td>Complejidad espacial</td><td>Θ(n) — array auxiliar</td><td>O(log n) medio, O(n) peor (pila)</td></tr>
+            <tr><td>In-place</td><td>No</td><td>Sí</td></tr>
+            <tr><td>Estable</td><td>Sí</td><td>No (versión básica)</td></tr>
+            <tr><td>Fase combinar</td><td>Necesaria (merge)</td><td>No necesaria</td></tr>
+          </tbody>
+        </table>
+        <br>
+        <div class="tag-row">
+          <span class="tag tag-green">Mergesort → garantía Θ(n log n)</span>
+          <span class="tag tag-red">Mergesort → O(n) memoria extra</span>
+          <span class="tag tag-green">Quicksort → in-place, más rápido en práctica</span>
+          <span class="tag tag-red">Quicksort → puede degenerar a O(n²)</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /cards -->
+
+</body>
+</html>

@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eficiencia — ADA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #0d1117;
+      --surface:     #161b22;
+      --border:      #30363d;
+      --border-soft: #21262d;
+      --text:        #e6edf3;
+      --text-muted:  #8b949e;
+      --text-body:   #c9d1d9;
+      --accent:      #58a6ff;
+      --accent-dim:  #1f6feb;
+      --quote-bg:    #1c2333;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-body);
+      font-family: 'Lora', Georgia, serif;
+      font-size: 16px;
+      line-height: 1.7;
+      min-height: 100vh;
+      padding: 0 0 64px;
+    }
+
+    .nav {
+      padding: 20px 24px 0;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: color .2s;
+    }
+    .nav a:hover { color: var(--accent); }
+
+    .header {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 24px 28px;
+    }
+    .header h1 {
+      font-family: 'Lora', Georgia, serif;
+      font-size: clamp(32px, 7vw, 46px);
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.15;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+    .header .meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header .meta .dot { color: var(--border); }
+
+    .cards {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px 24px 28px;
+      animation: fadeUp .4s ease both;
+    }
+    .card:nth-child(1)  { animation-delay: .04s }
+    .card:nth-child(2)  { animation-delay: .07s }
+    .card:nth-child(3)  { animation-delay: .10s }
+    .card:nth-child(4)  { animation-delay: .13s }
+    .card:nth-child(5)  { animation-delay: .16s }
+    .card:nth-child(6)  { animation-delay: .19s }
+    .card:nth-child(7)  { animation-delay: .22s }
+    .card:nth-child(8)  { animation-delay: .25s }
+    .card:nth-child(9)  { animation-delay: .28s }
+    .card:nth-child(10) { animation-delay: .31s }
+    .card:nth-child(11) { animation-delay: .34s }
+    .card:nth-child(12) { animation-delay: .37s }
+    .card:nth-child(13) { animation-delay: .40s }
+    .card:nth-child(14) { animation-delay: .43s }
+    .card:nth-child(15) { animation-delay: .46s }
+    .card:nth-child(16) { animation-delay: .49s }
+    .card:nth-child(17) { animation-delay: .52s }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .card-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--accent-dim);
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .card-title {
+      font-family: 'Lora', Georgia, serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.3;
+    }
+
+    .label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .quote-block {
+      background: var(--quote-bg);
+      border-left: 3px solid var(--accent-dim);
+      border-radius: 0 8px 8px 0;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      color: var(--text-body);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .formal {
+      background: var(--quote-bg);
+      border-left: 3px solid #3fb950;
+      border-radius: 0 8px 8px 0;
+      padding: 12px 16px;
+      margin: 10px 0 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #aff3c0;
+      line-height: 1.6;
+    }
+
+    .code-block {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 10px 0 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #adbac7;
+      line-height: 1.7;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .explanation {
+      font-size: 15px;
+      color: var(--text-body);
+      line-height: 1.75;
+    }
+    .explanation strong { color: var(--text); font-weight: 600; }
+    .explanation ol, .explanation ul {
+      margin: 10px 0 10px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    /* generic table */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 14px;
+      font-size: 14px;
+    }
+    .data-table th {
+      background: var(--border-soft);
+      color: var(--text-muted);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+    .data-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border-soft);
+      vertical-align: top;
+      color: var(--text-body);
+      line-height: 1.5;
+    }
+    .data-table tr:last-child td { border-bottom: none; }
+    .data-table td:first-child {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    /* hierarchy chain */
+    .hierarchy {
+      background: var(--quote-bg);
+      border: 1px solid var(--border-soft);
+      border-radius: 8px;
+      padding: 14px 16px;
+      margin: 12px 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12.5px;
+      color: var(--accent);
+      line-height: 1.8;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    /* pill tags */
+    .pill {
+      display: inline-block;
+      background: #1f6feb22;
+      border: 1px solid #1f6feb55;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      padding: 2px 9px;
+      border-radius: 20px;
+      margin: 2px 3px 2px 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="nav">
+    <a href="javascript:window.close()">← Volver al test</a>
+  </div>
+
+  <div class="header">
+    <h1>Eficiencia</h1>
+    <div class="meta">
+      <span>ADA · Tema 2</span>
+      <span class="dot">·</span>
+      <span>17 conceptos clave</span>
+    </div>
+  </div>
+
+  <div class="cards">
+
+    <!-- 1 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">1</div>
+        <div class="card-title">Complejidad Algorítmica</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Medida de los recursos (tiempo y/o memoria) que necesita un algoritmo para resolver un problema, expresada en función del tamaño de la entrada.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        No mide segundos reales, sino una cantidad abstracta e independiente de la máquina. Los dos tipos principales son:
+        <ul>
+          <li><strong>Complejidad temporal T(n):</strong> número de operaciones elementales que ejecuta el algoritmo.</li>
+          <li><strong>Complejidad espacial M(n):</strong> memoria adicional que consume el algoritmo (sin contar la entrada).</li>
+        </ul>
+        Su finalidad es doble: <strong>valorar</strong> si un algoritmo es bueno o prohibitivo, y <strong>comparar</strong> alternativas para un mismo problema.
+      </div>
+    </div>
+
+    <!-- 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">2</div>
+        <div class="card-title">Modelo de Computación: Máquina RAM</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Modelo teórico de computador (basado en la arquitectura de Von Neumann) que se usa como referencia para que los análisis de complejidad sean comparables entre sí.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Sus características clave son:
+        <ul>
+          <li><strong>Tamaño fijo de palabra:</strong> las magnitudes simples (enteros, reales, punteros) están acotadas en tamaño.</li>
+          <li><strong>Acceso aleatorio a memoria en tiempo constante:</strong> leer o escribir cualquier posición cuesta O(1).</li>
+          <li><strong>Consecuencia fundamental:</strong> cada operación elemental (aritmética, asignación, comparación, acceso a array) tarda un tiempo acotado por una constante.</li>
+        </ul>
+        Sin fijar un modelo de computación, la complejidad de un mismo algoritmo puede ser diferente. Por ejemplo, el factorial de n es O(n) si n está en binario, O(2ᵐ) si m es el número de bits de n, o O(1) en base unaria — aunque la base unaria está <strong>prohibida</strong> en RAM por ser una codificación no compacta.
+      </div>
+    </div>
+
+    <!-- 3 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">3</div>
+        <div class="card-title">Tamaño del Problema (Talla)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Número de bits necesarios para codificar una instancia del problema. Es la variable independiente de la función de complejidad.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        En la práctica se simplifica a un <strong>parámetro representativo</strong> de la entrada: el número de elementos n de un vector, la dimensión d de una matriz, etc.
+        <ul>
+          <li>Ordenar un vector de n enteros → talla = n.</li>
+          <li>Multiplicar matrices m×n y n×ℓ → talla = mn + nℓ.</li>
+          <li>Sumar un entero de 32 bits → talla = 32 (constante, complejidad O(1)).</li>
+        </ul>
+        La elección del parámetro afecta a la expresión de la complejidad: la traspuesta de una matriz d×d tiene complejidad O(d²) en función de d, pero <strong>O(n)</strong> en función de la talla n = d².
+      </div>
+    </div>
+
+    <!-- 4 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">4</div>
+        <div class="card-title">Análisis Empírico vs. Análisis Teórico</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Dos enfoques para estudiar el tiempo de ejecución de un algoritmo: a posteriori (ejecutar y medir) y a priori (contar operaciones formalmente).
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        <table class="data-table">
+          <thead>
+            <tr><th></th><th>Análisis Empírico</th><th>Análisis Teórico</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Método</td><td>Ejecutar y cronometrar</td><td>Contar operaciones elementales</td></tr>
+            <tr><td>Ventaja</td><td>Mide el comportamiento real en el entorno</td><td>Independiente de la máquina y el compilador</td></tr>
+            <tr><td>Inconveniente</td><td>Depende de factores externos (hardware, compilador, datos)</td><td>No refleja el tiempo real exacto</td></tr>
+          </tbody>
+        </table>
+        <br>
+        ADA usa el <strong>análisis teórico</strong>: elimina los factores externos contando únicamente operaciones elementales, lo que hace los resultados universales y comparables.
+      </div>
+    </div>
+
+    <!-- 5 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">5</div>
+        <div class="card-title">Operación Elemental y Paso de Programa</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Una <strong>operación elemental</strong> es aquella que la máquina RAM ejecuta en tiempo acotado por una constante. Un <strong>paso de programa</strong> es una agrupación de instrucciones cuyo tiempo total es constante respecto a n.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Son operaciones elementales: operaciones aritméticas básicas, asignaciones a tipos primitivos, saltos y llamadas a funciones, comparaciones lógicas y accesos a arrays.<br><br>
+        El <strong>paso de programa</strong> es una simplificación práctica: agrupa varias operaciones elementales en una sola unidad de cuenta cuando su coste total no depende de n. Permite obtener expresiones de complejidad más limpias. Por ejemplo, un bloque de 5 inicializaciones antes de un bucle cuenta como <strong>1 paso</strong>.
+      </div>
+    </div>
+
+    <!-- 6 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">6</div>
+        <div class="card-title">Caso Mejor, Caso Peor y Caso Promedio</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Tres medidas de la complejidad cuando el coste del algoritmo varía según los datos de entrada aunque el tamaño n sea el mismo.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        <ul>
+          <li><strong>Caso peor — Cota superior Cs(n):</strong> instancia que maximiza el coste. La más usada porque garantiza un límite máximo de tiempo. Ejemplo: buscar un elemento ausente en un vector de n elementos → Cs(n) = 3n+2 ∈ O(n).</li>
+          <li><strong>Caso mejor — Cota inferior Ci(n):</strong> instancia que minimiza el coste. Ejemplo: el elemento está en la primera posición → Ci(n) = 3 ∈ Ω(1).</li>
+          <li><strong>Caso promedio — Cm(n):</strong> coste esperado conociendo la distribución de probabilidad. Es el más difícil de calcular y <strong>no es la media</strong> de Cs y Ci.</li>
+        </ul>
+        Cuando el algoritmo se comporta igual para cualquier entrada del mismo tamaño (p.ej. suma de un vector), solo existe un caso y se usa la notación <strong>Θ</strong>.
+      </div>
+    </div>
+
+    <!-- 7 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">7</div>
+        <div class="card-title">Análisis Asintótico</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Estudio del comportamiento de la función de complejidad cuando el tamaño del problema tiende a infinito (n → ∞).
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Para entradas pequeñas, las diferencias de tiempo entre algoritmos son poco significativas; el análisis asintótico es relevante cuando el volumen de datos es <strong>grande</strong>. Permite <strong>clasificar</strong> funciones de complejidad en clases de equivalencia según su tasa de crecimiento y <strong>compararlas</strong> entre sí.<br><br>
+        Para ello se emplea la <strong>notación asintótica</strong> (O, Ω, Θ), que ignora constantes multiplicativas y términos de orden inferior.
+      </div>
+    </div>
+
+    <!-- 8 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">8</div>
+        <div class="card-title">Notación O (Cota Superior Asintótica)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        O(f) es el conjunto de funciones que crecen <strong>a lo sumo tan rápido</strong> como f para valores grandes de n. Se usa para acotar el caso peor.
+      </div>
+      <div class="label">Definición formal</div>
+      <div class="formal">O(f) = &#123; g : ℕ→ℝ⁺ | ∃c∈ℝ⁺, ∃n₀∈ℕ, ∀n≥n₀ : g(n) ≤ c·f(n) &#125;</div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Decir g ∈ O(f) significa que a partir de cierto n₀, g nunca supera a f multiplicada por una constante c. No importan las constantes ni los términos de orden inferior: 3n+1 ∈ O(n), 3n²+2 ∈ O(n²). Propiedades clave:
+        <ul>
+          <li>f₁ ∈ O(g₁) y f₂ ∈ O(g₂) → f₁+f₂ ∈ O(max{g₁,g₂}) — <strong>regla del máximo en sumas</strong>.</li>
+          <li>f₁ ∈ O(g₁) y f₂ ∈ O(g₂) → f₁·f₂ ∈ O(g₁·g₂) — <strong>regla del producto</strong>.</li>
+          <li>Un polinomio de grado m pertenece a O(nᵐ).</li>
+          <li>Usando límites: lím f/g = 0 ⟺ f ∈ O(g) y g ∉ O(f); lím f/g ∈ ℝ⁺ ⟺ f ∈ O(g) y g ∈ O(f).</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 9 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">9</div>
+        <div class="card-title">Notación Ω (Cota Inferior Asintótica)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Ω(f) es el conjunto de funciones que crecen <strong>al menos tan rápido</strong> como f para valores grandes de n. Se usa para acotar el caso mejor.
+      </div>
+      <div class="label">Definición formal</div>
+      <div class="formal">Ω(f) = &#123; g : ℕ→ℝ⁺ | ∃c∈ℝ⁺, ∃n₀∈ℕ, ∀n≥n₀ : g(n) ≥ c·f(n) &#125;</div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Es la <strong>imagen especular</strong> de O. Decir g ∈ Ω(f) significa que a partir de cierto n₀, g siempre supera a f multiplicada por una constante c. Por ejemplo: 3n²+1 ∈ Ω(n) y 3n²+1 ∈ Ω(n²). Propiedades simétricas a O: en sumas domina el máximo, en productos se multiplican.<br><br>
+        Usando límites: lím f/g = +∞ ⟺ f ∈ Ω(g) y g ∉ Ω(f).
+      </div>
+    </div>
+
+    <!-- 10 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">10</div>
+        <div class="card-title">Notación Θ (Coste Exacto Asintótico)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Θ(f) es el conjunto de funciones que crecen <strong>exactamente igual</strong> que f asintóticamente. Equivale a O(f) ∩ Ω(f).
+      </div>
+      <div class="label">Definición formal</div>
+      <div class="formal">Θ(f) = &#123; g | ∃c,d∈ℝ⁺, ∃n₀∈ℕ, ∀n≥n₀ : c·f(n) ≤ g(n) ≤ d·f(n) &#125;</div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Es la notación más precisa. Decir g ∈ Θ(f) significa que g y f tienen el <strong>mismo orden de crecimiento</strong>. Usando límites: lím f/g ∈ ℝ⁺ (límite finito y positivo) ⟺ f ∈ Θ(g). Ejemplos: 3n+1 ∈ Θ(n); 3n²+2 ∈ Θ(n²).<br><br>
+        Propiedad importante: <strong>Θ(f₁ + f₂) = Θ(max(f₁, f₂))</strong>.
+        <ul>
+          <li>Θ(log<sub>a</sub>(n)) = Θ(log<sub>b</sub>(n)) para cualquier a,b &gt; 1 — los logaritmos de distinta base difieren solo en una constante multiplicativa.</li>
+          <li><strong>Θ(2ⁿ) ≠ Θ(3ⁿ)</strong> — las exponenciales de distinta base NO son equivalentes.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 11 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">11</div>
+        <div class="card-title">Jerarquía de Clases de Complejidad</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Ordenación de las clases de complejidad asintótica de menor a mayor tasa de crecimiento.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        De menor a mayor coste:
+        <div class="hierarchy">O(1) ⊂ O(log log n) ⊂ O(log n) ⊂ O(√n) ⊂ O(n) ⊂ O(n log n) ⊂ O(n²) ⊂ O(nᵃ) ⊂ O(2ⁿ) ⊂ O(aⁿ) ⊂ O(n!) ⊂ O(nⁿ)</div>
+        <table class="data-table">
+          <thead><tr><th>Clase</th><th>Nombre</th><th>Ejemplo</th></tr></thead>
+          <tbody>
+            <tr><td>O(1)</td><td>Constante</td><td>Acceso a array</td></tr>
+            <tr><td>O(log n)</td><td>Logarítmica</td><td>Búsqueda binaria</td></tr>
+            <tr><td>O(n)</td><td>Lineal</td><td>Recorrido de array</td></tr>
+            <tr><td>O(n log n)</td><td>Lineal-logarítmica</td><td>Quicksort (promedio), Heapsort</td></tr>
+            <tr><td>O(n²)</td><td>Cuadrática</td><td>Ordenación por selección</td></tr>
+            <tr><td>O(2ⁿ)</td><td>Exponencial</td><td>Fuerza bruta con subconjuntos</td></tr>
+            <tr><td>O(n!)</td><td>Superexponencial</td><td>Permutaciones</td></tr>
+          </tbody>
+        </table>
+        <br>Los algoritmos <strong>polinómicos</strong> (O(nᵏ)) se consideran eficientes; los exponenciales y superexponenciales, <strong>prohibitivos</strong>.
+      </div>
+    </div>
+
+    <!-- 12 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">12</div>
+        <div class="card-title">Cálculo de Complejidad en Algoritmos Iterativos</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Proceso para obtener la función de complejidad de un algoritmo que usa bucles, sumando el coste de cada línea ponderado por el número de veces que se ejecuta.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Pasos:
+        <ol>
+          <li>Determinar la <strong>talla</strong> (parámetro n).</li>
+          <li>Identificar si hay <strong>mejor y peor caso</strong> (instancias de mismo tamaño con diferente coste).</li>
+          <li>Para cada línea/bloque, contar cuántas veces se ejecuta en cada caso.</li>
+          <li>Expresar el total con notación asintótica.</li>
+        </ol>
+        Reglas prácticas:
+        <ul>
+          <li>Una instrucción fuera de bucles → Θ(1).</li>
+          <li>Un bucle de n iteraciones con cuerpo Θ(1) → Θ(n).</li>
+          <li>Dos bucles anidados de n iteraciones cada uno → Θ(n²).</li>
+          <li>La complejidad total está dominada por el <strong>término de mayor orden</strong>.</li>
+        </ul>
+        Ejemplo: suma de un vector de n elementos → T(n) = 1 + (n+1) + n + 1 = 3n+3 ∈ <strong>Θ(n)</strong>.
+      </div>
+    </div>
+
+    <!-- 13 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">13</div>
+        <div class="card-title">Relaciones de Recurrencia</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Ecuación que expresa la complejidad de un algoritmo recursivo relacionando el coste T(n) con el coste de los subproblemas T(F(n)) en los que se descompone.
+      </div>
+      <div class="label">Forma general</div>
+      <div class="code-block">T(n) = a·T(F(n)) + P(n)   si n > n₀
+T(n) = P'(n)              si n ≤ n₀  (caso base)</div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Donde: <strong>a</strong> = número de llamadas recursivas; <strong>F(n)</strong> = tamaño del subproblema (n−b o n/b); <strong>P(n)</strong> = coste del trabajo extra (distinto de las llamadas recursivas).
+        <ul>
+          <li>Búsqueda binaria: T(n) = T(n/2) + Θ(1) → T(n) ∈ <strong>Θ(log n)</strong>.</li>
+          <li>Ordenación por selección: T(n) = T(n−1) + Θ(n) → T(n) ∈ <strong>Θ(n²)</strong>.</li>
+          <li>Quicksort mejor caso: T(n) = 2T(n/2) + Θ(n) → T(n) ∈ <strong>Ω(n log n)</strong>.</li>
+          <li>Quicksort peor caso: T(n) = T(n−1) + Θ(n) → T(n) ∈ <strong>O(n²)</strong>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 14 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">14</div>
+        <div class="card-title">Método de Sustitución</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Técnica para resolver relaciones de recurrencia lineales expandiendo repetidamente la recurrencia hasta encontrar un patrón y obtener el término general.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        Se aplica la definición recursiva k veces, se observa el patrón y se determina para qué valor de k se alcanza el caso base. Solo es aplicable directamente a recurrencias <strong>lineales</strong> (una única llamada recursiva). Ejemplo con ordenación por selección:
+        <div class="code-block">T(n) = n + T(n−1)
+     = n + (n−1) + T(n−2)
+     = n + (n−1) + (n−2) + ... + 2 + T(1)
+     = Σⱼ₌₁ⁿ j = n(n+1)/2  ∈  Θ(n²)</div>
+        Para recurrencias con múltiples llamadas (como Quicksort en el mejor caso) hay que identificar el número de <strong>niveles de recursión</strong> y el coste total por nivel.
+      </div>
+    </div>
+
+    <!-- 15 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">15</div>
+        <div class="card-title">Quicksort</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Algoritmo de ordenación Divide y Vencerás que selecciona un <strong>pivote</strong>, particiona el array en elementos menores y mayores, y ordena cada parte recursivamente. Sin fase de combinar.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        <ul>
+          <li><strong>Pivote:</strong> elemento que divide el array. Variantes: primer elemento, elemento central, mediana, aleatorio.</li>
+          <li><strong>Mejor caso</strong> (pivote = mediana, particiones iguales): T(n) = 2T(n/2) + Θ(n) → <strong>Ω(n log n)</strong>.</li>
+          <li><strong>Peor caso</strong> (pivote = mínimo o máximo): T(n) = T(n−1) + Θ(n) → <strong>O(n²)</strong>. Ocurre con arrays ya ordenados y primer elemento como pivote.</li>
+          <li><strong>Quicksort mediana:</strong> fuerza siempre el mejor caso eligiendo la mediana; complejidad garantizada <strong>Θ(n log n)</strong>.</li>
+        </ul>
+        En la práctica es muy eficiente para datos aleatorios (caso promedio Θ(n log n)).
+      </div>
+    </div>
+
+    <!-- 16 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">16</div>
+        <div class="card-title">Montículo (Heap)</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Estructura de datos basada en un <strong>árbol binario esencialmente completo</strong> donde cada nodo es mayor (max-heap) o menor (min-heap) que sus dos hijos.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        <ul>
+          <li><strong>Esencialmente completo (EC):</strong> todos los niveles llenos excepto el último, donde las hojas están lo más a la izquierda posible.</li>
+          <li><strong>Representación:</strong> se implementa sobre un <strong>vector</strong>. Nodo i: hijo izq. = 2i+1, hijo der. = 2i+2, padre = (i−1)/2.</li>
+          <li><strong>top:</strong> consultar la cima (máximo). Coste <strong>Θ(1)</strong>.</li>
+          <li><strong>push (float-up):</strong> insertar al final y flotar hacia arriba. Coste <strong>O(log n)</strong>, Ω(1).</li>
+          <li><strong>pop (sink):</strong> reemplazar la raíz con el último y hundir. Coste <strong>O(log n)</strong>, Ω(1).</li>
+          <li><strong>Heapification:</strong> hundir nodos internos de derecha a izquierda desde n/2−1 hasta la raíz. Coste <strong>Θ(n)</strong> — mucho más eficiente que n inserciones push que costaría O(n log n).</li>
+        </ul>
+        <strong>Aplicación principal:</strong> implementar colas de prioridad (<code>priority_queue</code> en C++ STL).
+      </div>
+    </div>
+
+    <!-- 17 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-num">17</div>
+        <div class="card-title">Heapsort</div>
+      </div>
+      <div class="label">Concepto</div>
+      <div class="quote-block">
+        Algoritmo de ordenación en dos fases que usa un montículo para seleccionar el máximo sucesivamente y colocarlo en su posición correcta.
+      </div>
+      <div class="label">Explicación</div>
+      <div class="explanation">
+        <ul>
+          <li><strong>Fase 1 — Construcción del heap:</strong> transformar el array en un max-heap. Coste <strong>Θ(n)</strong>.</li>
+          <li><strong>Fase 2 — Ordenación:</strong> repetir n−1 veces: intercambiar la cima con el último elemento del heap y hundir la nueva raíz reduciendo el tamaño en 1. Coste <strong>O(n log n)</strong>.</li>
+          <li><strong>Complejidad total:</strong> <strong>O(n log n)</strong> temporal y <strong>Θ(1)</strong> espacial — ordena in-place, sin memoria adicional.</li>
+          <li><strong>Ventaja frente a Quicksort:</strong> garantiza O(n log n) en el peor caso (Quicksort degenera a O(n²)) y usa O(1) de espacio extra.</li>
+          <li><strong>Desventaja:</strong> en la práctica suele ser más lento que Quicksort por peor localidad de caché.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div><!-- /cards -->
+
+</body>
+</html>
