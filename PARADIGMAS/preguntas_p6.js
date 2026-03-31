@@ -12,7 +12,7 @@ window.TEMAS_PARADIGMAS.push({
     { concept: "min-max-iter", conceptIndex: 3, question: "¿Qué devuelve (min-max-iter '(2 5 9 12 5 0 4) '(2 . 2))?", options: ["'(0 . 12)", "'(2 . 12)", "'(0 . 2)"], correct: 0, },
     { concept: "min-max-iter", conceptIndex: 3, question: "La pareja acumuladora en min-max-iter es (mínimo . máximo) donde inicialmente...", options: ["(primer-elem . primer-elem)", "(0 . infinito)", "(infinito . 0)"], correct: 0, },
     { concept: "mi-foldl", conceptIndex: 4, question: "¿Qué devuelve (mi-foldl cons '() '(1 2 3 4))?", options: ["'(4 3 2 1)", "'(1 2 3 4)", "'()"], correct: 0, },
-    { concept: "mi-foldl", conceptIndex: 4, question: "¿Qué devuelve (mi-foldl string-append \"****\" '(\"hola\" \"que\" \"tal\"))?", options: ["\"talquehola****\"", \"\"holaquetaltal****\\\"", "Error"], correct: 0, },
+    { concept: "mi-foldl", conceptIndex: 4, question: "¿Qué devuelve (mi-foldl string-append \"****\" '(\"hola\" \"que\" \"tal\"))?", options: ["\"talquehola****\"", "\"holaquetaltal****\"", "Error"], correct: 0, },
     { concept: "Acumuladores", conceptIndex: 5, question: "Un acumulador es una variable que...", options: ["almacena el resultado parcial durante la iteración", "cuenta las llamadas recursivas", "guarda la entrada original"], correct: 0, },
     { concept: "Acumuladores", conceptIndex: 5, question: "En (define (fact n acc) (if (= n 0) acc (fact (- n 1) (* acc n)))), el acumulador es...", options: ["n", "acc", "0"], correct: 1, },
     { concept: "Tail call optimization", conceptIndex: 5, question: "Una función con tail recursion puede optimizarse porque...", options: ["usa menos memoria de pila", "es más rápida", "ambas respuestas"], correct: 2, },

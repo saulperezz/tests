@@ -1,7 +1,189 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Práctica 5 — LPP</title><link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" /><style>*{box-sizing:border-box;margin:0;padding:0}:root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--text-muted:#8b949e;--text-body:#c9d1d9;--accent:#58a6ff;--accent-dim:#1f6feb;--quote-bg:#1c2333}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text-body);font-family:'Lora',Georgia,serif;font-size:16px;line-height:1.7;min-height:100vh;padding:0 0 64px}.nav{padding:20px 24px 0;max-width:720px;margin:0 auto}.nav a{color:var(--text-muted);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:color .2s}.nav a:hover{color:var(--accent)}.header{max-width:720px;margin:0 auto;padding:32px 24px 28px}.header h1{font-family:'Lora',Georgia,serif;font-size:clamp(32px,7vw,46px);font-weight:700;color:var(--text);line-height:1.15;letter-spacing:-0.5px;margin-bottom:8px}.header .meta{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:16px}.header .meta .dot{color:var(--border)}.cards{max-width:720px;margin:0 auto;padding:0 24px;display:flex;flex-direction:column;gap:20px}.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}.card-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}.card-num{width:32px;height:32px;background:var(--accent-dim);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600}.card-title{font-family:'Lora',Georgia,serif;font-size:19px;font-weight:700;color:var(--text);line-height:1.3}.label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}.quote-block{background:var(--quote-bg);border-left:3px solid var(--accent-dim);border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:20px;color:var(--text-body);font-size:15px;line-height:1.65}.code-block{background:var(--bg);border:1px solid #21262d;border-radius:8px;padding:14px 16px;margin-top:14px;margin-bottom:20px;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.7;overflow-x:auto;color:var(--text-body)}.fn{color:#58a6ff}.lit{color:#79c0ff}.cm{color:#8b949e}</style></head>
-<body><div class="nav"><a href="javascript:window.close()">← Volver al test</a></div><div class="header"><h1>Práctica 5: Funciones de Orden Superior</h1><div class="meta"><span>LPP · Práctica 5</span><span class="dot">·</span><span>5 conceptos clave</span></div></div><div class="cards"><div class="card"><div class="card-header"><div class="card-num">1</div><div class="card-title">map, filter, foldr, foldl</div></div><div class="label">Concepto</div><div class="quote-block">Funciones de orden superior que aplican una operación a cada elemento de una lista (map), filtran elementos (filter), o reducen la lista a un valor (foldr/foldl).</div><div class="code-block">(<span class="fn">map</span> (<span class="lit">lambda (x) (* x 2)) '(1 2 3)</span>) <span class="cm">; => (2 4 6)</span>
-(<span class="fn">filter</span> (<span class="lit">lambda (x) (> x 3)) '(1 5 2 8)</span>) <span class="cm">; => (5 8)</span>
-(<span class="fn">foldr</span> <span class="lit">+ 0 '(1 2 3 4)</span>) <span class="cm">; => 10</span></div></div><div class="card"><div class="card-header"><div class="card-num">2</div><div class="card-title">aplica-veces y composición</div></div><div class="label">Concepto</div><div class="quote-block">Componer funciones para aplicarlas repetidamente o en secuencia.</div><div class="code-block">(<span class="fn">aplica-veces</span> <span class="lit">doble suma-2 3 5</span>) <span class="cm">; => 68</span></div></div><div class="card"><div class="card-header"><div class="card-num">3</div><div class="card-title">Ordenación genérica</div></div><div class="label">Concepto</div><div class="quote-block">Crear funciones de orden superior que ordenan listas usando diferentes comparadores.</div><div class="code-block">(<span class="fn">ordena-generica</span> <span class="lit"><</span> '(3 1 4 1 5)) <span class="cm">; => (1 1 3 4 5)</span></div></div><div class="card"><div class="card-header"><div class="card-num">4</div><div class="card-title">Closures</div></div><div class="label">Concepto</div><div class="quote-block">Una función que "captura" variables de su entorno externo. Las lambdas anidadas son closures.</div><div class="code-block">(<span class="fn">define</span> <span class="lit">f (lambda (x) (lambda (y) (+ x y))))</span>
-((<span class="fn">f</span> <span class="lit">3) 5</span>) <span class="cm">; => 8 (la función interna captura x=3)</span></div></div><div class="card"><div class="card-header"><div class="card-num">5</div><div class="card-title">FOS rewrites y apply</div></div><div class="label">Concepto</div><div class="quote-block">Reescribir funciones recursivas usando funciones de orden superior (map, filter, foldr). apply aplica una función a una lista de argumentos.</div><div class="code-block">(<span class="fn">apply</span> <span class="lit">+ '(1 2 3 4)</span>) <span class="cm">; => 10</span></div></div></div></body></html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Práctica 5 — LPP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d1117; --surface: #161b22; --border: #30363d; --text: #e6edf3; --text-muted: #8b949e; --text-body: #c9d1d9; --accent: #58a6ff; --accent-dim: #1f6feb; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text-body); font-family: 'Lora', Georgia, serif; font-size: 16px; line-height: 1.7; min-height: 100vh; padding: 0 0 64px; }
+    .nav { padding: 20px 24px 0; max-width: 920px; margin: 0 auto; }
+    .nav a { color: var(--text-muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: color .2s; }
+    .nav a:hover { color: var(--accent); }
+    .header { max-width: 920px; margin: 0 auto; padding: 32px 24px 28px; }
+    .header h1 { font-family: 'Lora', Georgia, serif; font-size: clamp(32px, 7vw, 46px); font-weight: 700; color: var(--text); line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .meta { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); }
+    .content { max-width: 920px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 12px; }
+    .accordion-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .accordion-header { padding: 18px 20px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: background 0.2s; user-select: none; font-weight: 600; color: var(--text); font-size: 15px; }
+    .accordion-header:hover { background: #1c2128; }
+    .accordion-toggle { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s; color: var(--accent); font-size: 14px; font-weight: 700; }
+    .accordion-item.active .accordion-toggle { transform: rotate(90deg); }
+    .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; padding: 0 20px; }
+    .accordion-item.active .accordion-body { max-height: 10000px; padding: 0 20px 20px 20px; }
+    .accordion-content { color: var(--text-body); line-height: 1.8; }
+    .explanation { margin-bottom: 20px; padding: 14px 16px; background: #0d1117; border-left: 3px solid var(--accent-dim); border-radius: 0 4px 4px 0; font-size: 14px; line-height: 1.7; color: var(--text-body); }
+    .code-block { background: #0d1117; border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; overflow-x: auto; color: var(--text-body); white-space: pre; }
+    .code-block .kw { color: #ff7b72; }
+    .code-block .fn { color: #58a6ff; }
+    .code-block .lit { color: #79c0ff; }
+    .code-block .cm { color: #8b949e; }
+    .sub-exercise { margin-top: 18px; padding: 14px; background: #0d111722; border-left: 2px solid var(--accent); border-radius: 4px; }
+    .sub-exercise-title { color: var(--accent); font-weight: 600; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  </style>
+  <script>
+    function toggleAccordion(header) { const item = header.closest('.accordion-item'); item.classList.toggle('active'); }
+  </script>
+</head>
+<body>
+  <div class="nav"><a href="javascript:window.close()">← Volver al test</a></div>
+  <div class="header">
+    <h1>Práctica 5: Funciones de Orden Superior</h1>
+    <div class="meta">LPP · Práctica 5 · Curso 2025-26</div>
+  </div>
+  <div class="content">
+    <!-- EJERCICIO 1 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 1 — Composición y aplicación de funciones</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) aplica-veces: composición iterada</div><div class="code-block">(<span class="cm">;; Aplica n veces (f1 ∘ f2) sobre x</span>
+(<span class="kw">define</span> (<span class="fn">aplica-veces</span> f1 f2 n x)
+  (<span class="kw">if</span> (<span class="fn">=</span> n 0)
+      x
+      (<span class="fn">aplica-veces</span> f1 f2 (<span class="fn">-</span> n 1) (<span class="fn">f1</span> (<span class="fn">f2</span> x)))))
+
+(<span class="kw">define</span> doble (<span class="fn">lambda</span> (x) (<span class="fn">*</span> 2 x)))
+(<span class="kw">define</span> suma-2 (<span class="fn">lambda</span> (x) (<span class="fn">+</span> x 2)))
+
+(<span class="fn">aplica-veces</span> (<span class="fn">lambda</span> (x) (<span class="fn">+</span> x 1)) (<span class="fn">lambda</span> (x) (<span class="fn">+</span> x 2)) 2 10) <span class="cm">=> 16</span>
+(<span class="fn">aplica-veces</span> doble suma-2 3 5) <span class="cm">=> 68</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) mueve-al-principio-condicion: búsqueda con predicado</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">encuentra-primero</span> pred lista)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> lista) <span class="lit">#f</span>)
+    ((<span class="fn">pred</span> (<span class="fn">first</span> lista)) (<span class="fn">first</span> lista))
+    (<span class="kw">else</span> (<span class="fn">encuentra-primero</span> pred (<span class="fn">rest</span> lista)))))
+
+(<span class="kw">define</span> (<span class="fn">mueve-al-principio-condicion</span> pred lista)
+  (<span class="kw">if</span> (<span class="fn">equal?</span> (<span class="fn">encuentra-primero</span> pred lista) <span class="lit">#f</span>)
+      lista
+      (<span class="fn">cons</span> (<span class="fn">encuentra-primero</span> pred lista)
+            (<span class="fn">elimina-primera-cond</span> pred lista))))
+
+(<span class="fn">mueve-al-principio-condicion</span> <span class="fn">number?</span> <span class="lit">'(a b c 1 d 1 e)</span>) <span class="cm">=> '(1 a b c d 1 e)</span>
+(<span class="fn">mueve-al-principio-condicion</span> <span class="fn">string?</span> <span class="lit">'(a "hola" b "adios")</span>) <span class="cm">=> '("hola" a b "adios")</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">c) comprueba: filtraje con predicado generalizado</div><div class="code-block">(<span class="cm">;; Filtra parejas (x y) donde (pred x y) sea #t</span>
+(<span class="kw">define</span> (<span class="fn">comprueba</span> pred x-lista y-lista)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> x-lista) <span class="lit">'()</span>)
+    ((<span class="fn">pred</span> (<span class="fn">first</span> x-lista) (<span class="fn">first</span> y-lista))
+     (<span class="fn">cons</span> (<span class="fn">cons</span> (<span class="fn">first</span> x-lista) (<span class="fn">first</span> y-lista))
+           (<span class="fn">comprueba</span> pred (<span class="fn">rest</span> x-lista) (<span class="fn">rest</span> y-lista))))
+    (<span class="kw">else</span> (<span class="fn">comprueba</span> pred (<span class="fn">rest</span> x-lista) (<span class="fn">rest</span> y-lista)))))
+
+(<span class="fn">comprueba</span> (<span class="fn">lambda</span> (x y) (<span class="fn">&lt;</span> x y)) <span class="lit">'(1 2 3 4)</span> <span class="lit">'(2 1 4 3)</span>) <span class="cm">=> '((1 . 2) (3 . 4))</span></div></div>
+      </div></div>
+    </div>
+    <!-- EJERCICIO 2 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 2 — Ordenación genérica</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) ordena-generica: ordenación con predicado personalizado</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">inserta-generica</span> pred elem lista-ord)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> lista-ord) (<span class="fn">list</span> elem))
+    ((<span class="fn">pred</span> elem (<span class="fn">first</span> lista-ord)) (<span class="fn">cons</span> elem lista-ord))
+    (<span class="kw">else</span> (<span class="fn">cons</span> (<span class="fn">first</span> lista-ord)
+                (<span class="fn">inserta-generica</span> pred elem (<span class="fn">rest</span> lista-ord))))))
+
+(<span class="kw">define</span> (<span class="fn">ordena-generica</span> pred lista)
+  (<span class="kw">if</span> (<span class="fn">null?</span> lista)
+      <span class="lit">'()</span>
+      (<span class="fn">inserta-generica</span> pred (<span class="fn">first</span> lista)
+                       (<span class="fn">ordena-generica</span> pred (<span class="fn">rest</span> lista)))))
+
+(<span class="fn">ordena-generica</span> <span class="fn">&lt;</span> <span class="lit">'(3 1 4 1 5)</span>) <span class="cm">=> '(1 1 3 4 5)</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) ordena-por-longitud: ordenación de strings</div><div class="code-block">(<span class="fn">ordena-generica</span> (<span class="fn">lambda</span> (s1 s2) (<span class="fn">&lt;</span> (<span class="fn">string-length</span> s1) (<span class="fn">string-length</span> s2)))
+                    <span class="lit">'("hi" "hello" "a")</span>) <span class="cm">=> '("a" "hi" "hello")</span></div></div>
+      </div></div>
+    </div>
+    <!-- EJERCICIO 3 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 3 — Funciones de orden superior clásicas</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) map, filter, foldr, foldl: análisis</div><div class="explanation">
+<span class="cm">map: aplica función a cada elemento</span>
+(map (lambda (x) (* x 2)) '(1 2 3)) => '(2 4 6)
+
+<span class="cm">filter: selecciona elementos que cumplen predicado</span>
+(filter (lambda (x) (> x 3)) '(1 5 2 8 3)) => '(5 8)
+
+<span class="cm">foldr: reduce de derecha a izquierda</span>
+(foldr + 0 '(1 2 3 4)) => 10
+
+<span class="cm">foldl: reduce de izquierda a derecha</span>
+(foldl cons '() '(1 2 3)) => '(3 2 1)
+        </div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) apply: desempaquetado de lista</div><div class="code-block">(<span class="fn">apply</span> <span class="fn">+</span> <span class="lit">'(1 2 3 4)</span>) <span class="cm">=> 10</span>
+(<span class="fn">apply</span> <span class="fn">max</span> <span class="lit">'(3 1 4 1 5)</span>) <span class="cm">=> 5</span></div></div>
+      </div></div>
+    </div>
+    <!-- EJERCICIO 4 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 4 — Reescritura con FOS</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) contar-datos-iguales-fos: con foldr</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">contar-datos-iguales-fos</span> dato lista)
+  (<span class="fn">foldr</span> (<span class="fn">lambda</span> (x acc) (<span class="kw">if</span> (<span class="fn">equal?</span> x dato) (<span class="fn">+</span> acc 1) acc)) 0 lista))
+
+(<span class="fn">contar-datos-iguales-fos</span> <span class="lit">'a</span> <span class="lit">'(a b a c a)</span>) <span class="cm">=> 3</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) expande-lista-fos: con foldr/append</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">expande-lista-fos</span> lista-parejas)
+  (<span class="fn">foldr</span> (<span class="fn">lambda</span> (p acc) (<span class="fn">append</span> (<span class="fn">expande-pareja</span> p) acc)) <span class="lit">'()</span> lista-parejas))</div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">c) comprueba-simbolos-fos: con filter/map</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">comprueba-simbolos-fos</span> lista-simbolos lista-num)
+  (<span class="fn">filter</span> (<span class="fn">lambda</span> (par)
+            (<span class="fn">=</span> (<span class="fn">string-length</span> (<span class="fn">symbol->string</span> (<span class="fn">car</span> par)))
+               (<span class="fn">cdr</span> par)))
+          (<span class="fn">map</span> (<span class="fn">lambda</span> (s n) (<span class="fn">cons</span> s n)) lista-simbolos lista-num)))</div></div>
+      </div></div>
+    </div>
+    <!-- EJERCICIO 5 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 5 — Búsqueda y cuantificación</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) busca-mayor: con comparador personalizado</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">busca-mayor</span> comparador lista)
+  (<span class="kw">if</span> (<span class="fn">null?</span> (<span class="fn">rest</span> lista))
+      (<span class="fn">first</span> lista)
+      (<span class="kw">let</span> ((<span class="lit">mayor-resto</span> (<span class="fn">busca-mayor</span> comparador (<span class="fn">rest</span> lista))))
+        (<span class="kw">if</span> (<span class="fn">comparador</span> (<span class="fn">first</span> lista) mayor-resto)
+            (<span class="fn">first</span> lista)
+            mayor-resto))))</div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) todos-menores?: cuantificación universal</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">todos-menores?</span> n lista)
+  (<span class="fn">foldr</span> (<span class="fn">lambda</span> (x acc) (<span class="fn">and</span> (<span class="fn">&lt;</span> x n) acc)) <span class="lit">#t</span> lista))
+
+(<span class="fn">todos-menores?</span> 5 <span class="lit">'(1 2 3 4)</span>) <span class="cm">=> #t</span>
+(<span class="fn">todos-menores?</span> 3 <span class="lit">'(1 2 3 4)</span>) <span class="cm">=> #f</span></div></div>
+      </div></div>
+    </div>
+    <!-- EJERCICIO 6 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 6 — Truco de cartas mejorado</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) coloca mejorado: argumentos variadic</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">coloca</span> tres-listas . elementos)
+  (<span class="fn">map</span> (<span class="fn">lambda</span> (lista elem) (<span class="fn">cons</span> elem lista))
+       tres-listas
+       elementos))</div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) escoge-en-orden: reorden de montones</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">escoge-en-orden</span> tres-listas orden-simbolo)
+  (<span class="kw">cond</span>
+    ((<span class="fn">equal?</span> orden-simbolo <span class="lit">'izquierda</span>)
+     (<span class="fn">append</span> (<span class="fn">third</span> tres-listas) (<span class="fn">first</span> tres-listas) (<span class="fn">second</span> tres-listas)))
+    ((<span class="fn">equal?</span> orden-simbolo <span class="lit">'centro</span>)
+     (<span class="fn">append</span> (<span class="fn">third</span> tres-listas) (<span class="fn">second</span> tres-listas) (<span class="fn">first</span> tres-listas)))
+    ((<span class="fn">equal?</span> orden-simbolo <span class="lit">'derecha</span>)
+     (<span class="fn">append</span> (<span class="fn">second</span> tres-listas) (<span class="fn">third</span> tres-listas) (<span class="fn">first</span> tres-listas)))))</div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">c) junta-montones: con foldr/append</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">junta-montones</span> tres-listas)
+  (<span class="fn">foldr</span> <span class="fn">append</span> <span class="lit">'()</span> tres-listas))</div></div>
+      </div></div>
+    </div>
+  </div>
+</body>
+</html>

@@ -8,106 +8,500 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0d1117; --surface: #161b22; --border: #30363d; --border-soft: #21262d;
-      --text: #e6edf3; --text-muted: #8b949e; --text-body: #c9d1d9; --accent: #58a6ff; --accent-dim: #1f6feb; --quote-bg: #1c2333;
+      --bg: #0d1117; --surface: #161b22; --border: #30363d; --text: #e6edf3;
+      --text-muted: #8b949e; --text-body: #c9d1d9; --accent: #58a6ff; --accent-dim: #1f6feb;
     }
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text-body); font-family: 'Lora', Georgia, serif; font-size: 16px; line-height: 1.7; min-height: 100vh; padding: 0 0 64px; }
-    .nav { padding: 20px 24px 0; max-width: 720px; margin: 0 auto; }
-    .nav a { color: var(--text-muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: color .2s; }
+    body {
+      background: var(--bg); color: var(--text-body); font-family: 'Lora', Georgia, serif;
+      font-size: 16px; line-height: 1.7; min-height: 100vh; padding: 0 0 64px;
+    }
+    .nav { padding: 20px 24px 0; max-width: 920px; margin: 0 auto; }
+    .nav a {
+      color: var(--text-muted); text-decoration: none; font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: color .2s;
+    }
     .nav a:hover { color: var(--accent); }
-    .header { max-width: 720px; margin: 0 auto; padding: 32px 24px 28px; }
-    .header h1 { font-family: 'Lora', Georgia, serif; font-size: clamp(32px, 7vw, 46px); font-weight: 700; color: var(--text); line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 8px; }
-    .header .meta { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 16px; }
-    .header .meta .dot { color: var(--border); }
-    .cards { max-width: 720px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 20px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px 24px 28px; animation: fadeUp .4s ease both; }
-    .card:nth-child(1) { animation-delay: .04s } .card:nth-child(2) { animation-delay: .08s } .card:nth-child(3) { animation-delay: .12s } .card:nth-child(4) { animation-delay: .16s } .card:nth-child(5) { animation-delay: .20s } .card:nth-child(6) { animation-delay: .24s }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    .card-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
-    .card-num { flex-shrink: 0; width: 32px; height: 32px; background: var(--accent-dim); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; margin-top: 2px; }
-    .card-title { font-family: 'Lora', Georgia, serif; font-size: 19px; font-weight: 700; color: var(--text); line-height: 1.3; }
-    .label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
-    .quote-block { background: var(--quote-bg); border-left: 3px solid var(--accent-dim); border-radius: 0 8px 8px 0; padding: 14px 16px; margin-bottom: 20px; color: var(--text-body); font-size: 15px; line-height: 1.65; }
-    .explanation { font-size: 15px; color: var(--text-body); line-height: 1.75; }
-    .explanation strong { color: var(--text); font-weight: 600; }
-    .code-block { background: var(--bg); border: 1px solid var(--border-soft); border-radius: 8px; padding: 14px 16px; margin-top: 14px; margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; line-height: 1.7; overflow-x: auto; color: var(--text-body); }
-    .kw { color: #ff7b72; } .fn { color: #58a6ff; } .lit { color: #79c0ff; } .cm { color: #8b949e; }
-    .explanation ol, .explanation ul { margin: 10px 0 10px 20px; display: flex; flex-direction: column; gap: 6px; }
+    .header { max-width: 920px; margin: 0 auto; padding: 32px 24px 28px; }
+    .header h1 {
+      font-family: 'Lora', Georgia, serif; font-size: clamp(32px, 7vw, 46px); font-weight: 700;
+      color: var(--text); line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 8px;
+    }
+    .meta { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); }
+    .content { max-width: 920px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 12px; }
+    .accordion-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .accordion-header {
+      padding: 18px 20px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.2s; user-select: none; font-weight: 600; color: var(--text); font-size: 15px;
+    }
+    .accordion-header:hover { background: #1c2128; }
+    .accordion-toggle {
+      width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+      transition: transform 0.3s; color: var(--accent); font-size: 14px; font-weight: 700;
+    }
+    .accordion-item.active .accordion-toggle { transform: rotate(90deg); }
+    .accordion-body {
+      max-height: 0; overflow: hidden; transition: max-height 0.3s ease; padding: 0 20px;
+    }
+    .accordion-item.active .accordion-body { max-height: 10000px; padding: 0 20px 20px 20px; }
+    .accordion-content { color: var(--text-body); line-height: 1.8; }
+    .explanation {
+      margin-bottom: 20px; padding: 14px 16px; background: #0d1117; border-left: 3px solid var(--accent-dim);
+      border-radius: 0 4px 4px 0; font-size: 14px; line-height: 1.7; color: var(--text-body);
+    }
+    .code-block {
+      background: #0d1117; border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px;
+      margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6;
+      overflow-x: auto; color: var(--text-body); white-space: pre;
+    }
+    .code-block .kw { color: #ff7b72; }
+    .code-block .fn { color: #58a6ff; }
+    .code-block .lit { color: #79c0ff; }
+    .code-block .cm { color: #8b949e; }
+    .sub-exercise { margin-top: 18px; padding: 14px; background: #0d111722; border-left: 2px solid var(--accent); border-radius: 4px; }
+    .sub-exercise-title { color: var(--accent); font-weight: 600; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
   </style>
 </head>
 <body>
   <div class="nav"><a href="javascript:window.close()">← Volver al test</a></div>
   <div class="header">
-    <h1>Práctica 3: Recursión</h1>
-    <div class="meta"><span>LPP · Práctica 3</span><span class="dot">·</span><span>6 conceptos clave</span></div>
+    <h1>Práctica 3: Recursión, Parejas y Diagramas Box-and-Pointer</h1>
+    <div class="meta">LPP · Práctica 3 · Curso 2025-26</div>
   </div>
-  <div class="cards">
-    <div class="card">
-      <div class="card-header"><div class="card-num">1</div><div class="card-title">Función minimo</div></div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">Encontrar el mínimo de una lista comparando recursivamente el primer elemento con el mínimo del resto.</div>
-      <div class="label">Expresiones clave</div>
-      <div class="code-block">
-(<span class="fn">minimo</span> '(<span class="lit">1</span> <span class="lit">8</span> <span class="lit">6</span> <span class="lit">4</span> <span class="lit">3</span>)) <span class="cm">; => 1</span>
-(<span class="fn">minimo</span> '(<span class="lit">1</span> <span class="lit">-1</span> <span class="lit">3</span> <span class="lit">-6</span> <span class="lit">4</span>)) <span class="cm">; => -6</span>
+  <div class="content">
+
+    <!-- EJERCICIO 1 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 1 — Funciones recursivas básicas</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a.1) minimo: mínimo de una lista de números</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">minimo</span> <span class="lit">lista</span>)
+  (<span class="fn">if</span> (<span class="fn">null?</span> (<span class="fn">rest</span> <span class="lit">lista</span>))
+      (<span class="fn">first</span> <span class="lit">lista</span>)
+      (<span class="fn">menor</span> (<span class="fn">first</span> <span class="lit">lista</span>) (<span class="fn">minimo</span> (<span class="fn">rest</span> <span class="lit">lista</span>)))))
+
+(<span class="fn">minimo</span> <span class="lit">'(2)</span>)         <span class="cm">=> 2</span>
+(<span class="fn">minimo</span> <span class="lit">'(1 8 6 4 3)</span>) <span class="cm">=> 1</span>
+(<span class="fn">minimo</span> <span class="lit">'(1 -1 3 -6 4)</span>) <span class="cm">=> -6</span>
+(<span class="fn">minimo</span> <span class="lit">'(5 5 5)</span>)     <span class="cm">=> 5</span>
+(<span class="fn">minimo</span> <span class="lit">'(10)</span>)        <span class="cm">=> 10</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a.2) Análisis de la recursión en (minimo '(1 8 6 4 3))</div>
+            <div class="explanation">
+              1. ¿Qué lista se pasa como parámetro a la primera llamada recursiva?<br>
+              ➜ '(8 6 4 3) [es (rest '(1 8 6 4 3))]<br><br>
+              2. ¿Qué devuelve esa llamada recursiva?<br>
+              ➜ 3 [el mínimo de '(8 6 4 3) es 3]<br><br>
+              3. ¿Con qué argumentos se llama a la función menor que devuelve el resultado final?<br>
+              ➜ (menor 1 3) [primer elemento=1, resultado recursión=3]<br>
+              ➜ devuelve 1
+            </div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b) concatena: lista de caracteres → cadena</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">concatena</span> <span class="lit">lista-chars</span>)
+  (<span class="fn">if</span> (<span class="fn">null?</span> <span class="lit">lista-chars</span>)
+      <span class="lit">""</span>
+      (<span class="fn">string-append</span> (<span class="fn">string</span> (<span class="fn">first</span> <span class="lit">lista-chars</span>))
+                     (<span class="fn">concatena</span> (<span class="fn">rest</span> <span class="lit">lista-chars</span>)))))
+
+(<span class="fn">concatena</span> <span class="lit">'()</span>) <span class="cm">=> ""</span>
+(<span class="fn">concatena</span> <span class="lit">'(#\H #\o #\l #\a)</span>) <span class="cm">=> "Hola"</span>
+(<span class="fn">concatena</span> <span class="lit">'(#\S #\c #\h #\e #\m #\e #\space #\m #\o #\l #\a)</span>)
+              <span class="cm">=> "Scheme mola"</span>
+(<span class="fn">concatena</span> <span class="lit">'(#\a #\b #\c)</span>) <span class="cm">=> "abc"</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">c) cifra-cadena / descifra-cadena usando recursión</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">cifra-cadena</span> <span class="lit">cad desplazamiento</span>)
+  (<span class="fn">concatena</span> (<span class="fn">map</span> (<span class="kw">lambda</span> (<span class="lit">c</span>) (<span class="fn">cifra-caracter</span> <span class="lit">c desplazamiento</span>))
+                  (<span class="fn">string->list</span> <span class="lit">cad</span>))))
+
+(<span class="kw">define</span> (<span class="fn">descifra-cadena</span> <span class="lit">cad desplazamiento</span>)
+  (<span class="fn">cifra-cadena</span> <span class="lit">cad</span> (<span class="fn">-</span> <span class="lit">desplazamiento</span>)))
+
+(<span class="fn">cifra-cadena</span> <span class="lit">"En un lugar de la Mancha, de cuyo nombre no quiero acordarme"</span> <span class="lit">10</span>)
+<span class="cm">=> "Ox ex veqkb no vk Wkxmrk, no meiy xywlbo xy aesoby kmybnkbwo"</span>
+
+(<span class="fn">descifra-cadena</span> <span class="lit">"Ox ex veqkb no vk Wkxmrk, no meiy xywlbo xy aesoby kmybnkbwo"</span> <span class="lit">10</span>)
+<span class="cm">=> "En un lugar de la Mancha, de cuyo nombre no quiero acordarme"</span>
+
+(<span class="fn">descifra-cadena</span> (<span class="fn">cifra-cadena</span> <span class="lit">"Hola Mundo!"</span> <span class="lit">7</span>) <span class="lit">7</span>) <span class="cm">=> "Hola Mundo!"</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">d) contiene? y str-contiene?</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">contiene?</span> <span class="lit">lista elemento</span>)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> <span class="lit">lista</span>) <span class="lit">#f</span>)
+    ((<span class="fn">equal?</span> (<span class="fn">first</span> <span class="lit">lista</span>) <span class="lit">elemento</span>) <span class="lit">#t</span>)
+    (<span class="kw">else</span> (<span class="fn">contiene?</span> (<span class="fn">rest</span> <span class="lit">lista</span>) <span class="lit">elemento</span>))))
+
+(<span class="kw">define</span> (<span class="fn">str-contiene?</span> <span class="lit">cadena char</span>)
+  (<span class="fn">contiene?</span> (<span class="fn">string->list</span> <span class="lit">cadena</span>) <span class="lit">char</span>))
+
+(<span class="fn">contiene?</span> <span class="lit">'(algo 3 #\A) 3</span>)      <span class="cm">=> #t</span>
+(<span class="fn">contiene?</span> <span class="lit">'(algo 3 #\A) "algo"</span>) <span class="cm">=> #f</span>
+(<span class="fn">contiene?</span> <span class="lit">'(algo 3 #\A) 'algo</span>)  <span class="cm">=> #t</span>
+(<span class="fn">contiene?</span> <span class="lit">'() 5</span>)                <span class="cm">=> #f</span>
+
+(<span class="fn">str-contiene?</span> <span class="lit">"Hola" #\o</span>)               <span class="cm">=> #t</span>
+(<span class="fn">str-contiene?</span> <span class="lit">"Esto es una frase" #\space</span>) <span class="cm">=> #t</span>
+(<span class="fn">str-contiene?</span> <span class="lit">"Hola" #\h</span>)               <span class="cm">=> #f</span></div>
+          </div>
+
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header"><div class="card-num">2</div><div class="card-title">Función concatena</div></div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">Convertir una lista de caracteres en una cadena usando recursión y string-append.</div>
-      <div class="label">Expresiones clave</div>
-      <div class="code-block">
-(<span class="fn">concatena</span> '(#<span class="lit">\H</span> #<span class="lit">\o</span> #<span class="lit">\l</span> #<span class="lit">\a</span>)) <span class="cm">; => "Hola"</span>
-(<span class="fn">concatena</span> '())                        <span class="cm">; => ""</span>
+
+    <!-- EJERCICIO 2 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 2 — Predicados sobre listas</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a) todos-iguales?: todos los elementos de la lista son iguales</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">todos-iguales?</span> <span class="lit">lista</span>)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> <span class="lit">lista</span>)             <span class="lit">#t</span>)
+    ((<span class="fn">null?</span> (<span class="fn">rest</span> <span class="lit">lista</span>))      <span class="lit">#t</span>)
+    ((<span class="fn">equal?</span> (<span class="fn">first</span> <span class="lit">lista</span>) (<span class="fn">second</span> <span class="lit">lista</span>))
+     (<span class="fn">todos-iguales?</span> (<span class="fn">rest</span> <span class="lit">lista</span>)))
+    (<span class="kw">else</span> <span class="lit">#f</span>)))
+
+(<span class="fn">todos-iguales?</span> <span class="lit">'()</span>)              <span class="cm">=> #t</span>
+(<span class="fn">todos-iguales?</span> <span class="lit">'(a)</span>)             <span class="cm">=> #t</span>
+(<span class="fn">todos-iguales?</span> <span class="lit">'(a a a a a a a)</span>) <span class="cm">=> #t</span>
+(<span class="fn">todos-iguales?</span> <span class="lit">'((a b) (a b) (a b))</span>) <span class="cm">=> #t</span>
+(<span class="fn">todos-iguales?</span> <span class="lit">'(a a a a a b)</span>)   <span class="cm">=> #f</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b) todos-distintos?: todos los elementos son distintos</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">todos-distintos?</span> <span class="lit">lista</span>)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> <span class="lit">lista</span>)        <span class="lit">#t</span>)
+    ((<span class="fn">null?</span> (<span class="fn">rest</span> <span class="lit">lista</span>)) <span class="lit">#t</span>)
+    ((<span class="fn">contiene?</span> (<span class="fn">rest</span> <span class="lit">lista</span>) (<span class="fn">first</span> <span class="lit">lista</span>)) <span class="lit">#f</span>)
+    (<span class="kw">else</span> (<span class="fn">todos-distintos?</span> (<span class="fn">rest</span> <span class="lit">lista</span>)))))
+
+(<span class="fn">todos-distintos?</span> <span class="lit">'()</span>)        <span class="cm">=> #t</span>
+(<span class="fn">todos-distintos?</span> <span class="lit">'(a)</span>)       <span class="cm">=> #t</span>
+(<span class="fn">todos-distintos?</span> <span class="lit">'(a b c)</span>)   <span class="cm">=> #t</span>
+(<span class="fn">todos-distintos?</span> <span class="lit">'(a b c a)</span>) <span class="cm">=> #f</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">c) solo-dos-iguales?: exactamente un par de elementos iguales</div>
+            <div class="explanation">
+              Estrategia: si el primer elemento aparece en el resto, comprobamos que no vuelve a aparecer en el resto del resto, y que los demás son todos distintos entre sí. Si el primer elemento NO aparece en el resto, pasamos al siguiente.
+            </div>
+            <div class="code-block"><span class="cm">;;; Cuenta cuántas veces aparece elem en lista</span>
+(<span class="kw">define</span> (<span class="fn">cuenta-veces</span> <span class="lit">elem lista</span>)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> <span class="lit">lista</span>) <span class="lit">0</span>)
+    ((<span class="fn">equal?</span> (<span class="fn">first</span> <span class="lit">lista</span>) <span class="lit">elem</span>)
+     (<span class="fn">+</span> <span class="lit">1</span> (<span class="fn">cuenta-veces</span> <span class="lit">elem</span> (<span class="fn">rest</span> <span class="lit">lista</span>))))
+    (<span class="kw">else</span> (<span class="fn">cuenta-veces</span> <span class="lit">elem</span> (<span class="fn">rest</span> <span class="lit">lista</span>)))))
+
+<span class="cm">;;; Devuelve la lista sin todas las ocurrencias de elem</span>
+(<span class="kw">define</span> (<span class="fn">quita-todos</span> <span class="lit">elem lista</span>)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> <span class="lit">lista</span>) <span class="lit">'()</span>)
+    ((<span class="fn">equal?</span> (<span class="fn">first</span> <span class="lit">lista</span>) <span class="lit">elem</span>) (<span class="fn">quita-todos</span> <span class="lit">elem</span> (<span class="fn">rest</span> <span class="lit">lista</span>)))
+    (<span class="kw">else</span> (<span class="fn">cons</span> (<span class="fn">first</span> <span class="lit">lista</span>) (<span class="fn">quita-todos</span> <span class="lit">elem</span> (<span class="fn">rest</span> <span class="lit">lista</span>))))))
+
+(<span class="kw">define</span> (<span class="fn">solo-dos-iguales?</span> <span class="lit">lista</span>)
+  (<span class="kw">cond</span>
+    <span class="cm">;;; Listas de 0 o 1 elemento: imposible tener exactamente dos iguales</span>
+    ((<span class="fn">null?</span> <span class="lit">lista</span>)        <span class="lit">#f</span>)
+    ((<span class="fn">null?</span> (<span class="fn">rest</span> <span class="lit">lista</span>)) <span class="lit">#f</span>)
+    <span class="cm">;;; El primer elemento aparece exactamente una vez más en el resto</span>
+    ((<span class="fn">=</span> (<span class="fn">cuenta-veces</span> (<span class="fn">first</span> <span class="lit">lista</span>) (<span class="fn">rest</span> <span class="lit">lista</span>)) <span class="lit">1</span>)
+     <span class="cm">;;; El resto (sin el primer elemento) debe tener todos distintos</span>
+     (<span class="fn">todos-distintos?</span> (<span class="fn">quita-todos</span> (<span class="fn">first</span> <span class="lit">lista</span>) (<span class="fn">rest</span> <span class="lit">lista</span>))))
+    <span class="cm">;;; El primer elemento aparece más de una vez en el resto => más de dos iguales</span>
+    ((<span class="fn">></span> (<span class="fn">cuenta-veces</span> (<span class="fn">first</span> <span class="lit">lista</span>) (<span class="fn">rest</span> <span class="lit">lista</span>)) <span class="lit">1</span>)
+     <span class="lit">#f</span>)
+    <span class="cm">;;; El primer elemento no aparece en el resto: seguimos mirando</span>
+    (<span class="kw">else</span> (<span class="fn">solo-dos-iguales?</span> (<span class="fn">rest</span> <span class="lit">lista</span>)))))
+
+(<span class="fn">solo-dos-iguales?</span> <span class="lit">'()</span>)           <span class="cm">=> #f</span>
+(<span class="fn">solo-dos-iguales?</span> <span class="lit">'(a)</span>)          <span class="cm">=> #f</span>
+(<span class="fn">solo-dos-iguales?</span> <span class="lit">'(a b c a)</span>)    <span class="cm">=> #t</span>
+(<span class="fn">solo-dos-iguales?</span> <span class="lit">'(a b c b a a)</span>) <span class="cm">=> #f</span>
+(<span class="fn">solo-dos-iguales?</span> <span class="lit">'(a b c a a)</span>)  <span class="cm">=> #f</span>
+(<span class="fn">solo-dos-iguales?</span> <span class="lit">'(a b c a b)</span>)  <span class="cm">=> #f</span></div>
+          </div>
+
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header"><div class="card-num">3</div><div class="card-title">Función contiene?</div></div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">Buscar un elemento en una lista devolviendo #t si existe, #f si no. Dos versiones: contiene? y str-contiene?.</div>
-      <div class="label">Expresiones clave</div>
-      <div class="code-block">
-(<span class="fn">contiene?</span> '(<span class="lit">algo</span> <span class="lit">3</span> #<span class="lit">\A</span>) <span class="lit">3</span>)    <span class="cm">; => #t</span>
-(<span class="fn">str-contiene?</span> <span class="lit">"Hola"</span> #<span class="lit">\o</span>)     <span class="cm">; => #t</span>
-(<span class="fn">contiene?</span> '() <span class="lit">5</span>)            <span class="cm">; => #f</span>
+
+    <!-- EJERCICIO 3 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 3 — Diagramas caja y puntero</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a.1) Definición de p1 a partir del diagrama</div>
+            <div class="explanation">
+              p1 apunta a una lista cuyo primer elemento es la lista (a b), el segundo elemento es la pareja (c . d), y el tercer elemento es e.
+              <br><br>
+              Estructura: ( (a b)  (c . d)  e )
+            </div>
+            <div class="code-block">(<span class="kw">define</span> <span class="lit">p1</span> (<span class="fn">list</span> (<span class="fn">list</span> <span class="lit">'a 'b</span>) (<span class="fn">cons</span> <span class="lit">'c 'd</span>) <span class="lit">'e</span>))</div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a.2) Expresiones que devuelven b y d a partir de p1</div>
+            <div class="explanation">
+              b es el segundo elemento de la sublista (a b), es decir, el second del first de p1:<br>
+              d es el cdr de la pareja (c . d), que está en la segunda posición de p1:
+            </div>
+            <div class="code-block">(<span class="fn">second</span> (<span class="fn">first</span> <span class="lit">p1</span>)) <span class="cm">=> 'b</span>
+(<span class="fn">cdr</span> (<span class="fn">second</span> <span class="lit">p1</span>)) <span class="cm">=> 'd</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b.1) Definición de p2 a partir del diagrama</div>
+            <div class="explanation">
+              p2 apunta a una pareja cuyo car es la lista (a b c) y cuyo cdr es otra pareja cuyo car es d y cuyo cdr es la lista (e).
+              <br><br>
+              Estructura: ( (a b c) d e ) representada como:
+              (cons (list 'a 'b 'c) (cons 'd (list 'e)))
+            </div>
+            <div class="code-block">(<span class="kw">define</span> <span class="lit">p2</span> (<span class="fn">cons</span> (<span class="fn">list</span> <span class="lit">'a 'b 'c</span>) (<span class="fn">cons</span> <span class="lit">'d</span> (<span class="fn">list</span> <span class="lit">'e</span>))))</div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b.2) Expresiones que devuelven c y e a partir de p2</div>
+            <div class="explanation">
+              c es el tercer elemento de la lista (a b c), que es el car de p2:<br>
+              e es el first de la lista (e), que está como cdr del cdr de p2:
+            </div>
+            <div class="code-block">(<span class="fn">third</span> (<span class="fn">car</span> <span class="lit">p2</span>)) <span class="cm">=> 'c</span>
+(<span class="fn">first</span> (<span class="fn">cdr</span> (<span class="fn">cdr</span> <span class="lit">p2</span>))) <span class="cm">=> 'e</span></div>
+          </div>
+
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header"><div class="card-num">4</div><div class="card-title">Función todos-iguales?</div></div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">Verificar si todos los elementos de una lista son iguales entre sí.</div>
-      <div class="label">Expresiones clave</div>
-      <div class="code-block">
-(<span class="fn">todos-iguales?</span> '(<span class="lit">a</span> <span class="lit">a</span> <span class="lit">a</span> <span class="lit">a</span>)) <span class="cm">; => #t</span>
-(<span class="fn">todos-iguales?</span> '(<span class="lit">a</span> <span class="lit">a</span> <span class="lit">a</span> <span class="lit">b</span>)) <span class="cm">; => #f</span>
+
+    <!-- EJERCICIO 4 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 4 — contar-datos-iguales</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <div class="explanation">
+            Cuenta parejas con car = cdr
+          </div>
+          <div class="code-block">(<span class="kw">define</span> (<span class="fn">contar-datos-iguales</span> <span class="lit">lista-parejas</span>)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> <span class="lit">lista-parejas</span>) <span class="lit">0</span>)
+    ((<span class="fn">equal?</span> (<span class="fn">car</span> (<span class="fn">first</span> <span class="lit">lista-parejas</span>))
+             (<span class="fn">cdr</span> (<span class="fn">first</span> <span class="lit">lista-parejas</span>)))
+     (<span class="fn">+</span> <span class="lit">1</span> (<span class="fn">contar-datos-iguales</span> (<span class="fn">rest</span> <span class="lit">lista-parejas</span>))))
+    (<span class="kw">else</span> (<span class="fn">contar-datos-iguales</span> (<span class="fn">rest</span> <span class="lit">lista-parejas</span>)))))
+
+(<span class="fn">contar-datos-iguales</span>
+ (<span class="fn">list</span> (<span class="fn">cons</span> <span class="lit">2 3</span>) (<span class="fn">cons</span> <span class="lit">"hola" "hola"</span>) (<span class="fn">cons</span> #\<span class="lit">a</span> #\<span class="lit">a</span>) (<span class="fn">cons</span> <span class="lit">'true 'false</span>)))
+<span class="cm">=> 2</span>
+
+(<span class="fn">contar-datos-iguales</span>
+ (<span class="fn">list</span> (<span class="fn">cons</span> <span class="lit">2 "hola"</span>) (<span class="fn">cons</span> <span class="lit">"hola" 3</span>) (<span class="fn">cons</span> #\<span class="lit">a</span> <span class="lit">'true</span>) (<span class="fn">cons</span> #\<span class="lit">b</span> <span class="lit">'false</span>)))
+<span class="cm">=> 0</span>
+
+(<span class="fn">contar-datos-iguales</span> <span class="lit">'()</span>) <span class="cm">=> 0</span>
+(<span class="fn">contar-datos-iguales</span> <span class="lit">'((1 . 1) (2 . 2) (3 . 3))</span>) <span class="cm">=> 3</span></div>
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header"><div class="card-num">5</div><div class="card-title">Función todos-distintos?</div></div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">Verificar que todos los elementos de una lista son distintos entre sí (sin repetidos).</div>
-      <div class="label">Expresiones clave</div>
-      <div class="code-block">
-(<span class="fn">todos-distintos?</span> '(<span class="lit">a</span> <span class="lit">b</span> <span class="lit">c</span>))   <span class="cm">; => #t</span>
-(<span class="fn">todos-distintos?</span> '(<span class="lit">a</span> <span class="lit">b</span> <span class="lit">c</span> <span class="lit">a</span>)) <span class="cm">; => #f</span>
+
+    <!-- EJERCICIO 5 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 5 — Manos de póker</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a) palo-carta</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">palo-carta</span> <span class="lit">simbolo</span>)
+  (<span class="fn">obten-palo</span> (<span class="fn">string-ref</span> (<span class="fn">symbol->string</span> <span class="lit">simbolo</span>) <span class="lit">1</span>)))
+
+(<span class="fn">palo-carta</span> <span class="lit">'A♠</span>) <span class="cm">=> 'Picas</span>
+(<span class="fn">palo-carta</span> <span class="lit">'2♣</span>) <span class="cm">=> 'Tréboles</span>
+(<span class="fn">palo-carta</span> <span class="lit">'3♥</span>) <span class="cm">=> 'Corazones</span>
+(<span class="fn">palo-carta</span> <span class="lit">'4♦</span>) <span class="cm">=> 'Diamantes</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b) veces-palo y color?</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">veces-palo</span> <span class="lit">lista palo</span>)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> <span class="lit">lista</span>) <span class="lit">0</span>)
+    ((<span class="fn">equal?</span> (<span class="fn">palo-carta</span> (<span class="fn">first</span> <span class="lit">lista</span>)) <span class="lit">palo</span>)
+     (<span class="fn">+</span> <span class="lit">1</span> (<span class="fn">veces-palo</span> (<span class="fn">rest</span> <span class="lit">lista</span>) <span class="lit">palo</span>)))
+    (<span class="kw">else</span> (<span class="fn">veces-palo</span> (<span class="fn">rest</span> <span class="lit">lista</span>) <span class="lit">palo</span>))))
+
+(<span class="fn">veces-palo</span> <span class="lit">'(5♠ 6♣ 7♥ 8♦ 9♠) 'Picas</span>)    <span class="cm">=> 2</span>
+(<span class="fn">veces-palo</span> <span class="lit">'(J♠ Q♣ K♥) 'Diamantes</span>)        <span class="cm">=> 0</span>
+(<span class="fn">veces-palo</span> <span class="lit">'(A♣ 2♥ 3♠) 'Corazones</span>)        <span class="cm">=> 1</span>
+(<span class="fn">veces-palo</span> <span class="lit">'() 'Tréboles</span>)                  <span class="cm">=> 0</span>
+
+(<span class="kw">define</span> (<span class="fn">color?</span> <span class="lit">mano</span>)
+  (<span class="fn">=</span> (<span class="fn">veces-palo</span> <span class="lit">mano</span> (<span class="fn">palo-carta</span> (<span class="fn">first</span> <span class="lit">mano</span>)))
+     (<span class="fn">length</span> <span class="lit">mano</span>)))
+
+(<span class="fn">color?</span> <span class="lit">'(5♣ J♦ J♣ Q♠ Q♥)</span>) <span class="cm">=> #f</span>
+(<span class="fn">color?</span> <span class="lit">'(2♦ 5♦ 6♦ J♦ K♦)</span>) <span class="cm">=> #t</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">c) escalera? y escalera-color?</div>
+            <div class="explanation">
+              escalera?: valores consecutivos ordenados de menor a mayor.
+              <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>Caso base: lista de 1 carta ⇒ siempre escalera.</li>
+                <li>Caso recursivo: el segundo valor = primer valor + 1, y el resto es escalera.</li>
+              </ul>
+            </div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">escalera?</span> <span class="lit">lista</span>)
+  (<span class="fn">if</span> (<span class="fn">null?</span> (<span class="fn">rest</span> <span class="lit">lista</span>))
+      <span class="lit">#t</span>
+      (<span class="fn">and</span> (<span class="fn">=</span> (<span class="fn">valor-carta</span> (<span class="fn">second</span> <span class="lit">lista</span>))
+              (<span class="fn">+</span> (<span class="fn">valor-carta</span> (<span class="fn">first</span> <span class="lit">lista</span>)) <span class="lit">1</span>))
+           (<span class="fn">escalera?</span> (<span class="fn">rest</span> <span class="lit">lista</span>)))))
+
+(<span class="fn">escalera?</span> <span class="lit">'(5♣ 4♦ 3♣)</span>)     <span class="cm">=> #f</span>
+(<span class="fn">escalera?</span> <span class="lit">'(8♣ 9♦ J♣ Q♦)</span>)  <span class="cm">=> #t</span>
+(<span class="fn">escalera?</span> <span class="lit">'(8♣ 2♣)</span>)         <span class="cm">=> #f</span>
+(<span class="fn">escalera?</span> <span class="lit">'(A♣ 2♦ 3♣)</span>)     <span class="cm">=> #t</span>
+
+(<span class="kw">define</span> (<span class="fn">escalera-color?</span> <span class="lit">mano</span>)
+  (<span class="fn">and</span> (<span class="fn">escalera?</span> <span class="lit">mano</span>) (<span class="fn">color?</span> <span class="lit">mano</span>)))
+
+(<span class="fn">escalera-color?</span> <span class="lit">'(5♣ 6♦ 7♣ 8♠ 9♥)</span>) <span class="cm">=> #f</span>
+(<span class="fn">escalera-color?</span> <span class="lit">'(A♦ 2♦ 3♦ 4♦ 5♦)</span>) <span class="cm">=> #t</span></div>
+          </div>
+
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header"><div class="card-num">6</div><div class="card-title">Análisis de Recursión</div></div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">Entender cómo se estructuran las llamadas recursivas: caso base, parámetro que se reduce, y composición del resultado.</div>
-      <div class="label">Explicación</div>
-      <div class="explanation">
-        En <code>(minimo '(1 8 6 4 3))</code>:
-        <ul>
-          <li>Primera llamada recursiva recibe: <code>'(8 6 4 3)</code></li>
-          <li>Esa llamada devuelve: 3 (el mínimo del resto)</li>
-          <li>Composición final: <code>(menor 1 3)</code> devuelve 1</li>
-        </ul>
+
+    <!-- EJERCICIO 6 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 6 — Operaciones con parejas</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a) suma-izq y suma-der</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">suma-izq</span> <span class="lit">pareja n</span>)
+  (<span class="fn">cons</span> (<span class="fn">+</span> (<span class="fn">car</span> <span class="lit">pareja</span>) <span class="lit">n</span>) (<span class="fn">cdr</span> <span class="lit">pareja</span>)))
+
+(<span class="kw">define</span> (<span class="fn">suma-der</span> <span class="lit">pareja n</span>)
+  (<span class="fn">cons</span> (<span class="fn">car</span> <span class="lit">pareja</span>) (<span class="fn">+</span> (<span class="fn">cdr</span> <span class="lit">pareja</span>) <span class="lit">n</span>)))
+
+(<span class="fn">suma-izq</span> (<span class="fn">cons</span> <span class="lit">10 20</span>) <span class="lit">3</span>) <span class="cm">=> '(13 . 20)</span>
+(<span class="fn">suma-der</span> (<span class="fn">cons</span> <span class="lit">10 20</span>) <span class="lit">5</span>) <span class="cm">=> '(10 . 25)</span>
+(<span class="fn">suma-izq</span> (<span class="fn">cons</span> <span class="lit">0 0</span>) <span class="lit">7</span>)   <span class="cm">=> '(7 . 0)</span>
+(<span class="fn">suma-der</span> (<span class="fn">cons</span> <span class="lit">0 0</span>) <span class="lit">7</span>)   <span class="cm">=> '(0 . 7)</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b.1) suma-impares-pares: devuelve (suma-impares . suma-pares)</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">suma-impares-pares</span> <span class="lit">lista-num</span>)
+  (<span class="fn">if</span> (<span class="fn">null?</span> <span class="lit">lista-num</span>)
+      (<span class="fn">cons</span> <span class="lit">0 0</span>)
+      (<span class="fn">if</span> (<span class="fn">odd?</span> (<span class="fn">first</span> <span class="lit">lista-num</span>))
+          (<span class="fn">suma-izq</span> (<span class="fn">suma-impares-pares</span> (<span class="fn">rest</span> <span class="lit">lista-num</span>)) (<span class="fn">first</span> <span class="lit">lista-num</span>))
+          (<span class="fn">suma-der</span> (<span class="fn">suma-impares-pares</span> (<span class="fn">rest</span> <span class="lit">lista-num</span>)) (<span class="fn">first</span> <span class="lit">lista-num</span>)))))
+
+(<span class="fn">suma-impares-pares</span> <span class="lit">'(3 2 1 4 8 7 6 5)</span>) <span class="cm">=> '(16 . 20)</span>
+(<span class="fn">suma-impares-pares</span> <span class="lit">'(3 1 5)</span>)            <span class="cm">=> '(9 . 0)</span>
+(<span class="fn">suma-impares-pares</span> <span class="lit">'(2 4 6)</span>)            <span class="cm">=> '(0 . 12)</span>
+(<span class="fn">suma-impares-pares</span> <span class="lit">'()</span>)                 <span class="cm">=> '(0 . 0)</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b.2) Primera llamada recursiva de (suma-impares-pares '(2 1 2 1 4))</div>
+            <div class="explanation">
+              (suma-impares-pares '(2 1 2 1 4))<br>
+              ⇒ primera llamada recursiva: (suma-impares-pares '(1 2 1 4))<br><br>
+              Calculamos (suma-impares-pares '(1 2 1 4)):<br>
+              - recursión sobre '(2 1 4) ⇒ (suma-impares-pares '(2 1 4))<br>
+              - recursión sobre '(1 4) ⇒ (suma-impares-pares '(1 4))<br>
+              - recursión sobre '(4) ⇒ (suma-impares-pares '(4))<br>
+              - recursión sobre '() ⇒ (cons 0 0)<br>
+              - 4 es par ⇒ (suma-der '(0 . 0) 4) ⇒ (0 . 4)<br>
+              - 1 es impar ⇒ (suma-izq '(0 . 4) 1) ⇒ (1 . 4)<br>
+              - 2 es par ⇒ (suma-der '(1 . 4) 2) ⇒ (1 . 6)<br>
+              - 1 es impar ⇒ (suma-izq '(1 . 6) 1) ⇒ (2 . 6)<br><br>
+              <strong>RESPUESTA: la primera llamada recursiva devuelve (2 . 6)</strong>
+            </div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">c) cadena-mayor: pareja (cadena-mayor . longitud)</div>
+            <div class="explanation">
+              En empate gana la última que aparezca en la lista.
+            </div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">cadena-mayor</span> <span class="lit">lista</span>)
+  (<span class="fn">if</span> (<span class="fn">null?</span> <span class="lit">lista</span>)
+      (<span class="fn">cons</span> <span class="lit">""</span> <span class="lit">0</span>)
+      (<span class="fn">if</span> (<span class="fn">></span> (<span class="fn">string-length</span> (<span class="fn">first</span> <span class="lit">lista</span>)) (<span class="fn">cdr</span> (<span class="fn">cadena-mayor</span> (<span class="fn">rest</span> <span class="lit">lista</span>))))
+          (<span class="fn">cons</span> (<span class="fn">first</span> <span class="lit">lista</span>) (<span class="fn">string-length</span> (<span class="fn">first</span> <span class="lit">lista</span>)))
+          (<span class="fn">cadena-mayor</span> (<span class="fn">rest</span> <span class="lit">lista</span>)))))
+
+(<span class="fn">cadena-mayor</span> <span class="lit">'("vamos" "a" "obtener" "la" "cadena" "mayor")</span>)
+<span class="cm">=> '("obtener" . 7)</span>
+
+(<span class="fn">cadena-mayor</span> <span class="lit">'("prueba" "con" "maximo" "igual")</span>)
+<span class="cm">=> '("maximo" . 6)</span>
+
+(<span class="fn">cadena-mayor</span> <span class="lit">'()</span>) <span class="cm">=> '("" . 0)</span>
+(<span class="fn">cadena-mayor</span> <span class="lit">'("hola")</span>) <span class="cm">=> '("hola" . 4)</span></div>
+          </div>
+
+        </div>
       </div>
     </div>
+
   </div>
+
+  <script>
+    function toggleAccordion(header) {
+      const item = header.parentElement;
+      item.classList.toggle('active');
+    }
+  </script>
 </body>
 </html>

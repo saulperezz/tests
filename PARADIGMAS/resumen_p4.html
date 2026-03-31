@@ -7,74 +7,496 @@
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root { --bg: #0d1117; --surface: #161b22; --border: #30363d; --border-soft: #21262d; --text: #e6edf3; --text-muted: #8b949e; --text-body: #c9d1d9; --accent: #58a6ff; --accent-dim: #1f6feb; --quote-bg: #1c2333; }
+    :root {
+      --bg: #0d1117; --surface: #161b22; --border: #30363d; --text: #e6edf3;
+      --text-muted: #8b949e; --text-body: #c9d1d9; --accent: #58a6ff; --accent-dim: #1f6feb;
+    }
     html { scroll-behavior: smooth; }
-    body { background: var(--bg); color: var(--text-body); font-family: 'Lora', Georgia, serif; font-size: 16px; line-height: 1.7; min-height: 100vh; padding: 0 0 64px; }
-    .nav { padding: 20px 24px 0; max-width: 720px; margin: 0 auto; }
-    .nav a { color: var(--text-muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: color .2s; }
+    body {
+      background: var(--bg); color: var(--text-body); font-family: 'Lora', Georgia, serif;
+      font-size: 16px; line-height: 1.7; min-height: 100vh; padding: 0 0 64px;
+    }
+    .nav { padding: 20px 24px 0; max-width: 920px; margin: 0 auto; }
+    .nav a {
+      color: var(--text-muted); text-decoration: none; font-family: 'JetBrains Mono', monospace;
+      font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: color .2s;
+    }
     .nav a:hover { color: var(--accent); }
-    .header { max-width: 720px; margin: 0 auto; padding: 32px 24px 28px; }
-    .header h1 { font-family: 'Lora', Georgia, serif; font-size: clamp(32px, 7vw, 46px); font-weight: 700; color: var(--text); line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 8px; }
-    .header .meta { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 16px; }
-    .header .meta .dot { color: var(--border); }
-    .cards { max-width: 720px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 20px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 24px 24px 28px; animation: fadeUp .4s ease both; }
-    .card:nth-child(n) { animation-delay: calc(0.04s * var(--n, 0)); }
-    @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-    .card-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 20px; }
-    .card-num { flex-shrink: 0; width: 32px; height: 32px; background: var(--accent-dim); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-size: 13px; font-weight: 600; margin-top: 2px; }
-    .card-title { font-family: 'Lora', Georgia, serif; font-size: 19px; font-weight: 700; color: var(--text); line-height: 1.3; }
-    .label { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
-    .quote-block { background: var(--quote-bg); border-left: 3px solid var(--accent-dim); border-radius: 0 8px 8px 0; padding: 14px 16px; margin-bottom: 20px; color: var(--text-body); font-size: 15px; line-height: 1.65; }
-    .explanation { font-size: 15px; color: var(--text-body); line-height: 1.75; }
-    .explanation strong { color: var(--text); font-weight: 600; }
-    .code-block { background: var(--bg); border: 1px solid var(--border-soft); border-radius: 8px; padding: 14px 16px; margin-top: 14px; margin-bottom: 20px; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; line-height: 1.7; overflow-x: auto; color: var(--text-body); }
-    .kw { color: #ff7b72; } .fn { color: #58a6ff; } .lit { color: #79c0ff; } .cm { color: #8b949e; }
-    .explanation ol, .explanation ul { margin: 10px 0 10px 20px; display: flex; flex-direction: column; gap: 6px; }
+    .header { max-width: 920px; margin: 0 auto; padding: 32px 24px 28px; }
+    .header h1 {
+      font-family: 'Lora', Georgia, serif; font-size: clamp(32px, 7vw, 46px); font-weight: 700;
+      color: var(--text); line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 8px;
+    }
+    .meta { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); }
+    .content { max-width: 920px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 12px; }
+    .accordion-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .accordion-header {
+      padding: 18px 20px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+      transition: background 0.2s; user-select: none; font-weight: 600; color: var(--text); font-size: 15px;
+    }
+    .accordion-header:hover { background: #1c2128; }
+    .accordion-toggle {
+      width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+      transition: transform 0.3s; color: var(--accent); font-size: 14px; font-weight: 700;
+    }
+    .accordion-item.active .accordion-toggle { transform: rotate(90deg); }
+    .accordion-body {
+      max-height: 0; overflow: hidden; transition: max-height 0.3s ease; padding: 0 20px;
+    }
+    .accordion-item.active .accordion-body { max-height: 10000px; padding: 0 20px 20px 20px; }
+    .accordion-content { color: var(--text-body); line-height: 1.8; }
+    .explanation {
+      margin-bottom: 20px; padding: 14px 16px; background: #0d1117; border-left: 3px solid var(--accent-dim);
+      border-radius: 0 4px 4px 0; font-size: 14px; line-height: 1.7; color: var(--text-body);
+    }
+    .code-block {
+      background: #0d1117; border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px;
+      margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6;
+      overflow-x: auto; color: var(--text-body); white-space: pre;
+    }
+    .code-block .kw { color: #ff7b72; }
+    .code-block .fn { color: #58a6ff; }
+    .code-block .lit { color: #79c0ff; }
+    .code-block .cm { color: #8b949e; }
+    .sub-exercise { margin-top: 18px; padding: 14px; background: #0d111722; border-left: 2px solid var(--accent); border-radius: 4px; }
+    .sub-exercise-title { color: var(--accent); font-weight: 600; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
   </style>
+  <script>
+    function toggleAccordion(header) {
+      const item = header.closest('.accordion-item');
+      item.classList.toggle('active');
+    }
+  </script>
 </head>
 <body>
   <div class="nav"><a href="javascript:window.close()">← Volver al test</a></div>
   <div class="header">
     <h1>Práctica 4: Recursión con Listas</h1>
-    <div class="meta"><span>LPP · Práctica 4</span><span class="dot">·</span><span>5 conceptos clave</span></div>
+    <div class="meta">LPP · Práctica 4 · Curso 2025-26</div>
   </div>
-  <div class="cards">
-    <div class="card">
-      <div class="card-header"><div class="card-num">1</div><div class="card-title">Función es-prefijo?</div></div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">Verificar si una lista es prefijo de otra (todos sus elementos aparecen al inicio en el mismo orden).</div>
-      <div class="code-block">(<span class="fn">es-prefijo?</span> '(<span class="lit">a</span> <span class="lit">b</span>) '(<span class="lit">a</span> <span class="lit">b</span> <span class="lit">c</span> <span class="lit">d</span>)) <span class="cm">; => #t</span>
-(<span class="fn">es-prefijo?</span> '() '(<span class="lit">a</span> <span class="lit">b</span> <span class="lit">c</span>))       <span class="cm">; => #t</span></div>
-    </div>
-    <div class="card">
-      <div class="card-header"><div class="card-num">2</div><div class="card-title">Insertion Sort</div></div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">Ordenar una lista insertando cada elemento en su posición correcta. Las funciones son <code>inserta-ordenada</code> e <code>ordena</code>.</div>
-      <div class="code-block">(<span class="fn">inserta-ordenada</span> <span class="lit">5</span> '(<span class="lit">1</span> <span class="lit">3</span> <span class="lit">7</span> <span class="lit">9</span>)) <span class="cm">; => (1 3 5 7 9)</span>
-(<span class="fn">ordena</span> '(<span class="lit">3</span> <span class="lit">1</span> <span class="lit">4</span> <span class="lit">1</span> <span class="lit">5</span>))        <span class="cm">; => (1 1 3 4 5)</span></div>
-    </div>
-    <div class="card">
-      <div class="card-header"><div class="card-num">3</div><div class="card-title">Función mueve-al-principio</div></div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">Extraer un elemento específico de una lista y ponerlo al principio.</div>
-      <div class="code-block">(<span class="fn">mueve-al-principio</span> '<span class="lit">b</span> '(<span class="lit">a</span> <span class="lit">b</span> <span class="lit">c</span> <span class="lit">d</span>)) <span class="cm">; => (b a c d)</span></div>
-    </div>
-    <div class="card">
-      <div class="card-header"><div class="card-num">4</div><div class="card-title">Función expande</div></div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">Expandir una lista de parejas, donde cada pareja (n . x) se convierte en n copias de x.</div>
-      <div class="code-block">(<span class="fn">expande</span> '((<span class="lit">2</span> . <span class="lit">a</span>) (<span class="lit">3</span> . <span class="lit">b</span>)))  <span class="cm">; => (a a b b b)</span></div>
-    </div>
-    <div class="card">
-      <div class="card-header"><div class="card-num">5</div><div class="card-title">Lambdas y HOF</div></div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">Funciones anónimas usando <code>lambda</code>, composición con map, y funciones de orden superior.</div>
-      <div class="code-block">
-((<span class="kw">lambda</span> (<span class="lit">x</span> <span class="lit">y</span>) (<span class="fn">*</span> <span class="lit">x</span> (<span class="fn">+</span> <span class="lit">2</span> <span class="lit">y</span>))) (<span class="fn">+</span> <span class="lit">2</span> <span class="lit">3</span>) <span class="lit">4</span>)  <span class="cm">; => 30</span>
-(<span class="fn">map</span> (<span class="kw">lambda</span> (<span class="lit">x</span>) (<span class="fn">*</span> <span class="lit">x</span> <span class="lit">2</span>)) '(<span class="lit">1</span> <span class="lit">2</span> <span class="lit">3</span>)) <span class="cm">; => (2 4 6)</span>
+  <div class="content">
+
+    <!-- EJERCICIO 1 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 1 — Prefijos y búsqueda en cadenas</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a.1) es-prefijo?: comprobación de prefijos</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">es-prefijo?</span> pal1 pal2)
+  (<span class="kw">and</span> (<span class="fn">&lt;=</span> (<span class="fn">string-length</span> pal1) (<span class="fn">string-length</span> pal2))
+       (<span class="fn">equal?</span> pal1 (<span class="fn">substring</span> pal2 0 (<span class="fn">string-length</span> pal1)))))
+
+(<span class="fn">es-prefijo?</span> <span class="lit">"ante"</span> <span class="lit">"anterior"</span>) <span class="cm">=> #t</span>
+(<span class="fn">es-prefijo?</span> <span class="lit">"ante"</span> <span class="lit">"antígona"</span>) <span class="cm">=> #f</span>
+(<span class="fn">es-prefijo?</span> <span class="lit">"ante"</span> <span class="lit">"antena"</span>) <span class="cm">=> #t</span>
+(<span class="fn">es-prefijo?</span> <span class="lit">"ante"</span> <span class="lit">"anatema"</span>) <span class="cm">=> #f</span>
+(<span class="fn">es-prefijo?</span> <span class="lit">""</span> <span class="lit">"hola"</span>) <span class="cm">=> #t</span>
+(<span class="fn">es-prefijo?</span> <span class="lit">"hola"</span> <span class="lit">"ho"</span>) <span class="cm">=> #f</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a.2) contiene-prefijo: búsqueda en lista de palabras</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">contiene-prefijo</span> prefijo lista-pal)
+  (<span class="kw">if</span> (<span class="fn">null?</span> lista-pal)
+      <span class="lit">'()</span>
+      (<span class="fn">cons</span> (<span class="fn">es-prefijo?</span> prefijo (<span class="fn">first</span> lista-pal))
+            (<span class="fn">contiene-prefijo</span> prefijo (<span class="fn">rest</span> lista-pal)))))
+
+(<span class="fn">contiene-prefijo</span> <span class="lit">"ante"</span> <span class="lit">'("anterior" "antígona" "antena" "anatema")</span>)
+<span class="cm">=> '(#t #f #t #f)</span>
+(<span class="fn">contiene-prefijo</span> <span class="lit">"pre"</span> <span class="lit">'("prefijo" "pre" "repre" "prepara")</span>)
+<span class="cm">=> '(#t #t #f #t)</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b) cadenas-mayores: comparación de listas de longitud variable</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">cadenas-mayores</span> lista1 lista2)
+  (<span class="kw">cond</span>
+    ((<span class="fn">and</span> (<span class="fn">null?</span> lista1) (<span class="fn">null?</span> lista2)) <span class="lit">'()</span>)
+    ((<span class="fn">null?</span> lista1) lista2)
+    ((<span class="fn">null?</span> lista2) lista1)
+    (<span class="kw">else</span>
+     (<span class="fn">cons</span> (<span class="kw">if</span> (<span class="fn">&gt;=</span> (<span class="fn">string-length</span> (<span class="fn">first</span> lista1))
+                   (<span class="fn">string-length</span> (<span class="fn">first</span> lista2))
+               (<span class="fn">first</span> lista1)
+               (<span class="fn">first</span> lista2))
+           (<span class="fn">cadenas-mayores</span> (<span class="fn">rest</span> lista1) (<span class="fn">rest</span> lista2))))))
+
+(<span class="fn">cadenas-mayores</span> <span class="lit">'("hola" "que" "tal")</span> <span class="lit">'("adios")</span>)
+<span class="cm">=> '("adios" "que" "tal")</span>
+(<span class="fn">cadenas-mayores</span> <span class="lit">'("hola" "que" "tal")</span> <span class="lit">'("meme" "y" "adios")</span>)
+<span class="cm">=> '("hola" "que" "adios")</span>
+(<span class="fn">cadenas-mayores</span> <span class="lit">'()</span> <span class="lit">'()</span>) <span class="cm">=> '()</span>
+(<span class="fn">cadenas-mayores</span> <span class="lit">'("abc")</span> <span class="lit">'()</span>) <span class="cm">=> '("abc")</span></div>
+          </div>
+
+        </div>
       </div>
     </div>
+
+    <!-- EJERCICIO 2 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 2 — Inserción y ordenación</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a) inserta-pos: insertar en posición específica</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">inserta-pos</span> dato pos lista)
+  (<span class="kw">if</span> (<span class="fn">=</span> pos 0)
+      (<span class="fn">cons</span> dato lista)
+      (<span class="fn">cons</span> (<span class="fn">first</span> lista)
+            (<span class="fn">inserta-pos</span> dato (<span class="fn">-</span> pos 1) (<span class="fn">rest</span> lista)))))
+
+(<span class="fn">inserta-pos</span> <span class="lit">'b</span> 2 <span class="lit">'(a a a a)</span>) <span class="cm">=> '(a a b a a)</span>
+(<span class="fn">inserta-pos</span> <span class="lit">'b</span> 0 <span class="lit">'(a a a a)</span>) <span class="cm">=> '(b a a a a)</span>
+(<span class="fn">inserta-pos</span> <span class="lit">'x</span> 4 <span class="lit">'(a b c d)</span>) <span class="cm">=> '(a b c d x)</span>
+(<span class="fn">inserta-pos</span> 1 0 <span class="lit">'()</span>) <span class="cm">=> '(1)</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b) inserta-ordenada: mantener orden creciente</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">inserta-ordenada</span> n lista-ordenada)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> lista-ordenada) (<span class="fn">list</span> n))
+    ((<span class="fn">&lt;=</span> n (<span class="fn">first</span> lista-ordenada)) (<span class="fn">cons</span> n lista-ordenada))
+    (<span class="kw">else</span> (<span class="fn">cons</span> (<span class="fn">first</span> lista-ordenada)
+                (<span class="fn">inserta-ordenada</span> n (<span class="fn">rest</span> lista-ordenada))))))
+
+(<span class="fn">inserta-ordenada</span> 10 <span class="lit">'(-8 2 3 11 20)</span>) <span class="cm">=> '(-8 2 3 10 11 20)</span>
+(<span class="fn">inserta-ordenada</span> -9 <span class="lit">'(-8 2 3 11 20)</span>) <span class="cm">=> '(-9 -8 2 3 11 20)</span>
+(<span class="fn">inserta-ordenada</span> 99 <span class="lit">'(-8 2 3 11 20)</span>) <span class="cm">=> '(-8 2 3 11 20 99)</span>
+(<span class="fn">inserta-ordenada</span> 5 <span class="lit">'()</span>) <span class="cm">=> '(5)</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">c) ordena: ordenación por inserción</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">ordena</span> lista)
+  (<span class="kw">if</span> (<span class="fn">null?</span> lista)
+      <span class="lit">'()</span>
+      (<span class="fn">inserta-ordenada</span> (<span class="fn">first</span> lista)
+                        (<span class="fn">ordena</span> (<span class="fn">rest</span> lista)))))
+
+(<span class="fn">ordena</span> <span class="lit">'(2 -1 100 4 -6)</span>) <span class="cm">=> '(-6 -1 2 4 100)</span>
+(<span class="fn">ordena</span> <span class="lit">'(3 1 2)</span>) <span class="cm">=> '(1 2 3)</span>
+(<span class="fn">ordena</span> <span class="lit">'()</span>) <span class="cm">=> '()</span>
+(<span class="fn">ordena</span> <span class="lit">'(1)</span>) <span class="cm">=> '(1)</span>
+(<span class="fn">ordena</span> <span class="lit">'(5 5 3 1 3)</span>) <span class="cm">=> '(1 3 3 5 5)</span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO 3 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 3 — Manipulación de listas y parejas</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a) mueve-al-principio: primer elemento al inicio</div>
+            <div class="code-block">(<span class="cm">;; Función auxiliar: elimina la primera aparición de dato en lista</span>
+(<span class="kw">define</span> (<span class="fn">elimina-primera</span> dato lista)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> lista) <span class="lit">'()</span>)
+    ((<span class="fn">equal?</span> (<span class="fn">first</span> lista) dato) (<span class="fn">rest</span> lista))
+    (<span class="kw">else</span> (<span class="fn">cons</span> (<span class="fn">first</span> lista)
+                (<span class="fn">elimina-primera</span> dato (<span class="fn">rest</span> lista))))))
+
+(<span class="cm">;; Mueve la primera aparición de dato al inicio</span>
+(<span class="kw">define</span> (<span class="fn">mueve-al-principio</span> lista dato)
+  (<span class="fn">cons</span> dato (<span class="fn">elimina-primera</span> dato lista)))
+
+(<span class="fn">mueve-al-principio</span> <span class="lit">'(a b e c d e f)</span> <span class="lit">'e</span>) <span class="cm">=> '(e a b c d e f)</span>
+(<span class="fn">mueve-al-principio</span> <span class="lit">'(a b c d e f g)</span> <span class="lit">'a</span>) <span class="cm">=> '(a b c d e f g)</span>
+(<span class="fn">mueve-al-principio</span> <span class="lit">'(1 2 3 4)</span> 4) <span class="cm">=> '(4 1 2 3)</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b) comprueba-simbolos: parejas símbolo-longitud</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">comprueba-simbolos</span> lista-simbolos lista-num)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> lista-simbolos) <span class="lit">'()</span>)
+    ((<span class="fn">=</span> (<span class="fn">string-length</span> (<span class="fn">symbol->string</span> (<span class="fn">first</span> lista-simbolos)))
+        (<span class="fn">first</span> lista-num))
+     (<span class="fn">cons</span> (<span class="fn">cons</span> (<span class="fn">first</span> lista-simbolos) (<span class="fn">first</span> lista-num))
+           (<span class="fn">comprueba-simbolos</span> (<span class="fn">rest</span> lista-simbolos) (<span class="fn">rest</span> lista-num))))
+    (<span class="kw">else</span> (<span class="fn">comprueba-simbolos</span> (<span class="fn">rest</span> lista-simbolos) (<span class="fn">rest</span> lista-num)))))
+
+(<span class="fn">comprueba-simbolos</span> <span class="lit">'(este es un ejercicio de examen)</span> <span class="lit">'(2 1 2 9 1 6)</span>)
+<span class="cm">=> '((un . 2) (ejercicio . 9) (examen . 6))</span>
+(<span class="fn">comprueba-simbolos</span> <span class="lit">'(hola que tal)</span> <span class="lit">'(4 3 3)</span>)
+<span class="cm">=> '((hola . 4) (que . 3) (tal . 3))</span>
+(<span class="fn">comprueba-simbolos</span> <span class="lit">'(a b c)</span> <span class="lit">'(5 5 5)</span>) <span class="cm">=> '()</span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO 4 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 4 — Expansión de parejas y listas</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a) expande-pareja: repetir elemento n veces</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">expande-pareja</span> pareja)
+  (<span class="kw">if</span> (<span class="fn">=</span> (<span class="fn">cdr</span> pareja) 0)
+      <span class="lit">'()</span>
+      (<span class="fn">cons</span> (<span class="fn">car</span> pareja)
+            (<span class="fn">expande-pareja</span> (<span class="fn">cons</span> (<span class="fn">car</span> pareja)
+                                      (<span class="fn">-</span> (<span class="fn">cdr</span> pareja) 1))))))
+
+(<span class="fn">expande-pareja</span> <span class="lit">'(hola . 3)</span>) <span class="cm">=> '(hola hola hola)</span>
+(<span class="fn">expande-pareja</span> <span class="lit">'(#t . 5)</span>) <span class="cm">=> '(#t #t #t #t #t)</span>
+(<span class="fn">expande-pareja</span> <span class="lit">'(x . 0)</span>) <span class="cm">=> '()</span>
+(<span class="fn">expande-pareja</span> <span class="lit">'(1 . 1)</span>) <span class="cm">=> '(1)</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b.1) expande-parejas: con función auxiliar expande-lista</div>
+            <div class="code-block">(<span class="cm">;; Función auxiliar: expande lista de parejas</span>
+(<span class="kw">define</span> (<span class="fn">expande-lista</span> lista-parejas)
+  (<span class="kw">if</span> (<span class="fn">null?</span> lista-parejas)
+      <span class="lit">'()</span>
+      (<span class="fn">append</span> (<span class="fn">expande-pareja</span> (<span class="fn">first</span> lista-parejas))
+              (<span class="fn">expande-lista</span> (<span class="fn">rest</span> lista-parejas)))))
+
+(<span class="cm">;; Expande múltiples parejas (variadic)</span>
+(<span class="kw">define</span> (<span class="fn">expande-parejas</span> . args)
+  (<span class="fn">expande-lista</span> args))
+
+(<span class="fn">expande-parejas</span> <span class="lit">'(#t . 3)</span> <span class="lit">'("LPP" . 2)</span> <span class="lit">'(b . 4)</span>)
+<span class="cm">=> '(#t #t #t "LPP" "LPP" b b b b)</span>
+(<span class="fn">expande-parejas</span>) <span class="cm">=> '()</span>
+(<span class="fn">expande-parejas</span> <span class="lit">'(a . 1)</span>) <span class="cm">=> '(a)</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b.2) expande-parejas-2: función recursiva variadic</div>
+            <div class="code-block">(<span class="cm">;; La propia función es recursiva con argumentos variables, usando apply</span>
+(<span class="kw">define</span> (<span class="fn">expande-parejas-2</span> . args)
+  (<span class="kw">if</span> (<span class="fn">null?</span> args)
+      <span class="lit">'()</span>
+      (<span class="fn">append</span> (<span class="fn">expande-pareja</span> (<span class="fn">first</span> args))
+              (<span class="fn">apply</span> <span class="fn">expande-parejas-2</span> (<span class="fn">rest</span> args)))))
+
+(<span class="fn">expande-parejas-2</span> <span class="lit">'(#t . 3)</span> <span class="lit">'("LPP" . 2)</span> <span class="lit">'(b . 4)</span>)
+<span class="cm">=> '(#t #t #t "LPP" "LPP" b b b b)</span>
+(<span class="fn">expande-parejas-2</span>) <span class="cm">=> '()</span>
+(<span class="fn">expande-parejas-2</span> <span class="lit">'(z . 2)</span> <span class="lit">'(w . 1)</span>) <span class="cm">=> '(z z w)</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">c) expande: expansión alternante número-elemento</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">expande</span> lista)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> lista) <span class="lit">'()</span>)
+    ((<span class="fn">number?</span> (<span class="fn">first</span> lista))
+     (<span class="fn">append</span> (<span class="fn">expande-pareja</span> (<span class="fn">cons</span> (<span class="fn">second</span> lista) (<span class="fn">first</span> lista)))
+             (<span class="fn">expande</span> (<span class="fn">rest</span> (<span class="fn">rest</span> lista)))))
+    (<span class="kw">else</span> (<span class="fn">cons</span> (<span class="fn">first</span> lista) (<span class="fn">expande</span> (<span class="fn">rest</span> lista))))))
+
+(<span class="fn">expande</span> <span class="lit">'(4 clase ua 3 lpp aulario)</span>)
+<span class="cm">=> '(clase clase clase clase ua lpp lpp lpp aulario)</span>
+(<span class="fn">expande</span> <span class="lit">'(a b c)</span>) <span class="cm">=> '(a b c)</span>
+(<span class="fn">expande</span> <span class="lit">'(2 x y 3 z)</span>) <span class="cm">=> '(x x y z z z)</span>
+(<span class="fn">expande</span> <span class="lit">'()</span>) <span class="cm">=> '()</span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO 5 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 5 — Funciones lambda y orden superior</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a) expresiones con lambda: invocaciones directas</div>
+            <div class="code-block"><span class="cm">;; Lambda simple: cuadrado</span>
+((<span class="fn">lambda</span> (x) (<span class="fn">*</span> x x)) 3) <span class="cm">=> 9</span>
+
+<span class="cm">;; Lambda sin parámetros</span>
+((<span class="fn">lambda</span> () (<span class="fn">+</span> 6 4))) <span class="cm">=> 10</span>
+
+<span class="cm">;; Lambda con múltiples parámetros</span>
+((<span class="fn">lambda</span> (x y) (<span class="fn">*</span> x (<span class="fn">+</span> 2 y))) 5 4) <span class="cm">=> 30</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b) definiciones equivalentes con lambda</div>
+            <div class="code-block"><span class="cm">;; suma-3 sin lambda (forma estándar)</span>
+<span class="cm">;;   (define (suma-3 x) (+ x 3))</span>
+<span class="cm">;; equivale a:</span>
+(<span class="kw">define</span> suma-3 (<span class="fn">lambda</span> (x) (<span class="fn">+</span> x 3)))
+(<span class="fn">suma-3</span> 7) <span class="cm">=> 10</span>
+
+<span class="cm">;; factorial sin lambda (con recursión)</span>
+(<span class="kw">define</span> factorial
+  (<span class="fn">lambda</span> (x)
+    (<span class="kw">if</span> (<span class="fn">=</span> x 0) 1 (<span class="fn">*</span> x (<span class="fn">factorial</span> (<span class="fn">-</span> x 1))))))
+(<span class="fn">factorial</span> 5) <span class="cm">=> 120</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">c) funciones de orden superior: pasar funciones como argumentos</div>
+            <div class="code-block"><span class="cm">;; doble: multiplica por 2</span>
+(<span class="kw">define</span> (<span class="fn">doble</span> x) (<span class="fn">*</span> 2 x))
+
+<span class="cm">;; foo: función de orden superior (f y g son funciones)</span>
+(<span class="kw">define</span> (<span class="fn">foo</span> f g x y) (<span class="fn">f</span> (<span class="fn">g</span> x) y))
+<span class="cm">;; Evalúa: (f (g x) y) = (+ (doble 10) 15) = (+ 20 15) = 35</span>
+(<span class="fn">foo</span> <span class="fn">+</span> <span class="fn">doble</span> 10 15) <span class="cm">=> 35</span>
+
+<span class="cm">;; Usando lambda dentro de foo</span>
+(<span class="fn">foo</span> <span class="fn">string-append</span> (<span class="fn">lambda</span> (x) (<span class="fn">string-append</span> <span class="lit">"***"</span> x)) <span class="lit">"Hola"</span> <span class="lit">"Adios"</span>)
+<span class="cm">=> "***HolaAdios"</span>
+
+<span class="cm">;; bar: función de orden superior con predicado p</span>
+(<span class="kw">define</span> (<span class="fn">bar</span> f p x y)
+  (<span class="kw">if</span> (<span class="fn">and</span> (<span class="fn">p</span> x) (<span class="fn">p</span> y))
+      (<span class="fn">f</span> x y)
+      <span class="lit">'error</span>))
+
+(<span class="fn">bar</span> <span class="fn">string-append</span> <span class="fn">string?</span> <span class="lit">"Hola"</span> <span class="lit">"Adios"</span>) <span class="cm">=> "HolaAdios"</span>
+(<span class="fn">bar</span> <span class="fn">+</span> <span class="fn">number?</span> <span class="lit">"Hola"</span> 5) <span class="cm">=> 'error</span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO 6 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 6 — Truco de cartas mágico</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a) coloca: añadir elementos a tres sublistas</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">coloca</span> tres-listas un dos tres)
+  (<span class="fn">list</span> (<span class="fn">cons</span> un  (<span class="fn">first</span>  tres-listas))
+        (<span class="fn">cons</span> dos (<span class="fn">second</span> tres-listas))
+        (<span class="fn">cons</span> tres (<span class="fn">third</span>  tres-listas))))
+
+(<span class="fn">coloca</span> <span class="lit">'(() () ())</span> <span class="lit">'a</span> <span class="lit">'b</span> <span class="lit">'c</span>)
+<span class="cm">=> '((a) (b) (c))</span>
+(<span class="fn">coloca</span> <span class="lit">'((a) (b c) (d e f))</span> <span class="lit">'g</span> <span class="lit">'h</span> <span class="lit">'i</span>)
+<span class="cm">=> '((g a) (h b c) (i d e f))</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b) reparte-tres: distribuir cartas en tres montones</div>
+            <div class="code-block"><span class="cm">;; Reparte una lista en tres montones:
+;;   Montón 1: posiciones 0,3,6...
+;;   Montón 2: posiciones 1,4,7...
+;;   Montón 3: posiciones 2,5,8...</span>
+(<span class="kw">define</span> (<span class="fn">reparte-tres</span> lista-cartas)
+  (<span class="kw">if</span> (<span class="fn">null?</span> lista-cartas)
+      <span class="lit">'(() () ())</span>
+      (<span class="fn">coloca</span> (<span class="fn">reparte-tres</span> (<span class="fn">rest</span> (<span class="fn">rest</span> (<span class="fn">rest</span> lista-cartas))))
+              (<span class="fn">first</span> lista-cartas)
+              (<span class="fn">second</span> lista-cartas)
+              (<span class="fn">third</span> lista-cartas))))
+
+(<span class="kw">define</span> doce-cartas <span class="lit">'(A♣ 2♣ 3♣ 4♣ 5♣ 6♣ 7♣ 8♣ 9♣ J♣ Q♣ K♣)</span>)
+
+(<span class="fn">reparte-tres</span> doce-cartas)
+<span class="cm">=> '((A♣ 4♣ 7♣ J♣) (2♣ 5♣ 8♣ Q♣) (3♣ 6♣ 9♣ K♣))</span>
+(<span class="fn">reparte-tres</span> <span class="lit">'(a b c)</span>) <span class="cm">=> '((a) (b) (c))</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">c) elemento-central: elemento central en lista impar</div>
+            <div class="code-block"><span class="cm">;; Función auxiliar: elimina el último elemento de una lista</span>
+(<span class="kw">define</span> (<span class="fn">quita-ultimo</span> lista)
+  (<span class="kw">if</span> (<span class="fn">null?</span> (<span class="fn">rest</span> lista))
+      <span class="lit">'()</span>
+      (<span class="fn">cons</span> (<span class="fn">first</span> lista) (<span class="fn">quita-ultimo</span> (<span class="fn">rest</span> lista)))))
+
+<span class="cm">;; Elemento central: quitamos primero y último hasta que queda un solo elemento</span>
+(<span class="kw">define</span> (<span class="fn">elemento-central</span> lista)
+  (<span class="kw">if</span> (<span class="fn">null?</span> (<span class="fn">rest</span> lista))
+      (<span class="fn">first</span> lista)
+      (<span class="fn">elemento-central</span> (<span class="fn">quita-ultimo</span> (<span class="fn">rest</span> lista)))))
+
+(<span class="fn">elemento-central</span> <span class="lit">'(a b c d e f g)</span>) <span class="cm">=> 'd</span>
+(<span class="fn">elemento-central</span> <span class="lit">'(1)</span>) <span class="cm">=> 1</span>
+(<span class="fn">elemento-central</span> <span class="lit">'(1 2 3)</span>) <span class="cm">=> 2</span>
+(<span class="fn">elemento-central</span> <span class="lit">'(a b c d e)</span>) <span class="cm">=> 'c</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">d) funciones de reordenamiento: izquierda, centro, derecha</div>
+            <div class="code-block"><span class="cm">;; Reordena los tres montones según la posición elegida</span>
+(<span class="kw">define</span> (<span class="fn">izquierda</span> tres-listas)
+  (<span class="fn">append</span> (<span class="fn">third</span> tres-listas)
+          (<span class="fn">first</span> tres-listas)
+          (<span class="fn">second</span> tres-listas)))
+
+(<span class="kw">define</span> (<span class="fn">centro</span> tres-listas)
+  (<span class="fn">append</span> (<span class="fn">third</span> tres-listas)
+          (<span class="fn">second</span> tres-listas)
+          (<span class="fn">first</span> tres-listas)))
+
+(<span class="kw">define</span> (<span class="fn">derecha</span> tres-listas)
+  (<span class="fn">append</span> (<span class="fn">second</span> tres-listas)
+          (<span class="fn">third</span> tres-listas)
+          (<span class="fn">first</span> tres-listas)))</div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">e) adivina y ejecución completa del truco</div>
+            <div class="code-block"><span class="cm">;; Adivina la carta usando el elemento central</span>
+(<span class="kw">define</span> (<span class="fn">adivina</span> lista)
+  (<span class="fn">elemento-central</span> lista))
+
+<span class="cm">;; El truco se ejecuta mediante estos pasos (con seed determinista):</span>
+(random-seed 90)
+
+(<span class="kw">define</span> t1 (<span class="fn">reparte-tres</span> (<span class="fn">cartas</span> 27)))
+<span class="cm">;;; El as de tréboles está en el montón derecho</span>
+
+(<span class="kw">define</span> t2 (<span class="fn">reparte-tres</span> (<span class="fn">derecha</span> t1)))
+<span class="cm">;;; El as de tréboles está en el montón del centro</span>
+
+(<span class="kw">define</span> t3 (<span class="fn">reparte-tres</span> (<span class="fn">centro</span> t2)))
+<span class="cm">;;; El as de tréboles está en el montón derecho</span>
+
+(<span class="fn">adivina</span> (<span class="fn">derecha</span> t3))
+<span class="cm">=> 'A♣</span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </div>
 </body>
 </html>

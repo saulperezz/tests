@@ -1,4 +1,262 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Práctica 8 — LPP</title><link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" /><style>*{box-sizing:border-box;margin:0;padding:0}:root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--text-muted:#8b949e;--text-body:#c9d1d9;--accent:#58a6ff;--accent-dim:#1f6feb;--quote-bg:#1c2333}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text-body);font-family:'Lora',Georgia,serif;font-size:16px;line-height:1.7;min-height:100vh;padding:0 0 64px}.nav{padding:20px 24px 0;max-width:720px;margin:0 auto}.nav a{color:var(--text-muted);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:color .2s}.nav a:hover{color:var(--accent)}.header{max-width:720px;margin:0 auto;padding:32px 24px 28px}.header h1{font-family:'Lora',Georgia,serif;font-size:clamp(32px,7vw,46px);font-weight:700;color:var(--text);line-height:1.15;letter-spacing:-0.5px;margin-bottom:8px}.header .meta{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:16px}.header .meta .dot{color:var(--border)}.cards{max-width:720px;margin:0 auto;padding:0 24px;display:flex;flex-direction:column;gap:20px}.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}.card-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}.card-num{width:32px;height:32px;background:var(--accent-dim);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600}.card-title{font-family:'Lora',Georgia,serif;font-size:19px;font-weight:700;color:var(--text);line-height:1.3}.label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}.quote-block{background:var(--quote-bg);border-left:3px solid var(--accent-dim);border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:20px;color:var(--text-body);font-size:15px;line-height:1.65}</style></head>
-<body><div class="nav"><a href="javascript:window.close()">← Volver al test</a></div><div class="header"><h1>Práctica 8: Árboles</h1><div class="meta"><span>LPP · Práctica 8</span><span class="dot">·</span><span>6 conceptos clave</span></div></div><div class="cards"><div class="card"><div class="card-header"><div class="card-num">1</div><div class="card-title">Estructura de árboles generales</div></div><div class="label">Concepto</div><div class="quote-block">Un árbol genérico tiene un dato raíz y una lista de árboles hijos. dato-arbol devuelve el dato; hijos-arbol devuelve la lista de hijos.</div></div><div class="card"><div class="card-header"><div class="card-num">2</div><div class="card-title">Recursión mutua: suma-datos-arbol</div></div><div class="label">Concepto</div><div class="quote-block">suma-datos-arbol suma un árbol; suma-datos-bosque suma una lista de árboles. Son funciones mutuamente recursivas.</div></div><div class="card"><div class="card-header"><div class="card-num">3</div><div class="card-title">suma-datos-arbol-fos</div></div><div class="label">Concepto</div><div class="quote-block">Versión de orden superior: (map suma-datos-bosque ...) aplica la función a cada hijo, luego foldr suma los resultados.</div></div><div class="card"><div class="card-header"><div class="card-num">4</div><div class="card-title">to-string-arbol y veces-arbol</div></div><div class="label">Concepto</div><div class="quote-block">to-string-arbol concatena todos los datos del árbol en orden; veces-arbol cuenta ocurrencias de un elemento en el árbol.</div></div><div class="card"><div class="card-header"><div class="card-num">5</div><div class="card-title">Árboles binarios y búsqueda</div></div><div class="label">Concepto</div><div class="quote-block">Árboles binarios tienen hijo izquierdo y derecho. ordenado-entre? verifica si un árbol BST es válido (valores en rango).</div></div><div class="card"><div class="card-header"><div class="card-num">6</div><div class="card-title">Caminos y niveles</div></div><div class="label">Concepto</div><div class="quote-block">es-camino? verifica si existe una secuencia de nodos desde raíz a hoja; nodos-nivel devuelve nodos a una profundidad específica.</div></div></div></body></html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Práctica 8 — LPP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d1117; --surface: #161b22; --border: #30363d; --text: #e6edf3; --text-muted: #8b949e; --text-body: #c9d1d9; --accent: #58a6ff; --accent-dim: #1f6feb; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text-body); font-family: 'Lora', Georgia, serif; font-size: 16px; line-height: 1.7; min-height: 100vh; padding: 0 0 64px; }
+    .nav { padding: 20px 24px 0; max-width: 920px; margin: 0 auto; }
+    .nav a { color: var(--text-muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: color .2s; }
+    .nav a:hover { color: var(--accent); }
+    .header { max-width: 920px; margin: 0 auto; padding: 32px 24px 28px; }
+    .header h1 { font-family: 'Lora', Georgia, serif; font-size: clamp(32px, 7vw, 46px); font-weight: 700; color: var(--text); line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .meta { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); }
+    .content { max-width: 920px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 12px; }
+    .accordion-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .accordion-header { padding: 18px 20px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: background 0.2s; user-select: none; font-weight: 600; color: var(--text); font-size: 15px; }
+    .accordion-header:hover { background: #1c2128; }
+    .accordion-toggle { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s; color: var(--accent); font-size: 14px; font-weight: 700; }
+    .accordion-item.active .accordion-toggle { transform: rotate(90deg); }
+    .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; padding: 0 20px; }
+    .accordion-item.active .accordion-body { max-height: 10000px; padding: 0 20px 20px 20px; }
+    .accordion-content { color: var(--text-body); line-height: 1.8; }
+    .explanation { margin-bottom: 20px; padding: 14px 16px; background: #0d1117; border-left: 3px solid var(--accent-dim); border-radius: 0 4px 4px 0; font-size: 14px; line-height: 1.7; color: var(--text-body); }
+    .code-block { background: #0d1117; border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; overflow-x: auto; color: var(--text-body); white-space: pre; }
+    .code-block .kw { color: #ff7b72; }
+    .code-block .fn { color: #58a6ff; }
+    .code-block .lit { color: #79c0ff; }
+    .code-block .cm { color: #8b949e; }
+    .sub-exercise { margin-top: 18px; padding: 14px; background: #0d111722; border-left: 2px solid var(--accent); border-radius: 4px; }
+    .sub-exercise-title { color: var(--accent); font-weight: 600; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  </style>
+  <script>
+    function toggleAccordion(header) { const item = header.closest('.accordion-item'); item.classList.toggle('active'); }
+  </script>
+</head>
+<body>
+  <div class="nav"><a href="javascript:window.close()">← Volver al test</a></div>
+  <div class="header">
+    <h1>Práctica 8: Árboles</h1>
+    <div class="meta">LPP · Práctica 8 · Curso 2025-26</div>
+  </div>
+  <div class="content">
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 1 — Suma de datos con recursión mutua</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) suma-datos-arbol y suma-datos-bosque: recursión mutua</div><div class="code-block">(<span class="cm">;; Suma recursiva de datos en árbol (mutuamente recursivo con bosque)</span>
+(<span class="kw">define</span> (<span class="fn">suma-datos-arbol</span> arbol)
+  (<span class="fn">+</span> (<span class="fn">dato-arbol</span> arbol)
+     (<span class="fn">suma-datos-bosque</span> (<span class="fn">hijos-arbol</span> arbol))))
+
+(<span class="cm">;; Suma de múltiples árboles (bosque)</span>
+(<span class="kw">define</span> (<span class="fn">suma-datos-bosque</span> bosque)
+  (<span class="kw">if</span> (<span class="fn">null?</span> bosque)
+      0
+      (<span class="fn">+</span> (<span class="fn">suma-datos-arbol</span> (<span class="fn">first</span> bosque))
+         (<span class="fn">suma-datos-bosque</span> (<span class="fn">rest</span> bosque)))))
+
+(<span class="fn">suma-datos-arbol</span> <span class="lit">'(1 (2) (3 (4) (5)))</span>) <span class="cm">=> 15</span>
+(<span class="fn">suma-datos-arbol</span> <span class="lit">'(10 (20 (30)) (40))</span>) <span class="cm">=> 100</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) suma-datos-arbol-fos: con map y foldr</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">suma-datos-arbol-fos</span> arbol)
+  (<span class="fn">+</span> (<span class="fn">dato-arbol</span> arbol)
+     (<span class="fn">foldr</span> <span class="fn">+</span> 0 (<span class="fn">map</span> <span class="fn">suma-datos-arbol-fos</span>
+                      (<span class="fn">hijos-arbol</span> arbol)))))
+
+(<span class="fn">suma-datos-arbol-fos</span> <span class="lit">'(1 (2) (3 (4) (5)))</span>) <span class="cm">=> 15</span></div></div>
+      </div></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 2 — Conversión a cadena y conteo</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) to-string-arbol: preorden concatenado</div><div class="code-block">(<span class="cm">;; Convierte árbol a cadena en preorden (dato primero)</span>
+(<span class="kw">define</span> (<span class="fn">to-string-arbol</span> arbol)
+  (<span class="fn">string-append</span> (<span class="fn">number->string</span> (<span class="fn">dato-arbol</span> arbol))
+                 (<span class="fn">to-string-bosque</span> (<span class="fn">hijos-arbol</span> arbol))))
+
+(<span class="kw">define</span> (<span class="fn">to-string-bosque</span> bosque)
+  (<span class="kw">if</span> (<span class="fn">null?</span> bosque)
+      <span class="lit">""</span>
+      (<span class="fn">string-append</span> (<span class="fn">to-string-arbol</span> (<span class="fn">first</span> bosque))
+                     (<span class="fn">to-string-bosque</span> (<span class="fn">rest</span> bosque)))))
+
+(<span class="fn">to-string-arbol</span> <span class="lit">'(1 (2) (3 (4)))</span>) <span class="cm">=> "1234"</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) veces-arbol: conteo de occurrencias</div><div class="code-block">(<span class="cm">;; Cuenta cuántas veces aparece un dato en el árbol</span>
+(<span class="kw">define</span> (<span class="fn">veces-arbol</span> dato arbol)
+  (<span class="fn">+</span> ((<span class="kw">if</span> (<span class="fn">=</span> (<span class="fn">dato-arbol</span> arbol) dato) 1 0))
+     (<span class="fn">veces-bosque</span> dato (<span class="fn">hijos-arbol</span> arbol))))
+
+(<span class="kw">define</span> (<span class="fn">veces-bosque</span> dato bosque)
+  (<span class="kw">if</span> (<span class="fn">null?</span> bosque)
+      0
+      (<span class="fn">+</span> (<span class="fn">veces-arbol</span> dato (<span class="fn">first</span> bosque))
+         (<span class="fn">veces-bosque</span> dato (<span class="fn">rest</span> bosque)))))
+
+(<span class="fn">veces-arbol</span> 2 <span class="lit">'(1 (2) (3 (2) (2)))</span>) <span class="cm">=> 3</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">c) veces-arbol-fos: versión con FOS</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">veces-arbol-fos</span> dato arbol)
+  (<span class="fn">+</span> ((<span class="kw">if</span> (<span class="fn">=</span> (<span class="fn">dato-arbol</span> arbol) dato) 1 0))
+     (<span class="fn">foldr</span> <span class="fn">+</span> 0 (<span class="fn">map</span> (<span class="fn">lambda</span> (h) (<span class="fn">veces-arbol-fos</span> dato h))
+                      (<span class="fn">hijos-arbol</span> arbol)))))
+
+(<span class="fn">veces-arbol-fos</span> 2 <span class="lit">'(1 (2) (3 (2) (2)))</span>) <span class="cm">=> 3</span></div></div>
+      </div></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 3 — Predicados en hojas</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) hojas-cumplen: filtraje de hojas con predicado</div><div class="code-block">(<span class="cm">;; Encuentra hojas que cumplen predicado</span>
+(<span class="kw">define</span> (<span class="fn">hojas-cumplen</span> pred arbol)
+  ((<span class="kw">if</span> (<span class="fn">pred</span> (<span class="fn">dato-arbol</span> arbol))
+       <span class="fn">cons</span>
+       <span class="fn">identity</span>)
+   (<span class="fn">dato-arbol</span> arbol)
+   (<span class="fn">hojas-bosque-cumplen</span> pred (<span class="fn">hijos-arbol</span> arbol))))
+
+(<span class="kw">define</span> (<span class="fn">hojas-bosque-cumplen</span> pred bosque)
+  (<span class="kw">if</span> (<span class="fn">null?</span> bosque)
+      <span class="lit">'()</span>
+      (<span class="fn">append</span> (<span class="fn">hojas-cumplen</span> pred (<span class="fn">first</span> bosque))
+              (<span class="fn">hojas-bosque-cumplen</span> pred (<span class="fn">rest</span> bosque)))))
+
+(<span class="fn">hojas-cumplen</span> (<span class="fn">lambda</span> (x) (<span class="fn">&gt;</span> x 2)) <span class="lit">'(1 (2) (3 (4)))</span>) <span class="cm">=> '(3 4)</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) todas-hojas-cumplen?: predicado universal</div><div class="code-block">(<span class="cm">;; Verifica si todas las hojas cumplen predicado</span>
+(<span class="kw">define</span> (<span class="fn">todas-hojas-cumplen?</span> pred arbol)
+  (<span class="fn">and</span> (<span class="fn">pred</span> (<span class="fn">dato-arbol</span> arbol))
+       (<span class="fn">todas-hojas-bosque-cumplen?</span> pred (<span class="fn">hijos-arbol</span> arbol))))
+
+(<span class="kw">define</span> (<span class="fn">todas-hojas-bosque-cumplen?</span> pred bosque)
+  (<span class="kw">if</span> (<span class="fn">null?</span> bosque)
+      <span class="lit">#t</span>
+      (<span class="fn">and</span> (<span class="fn">todas-hojas-cumplen?</span> pred (<span class="fn">first</span> bosque))
+           (<span class="fn">todas-hojas-bosque-cumplen?</span> pred (<span class="fn">rest</span> bosque)))))
+
+(<span class="fn">todas-hojas-cumplen?</span> (<span class="fn">lambda</span> (x) (<span class="fn">&gt;</span> x 0)) <span class="lit">'(1 (2) (3 (4)))</span>) <span class="cm">=> #t</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">c) hojas-cumplen-fos: versión con map/foldr</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">hojas-cumplen-fos</span> pred arbol)
+  ((<span class="kw">if</span> (<span class="fn">pred</span> (<span class="fn">dato-arbol</span> arbol)) <span class="fn">cons</span> <span class="fn">identity</span>)
+   (<span class="fn">dato-arbol</span> arbol)
+   (<span class="fn">apply</span> <span class="fn">append</span> (<span class="fn">map</span> (<span class="fn">lambda</span> (h) (<span class="fn">hojas-cumplen-fos</span> pred h))
+                      (<span class="fn">hijos-arbol</span> arbol)))))
+
+(<span class="fn">hojas-cumplen-fos</span> (<span class="fn">lambda</span> (x) (<span class="fn">&gt;</span> x 2)) <span class="lit">'(1 (2) (3 (4)))</span>) <span class="cm">=> '(3 4)</span></div></div>
+      </div></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 4 — Análisis de raíces</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) suma-raices-hijos: suma de datos en nivel siguiente</div><div class="code-block">(<span class="cm">;; Suma los datos de los hijos directos</span>
+(<span class="kw">define</span> (<span class="fn">suma-raices-hijos</span> arbol)
+  (<span class="fn">foldr</span> <span class="fn">+</span> 0 (<span class="fn">map</span> <span class="fn">dato-arbol</span> (<span class="fn">hijos-arbol</span> arbol))))
+
+(<span class="fn">suma-raices-hijos</span> <span class="lit">'(1 (2) (3 (4)))</span>) <span class="cm">=> 5</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) raices-mayores-arbol?: raíz mayor que suma de hijos</div><div class="code-block">(<span class="cm">;; Verifica si la raíz es mayor que la suma de sus hijos</span>
+(<span class="kw">define</span> (<span class="fn">raices-mayores-arbol?</span> arbol)
+  (<span class="fn">and</span> (<span class="fn">&gt;</span> (<span class="fn">dato-arbol</span> arbol) (<span class="fn">suma-raices-hijos</span> arbol))
+       (<span class="fn">raices-mayores-bosque?</span> (<span class="fn">hijos-arbol</span> arbol))))
+
+(<span class="kw">define</span> (<span class="fn">raices-mayores-bosque?</span> bosque)
+  (<span class="kw">if</span> (<span class="fn">null?</span> bosque)
+      <span class="lit">#t</span>
+      (<span class="fn">and</span> (<span class="fn">raices-mayores-arbol?</span> (<span class="fn">first</span> bosque))
+           (<span class="fn">raices-mayores-bosque?</span> (<span class="fn">rest</span> bosque)))))
+
+(<span class="fn">raices-mayores-arbol?</span> <span class="lit">'(10 (2) (3 (4)))</span>) <span class="cm">=> #t</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">c) comprueba-raices-arbol: mapeo a 0/1</div><div class="code-block">(<span class="cm">;; Mapea a 1 si raíz > suma(hijos), 0 si no</span>
+(<span class="kw">define</span> (<span class="fn">comprueba-raices-arbol</span> arbol)
+  (<span class="fn">list</span> ((<span class="kw">if</span> (<span class="fn">raices-mayores-arbol?</span> arbol) 1 0))
+        (<span class="fn">map</span> <span class="fn">comprueba-raices-arbol</span> (<span class="fn">hijos-arbol</span> arbol))))
+
+(<span class="fn">comprueba-raices-arbol</span> <span class="lit">'(10 (2) (3 (4)))</span>) <span class="cm">=> '(1 (0) (0 (0)))</span></div></div>
+      </div></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 5 — Búsqueda de caminos</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) es-camino?: validación de ruta raíz-a-hoja</div><div class="code-block">(<span class="cm">;; Verifica si la lista es un camino válido raíz-a-hoja</span>
+(<span class="kw">define</span> (<span class="fn">es-camino?</span> arbol camino)
+  (<span class="kw">cond</span>
+    ((<span class="fn">null?</span> camino) <span class="lit">#f</span>)
+    ((<span class="fn">=</span> (<span class="fn">length</span> camino) 1)
+     (<span class="fn">=</span> (<span class="fn">first</span> camino) (<span class="fn">dato-arbol</span> arbol)))
+    (<span class="kw">else</span>
+     (<span class="fn">and</span> (<span class="fn">=</span> (<span class="fn">first</span> camino) (<span class="fn">dato-arbol</span> arbol))
+          (<span class="fn">member</span> <span class="lit">#t</span>
+                  (<span class="fn">map</span> (<span class="fn">lambda</span> (h) (<span class="fn">es-camino?</span> h (<span class="fn">rest</span> camino)))
+                       (<span class="fn">hijos-arbol</span> arbol)))))))
+
+(<span class="fn">es-camino?</span> <span class="lit">'(1 (2) (3 (4)))</span> <span class="lit">'(1 3 4)</span>) <span class="cm">=> #t</span>
+(<span class="fn">es-camino?</span> <span class="lit">'(1 (2) (3 (4)))</span> <span class="lit">'(1 2 4)</span>) <span class="cm">=> #f</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) nodos-nivel: nodos a una profundidad específica</div><div class="code-block">(<span class="cm">;; Retorna nodos a la profundidad especificada</span>
+(<span class="kw">define</span> (<span class="fn">nodos-nivel</span> arbol nivel actual)
+  (<span class="kw">cond</span>
+    ((<span class="fn">=</span> nivel actual) (<span class="fn">list</span> (<span class="fn">dato-arbol</span> arbol)))
+    ((<span class="fn">&gt;</span> nivel actual)
+     (<span class="fn">apply</span> <span class="fn">append</span> (<span class="fn">map</span> (<span class="fn">lambda</span> (h) (<span class="fn">nodos-nivel</span> h nivel (<span class="fn">+</span> actual 1)))
+                      (<span class="fn">hijos-arbol</span> arbol))))
+    (<span class="kw">else</span> <span class="lit">'()</span>)))
+
+(<span class="fn">nodos-nivel</span> <span class="lit">'(1 (2) (3 (4)))</span> 2 0) <span class="cm">=> '(2 3)</span>
+(<span class="fn">nodos-nivel</span> <span class="lit">'(1 (2) (3 (4)))</span> 3 0) <span class="cm">=> '(4)</span></div></div>
+      </div></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 6 — Árboles binarios de búsqueda</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) ordenado?: validación de árbol binario de búsqueda</div><div class="code-block">(<span class="cm">;; Verifica si el árbol binario cumple propiedad BST</span>
+(<span class="kw">define</span> (<span class="fn">ordenado?</span> arbol)
+  (<span class="fn">ordenado-entre?</span> arbol <span class="cm">-inf.0</span> <span class="cm">+inf.0</span>))
+
+(<span class="kw">define</span> (<span class="fn">ordenado-entre?</span> arbol min max)
+  (<span class="kw">let</span> ((<span class="lit">dato</span> (<span class="fn">dato-arbol</span> arbol))
+        (<span class="lit">hijos</span> (<span class="fn">hijos-arbol</span> arbol)))
+    (<span class="fn">and</span> (<span class="fn">&gt;</span> dato min) (<span class="fn">&lt;</span> dato max)
+         (<span class="fn">case</span> (<span class="fn">length</span> hijos)
+           ((0) <span class="lit">#t</span>)
+           ((1) (<span class="fn">ordenado-entre?</span> (<span class="fn">first</span> hijos) min max))
+           ((2) (<span class="fn">and</span> (<span class="fn">ordenado-entre?</span> (<span class="fn">first</span> hijos) min dato)
+                     (<span class="fn">ordenado-entre?</span> (<span class="fn">second</span> hijos) dato max)))
+           (<span class="kw">else</span> <span class="lit">#f</span>)))))
+
+(<span class="fn">ordenado?</span> <span class="lit">'(5 (3 (1) (4)) (7 (6) (8)))</span>) <span class="cm">=> #t</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) inserta-ordenado: inserción en BST</div><div class="code-block">(<span class="cm">;; Inserta elemento manteniendo orden BST</span>
+(<span class="kw">define</span> (<span class="fn">inserta-ordenado</span> n arbol)
+  (<span class="kw">let</span> ((<span class="lit">dato</span> (<span class="fn">dato-arbol</span> arbol))
+        (<span class="lit">hijos</span> (<span class="fn">hijos-arbol</span> arbol)))
+    (<span class="kw">if</span> (<span class="fn">&lt;</span> n dato)
+        (<span class="kw">let</span> ((<span class="lit">hij-izq</span> (<span class="fn">first</span> hijos)))
+          ((<span class="kw">if</span> (<span class="fn">null?</span> hij-izq)
+               (<span class="fn">lambda</span> (x) (<span class="fn">list</span> dato (<span class="fn">list</span> n) (<span class="fn">second</span> hijos)))
+               (<span class="fn">lambda</span> (x) (<span class="fn">list</span> dato (<span class="fn">inserta-ordenado</span> n hij-izq) (<span class="fn">second</span> hijos))))
+           <span class="lit">_</span>))
+        (<span class="kw">let</span> ((<span class="lit">hij-der</span> (<span class="fn">second</span> hijos)))
+          ((<span class="kw">if</span> (<span class="fn">null?</span> hij-der)
+               (<span class="fn">lambda</span> (x) (<span class="fn">list</span> dato (<span class="fn">first</span> hijos) (<span class="fn">list</span> n)))
+               (<span class="fn">lambda</span> (x) (<span class="fn">list</span> dato (<span class="fn">first</span> hijos) (<span class="fn">inserta-ordenado</span> n hij-der))))
+           <span class="lit">_</span>)))))
+
+(<span class="fn">inserta-ordenado</span> 4 <span class="lit">'(5 (3 (1) ()) (7 () (8)))</span>) <span class="cm">=> '(5 (3 (1) (4)) (7 () (8)))</span></div></div>
+      </div></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 7 — Traversal de árbol binario</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">camino-arbolb: recorrido por símbolos de dirección</div><div class="code-block">(<span class="cm">;; Recorre árbol binario siguiendo símbolos 'izq (left) 'der (right)</span>
+(<span class="kw">define</span> (<span class="fn">camino-arbolb</span> arbol dirs)
+  (<span class="kw">if</span> (<span class="fn">null?</span> dirs)
+      (<span class="fn">dato-arbol</span> arbol)
+      (<span class="fn">let</span> ((<span class="lit">dir</span> (<span class="fn">first</span> dirs))
+            (<span class="lit">hijos</span> (<span class="fn">hijos-arbol</span> arbol)))
+        (<span class="kw">if</span> (<span class="fn">equal?</span> dir <span class="lit">'izq</span>)
+            (<span class="fn">camino-arbolb</span> (<span class="fn">first</span> hijos) (<span class="fn">rest</span> dirs))
+            (<span class="fn">camino-arbolb</span> (<span class="fn">second</span> hijos) (<span class="fn">rest</span> dirs))))))
+
+(<span class="fn">camino-arbolb</span> <span class="lit">'(5 (3 (1) (4)) (7 (6) (8)))</span> <span class="lit">'(izq der)</span>) <span class="cm">=> 4</span>
+(<span class="fn">camino-arbolb</span> <span class="lit">'(5 (3 (1) (4)) (7 (6) (8)))</span> <span class="lit">'(der izq)</span>) <span class="cm">=> 6</span></div></div>
+      </div></div>
+    </div>
+  </div>
+</body>
+</html>

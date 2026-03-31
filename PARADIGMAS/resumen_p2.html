@@ -8,16 +8,14 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg:          #0d1117;
-      --surface:     #161b22;
-      --border:      #30363d;
-      --border-soft: #21262d;
-      --text:        #e6edf3;
-      --text-muted:  #8b949e;
-      --text-body:   #c9d1d9;
-      --accent:      #58a6ff;
-      --accent-dim:  #1f6feb;
-      --quote-bg:    #1c2333;
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --text-body: #c9d1d9;
+      --accent: #58a6ff;
+      --accent-dim: #1f6feb;
     }
     html { scroll-behavior: smooth; }
     body {
@@ -31,7 +29,7 @@
     }
     .nav {
       padding: 20px 24px 0;
-      max-width: 720px;
+      max-width: 900px;
       margin: 0 auto;
     }
     .nav a {
@@ -46,7 +44,7 @@
     }
     .nav a:hover { color: var(--accent); }
     .header {
-      max-width: 720px;
+      max-width: 900px;
       margin: 0 auto;
       padding: 32px 24px 28px;
     }
@@ -59,117 +57,110 @@
       letter-spacing: -0.5px;
       margin-bottom: 8px;
     }
-    .header .meta {
+    .meta {
       font-family: 'JetBrains Mono', monospace;
       font-size: 13px;
       color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 16px;
     }
-    .header .meta .dot { color: var(--border); }
-    .cards {
-      max-width: 720px;
+    .content {
+      max-width: 900px;
       margin: 0 auto;
       padding: 0 24px;
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 12px;
     }
-    .card {
+    .accordion-item {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 24px 24px 28px;
-      animation: fadeUp .4s ease both;
+      border-radius: 8px;
+      overflow: hidden;
     }
-    .card:nth-child(1) { animation-delay: .04s }
-    .card:nth-child(2) { animation-delay: .08s }
-    .card:nth-child(3) { animation-delay: .12s }
-    .card:nth-child(4) { animation-delay: .16s }
-    .card:nth-child(5) { animation-delay: .20s }
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    .card-header {
+    .accordion-header {
+      padding: 18px 20px;
+      cursor: pointer;
       display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      margin-bottom: 20px;
+      align-items: center;
+      justify-content: space-between;
+      transition: background 0.2s;
+      user-select: none;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 15px;
     }
-    .card-num {
-      flex-shrink: 0;
-      width: 32px;
-      height: 32px;
-      background: var(--accent-dim);
-      color: #fff;
-      border-radius: 50%;
+    .accordion-header:hover {
+      background: #1c2128;
+    }
+    .accordion-toggle {
+      width: 24px;
+      height: 24px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      font-weight: 600;
-      margin-top: 2px;
-    }
-    .card-title {
-      font-family: 'Lora', Georgia, serif;
-      font-size: 19px;
-      font-weight: 700;
-      color: var(--text);
-      line-height: 1.3;
-    }
-    .label {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
+      transition: transform 0.3s;
       color: var(--accent);
-      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: 700;
     }
-    .quote-block {
-      background: var(--quote-bg);
-      border-left: 3px solid var(--accent-dim);
-      border-radius: 0 8px 8px 0;
-      padding: 14px 16px;
-      margin-bottom: 20px;
+    .accordion-item.active .accordion-toggle {
+      transform: rotate(90deg);
+    }
+    .accordion-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      padding: 0 20px;
+    }
+    .accordion-item.active .accordion-body {
+      max-height: 8000px;
+      padding: 0 20px 20px 20px;
+    }
+    .accordion-content {
       color: var(--text-body);
-      font-size: 15px;
-      line-height: 1.65;
+      line-height: 1.8;
     }
     .explanation {
-      font-size: 15px;
+      margin-bottom: 20px;
+      padding: 14px 16px;
+      background: #0d1117;
+      border-left: 3px solid var(--accent-dim);
+      border-radius: 0 4px 4px 0;
+      font-size: 14px;
+      line-height: 1.7;
       color: var(--text-body);
-      line-height: 1.75;
-    }
-    .explanation strong {
-      color: var(--text);
-      font-weight: 600;
     }
     .code-block {
-      background: var(--bg);
-      border: 1px solid var(--border-soft);
-      border-radius: 8px;
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 6px;
       padding: 14px 16px;
-      margin-top: 14px;
-      margin-bottom: 20px;
+      margin: 16px 0;
       font-family: 'JetBrains Mono', monospace;
-      font-size: 13.5px;
-      line-height: 1.7;
+      font-size: 13px;
+      line-height: 1.6;
       overflow-x: auto;
       color: var(--text-body);
+      white-space: pre;
     }
-    .kw  { color: #ff7b72; }
-    .fn  { color: #58a6ff; }
-    .lit { color: #79c0ff; }
-    .cm  { color: #8b949e; }
-    .explanation ol, .explanation ul {
-      margin: 10px 0 10px 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+    .code-block .kw { color: #ff7b72; }
+    .code-block .fn { color: #58a6ff; }
+    .code-block .lit { color: #79c0ff; }
+    .code-block .cm { color: #8b949e; }
+    .sub-exercise {
+      margin-top: 18px;
+      padding: 14px;
+      background: #0d111722;
+      border-left: 2px solid var(--accent);
+      border-radius: 4px;
+    }
+    .sub-exercise-title {
+      color: var(--accent);
+      font-weight: 600;
+      margin-bottom: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
   </style>
 </head>
@@ -177,143 +168,355 @@
   <div class="nav">
     <a href="javascript:window.close()">← Volver al test</a>
   </div>
+
   <div class="header">
-    <h1>Práctica 2: Programación Funcional</h1>
-    <div class="meta">
-      <span>LPP · Práctica 2</span>
-      <span class="dot">·</span>
-      <span>5 conceptos clave</span>
-    </div>
+    <h1>Práctica 2: Programación Funcional en Scheme</h1>
+    <div class="meta">LPP · Práctica 2 · Curso 2025-26</div>
   </div>
-  <div class="cards">
-    <div class="card">
-      <div class="card-header">
-        <div class="card-num">1</div>
-        <div class="card-title">Conversión Binario-Decimal</div>
+
+  <div class="content">
+
+    <!-- EJERCICIO 1 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 1 — Conversión binario-decimal y binario-hexadecimal</span>
+        <div class="accordion-toggle">›</div>
       </div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">
-        Un número binario de 4 bits se convierte a decimal multiplicando cada bit por su potencia de 2 correspondiente y sumando: <code>b3×2³ + b2×2² + b1×2¹ + b0×2⁰</code>.
-      </div>
-      <div class="label">Explicación</div>
-      <div class="explanation">
-        Cada posición en un número binario representa una potencia de 2. Por ejemplo:
-        <ul>
-          <li><code>1111</code> = 1×8 + 1×4 + 1×2 + 1×1 = 15</li>
-          <li><code>0110</code> = 0×8 + 1×4 + 1×2 + 0×1 = 6</li>
-          <li><code>1000</code> = 1×8 + 0×4 + 0×2 + 0×1 = 8</li>
-        </ul>
-      </div>
-      <div class="label">Expresiones clave</div>
-      <div class="code-block">
-(<span class="fn">binario-a-decimal</span> <span class="lit">1</span> <span class="lit">1</span> <span class="lit">1</span> <span class="lit">1</span>)  <span class="cm">; => 15</span>
-(<span class="fn">binario-a-decimal</span> <span class="lit">0</span> <span class="lit">1</span> <span class="lit">1</span> <span class="lit">0</span>)  <span class="cm">; => 6</span>
-(<span class="fn">binario-a-decimal</span> <span class="lit">1</span> <span class="lit">0</span> <span class="lit">0</span> <span class="lit">0</span>)  <span class="cm">; => 8</span>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-num">2</div>
-        <div class="card-title">Conversión Binario-Hexadecimal</div>
-      </div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">
-        Un número binario se convierte a hexadecimal: primero se convierte a decimal, y luego a carácter hex: 0-9 y A-F.
-      </div>
-      <div class="label">Explicación</div>
-      <div class="explanation">
-        La estrategia es composición de funciones: primero convertimos binario a decimal, luego decimal a hexadecimal:
-        <ul>
-          <li>Si el decimal es 0-9, el carácter es el dígito (0, 1, ... 9)</li>
-          <li>Si el decimal es 10-15, el carácter es la letra (A, B, C, D, E, F)</li>
-        </ul>
-      </div>
-      <div class="label">Expresiones clave</div>
-      <div class="code-block">
-(<span class="fn">binario-a-hexadecimal</span> <span class="lit">1</span> <span class="lit">1</span> <span class="lit">1</span> <span class="lit">1</span>)  <span class="cm">; => #\F</span>
-(<span class="fn">binario-a-hexadecimal</span> <span class="lit">0</span> <span class="lit">1</span> <span class="lit">1</span> <span class="lit">0</span>)  <span class="cm">; => #\6</span>
-(<span class="fn">binario-a-hexadecimal</span> <span class="lit">1</span> <span class="lit">0</span> <span class="lit">1</span> <span class="lit">0</span>)  <span class="cm">; => #\A</span>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a) binario-a-decimal: 4 bits → número decimal</div>
+            <div class="explanation">
+              Convierte un número binario de 4 bits a su representación decimal. Cada bit se multiplica por su potencia de 2 correspondiente (2³, 2², 2¹, 2⁰).
+            </div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">binario-a-decimal</span> <span class="lit">b3 b2 b1 b0</span>)
+  (<span class="fn">+</span> (<span class="fn">*</span> <span class="lit">b3</span> (<span class="fn">expt</span> <span class="lit">2</span> <span class="lit">3</span>))
+     (<span class="fn">*</span> <span class="lit">b2</span> (<span class="fn">expt</span> <span class="lit">2</span> <span class="lit">2</span>))
+     (<span class="fn">*</span> <span class="lit">b1</span> (<span class="fn">expt</span> <span class="lit">2</span> <span class="lit">1</span>))
+     (<span class="fn">*</span> <span class="lit">b0</span> (<span class="fn">expt</span> <span class="lit">2</span> <span class="lit">0</span>))))</div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b) binario-a-hexadecimal: 4 bits → carácter hexadecimal</div>
+            <div class="explanation">
+              Convierte un número binario a hexadecimal. La estrategia es:
+              <ul style="margin-top: 8px; margin-left: 20px;">
+                <li>Convertir primero a decimal con binario-a-decimal</li>
+                <li>Si decimal ≤ 9: el carácter es (integer->char (+ decimal (char->integer #\0)))</li>
+                <li>Si decimal ≥ 10: el carácter es (integer->char (+ (- decimal 10) (char->integer #\A)))</li>
+              </ul>
+            </div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">decimal-a-hexadecimal</span> <span class="lit">n</span>)
+  (<span class="fn">if</span> (<span class="fn">&lt;=</span> <span class="lit">n</span> <span class="lit">9</span>)
+      (<span class="fn">integer->char</span> (<span class="fn">+</span> <span class="lit">n</span> (<span class="fn">char->integer</span> #\<span class="lit">0</span>)))
+      (<span class="fn">integer->char</span> (<span class="fn">+</span> (<span class="fn">-</span> <span class="lit">n</span> <span class="lit">10</span>) (<span class="fn">char->integer</span> #\<span class="lit">A</span>)))))
+
+(<span class="kw">define</span> (<span class="fn">binario-a-hexadecimal</span> <span class="lit">b3 b2 b1 b0</span>)
+  (<span class="fn">decimal-a-hexadecimal</span> (<span class="fn">binario-a-decimal</span> <span class="lit">b3 b2 b1 b0</span>)))</div>
+          </div>
+
+        </div>
       </div>
     </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-num">3</div>
-        <div class="card-title">Cifrado César</div>
+
+    <!-- EJERCICIO 2 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 2 — Cifrado César</span>
+        <div class="accordion-toggle">›</div>
       </div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">
-        El <strong>cifrado César</strong> desplaza cada letra un número fijo de posiciones en el alfabeto. Un desplazamiento de 3 convierte A→D, B→E, etc.
-      </div>
-      <div class="label">Explicación</div>
-      <div class="explanation">
-        La implementación maneja:
-        <ul>
-          <li>Letras minúsculas directamente: desplaza dentro del rango a-z con módulo 26</li>
-          <li>Letras mayúsculas: convierte a minúscula, cifra, y vuelve a mayúscula</li>
-          <li>No-letras: devuelve sin cambios (números, signos, caracteres especiales)</li>
-        </ul>
-        El desplazamiento puede ser negativo (descifrado).
-      </div>
-      <div class="label">Expresiones clave</div>
-      <div class="code-block">
-(<span class="fn">cifra-caracter</span> <span class="lit">#\c</span> <span class="lit">5</span>)    <span class="cm">; => #\h</span>
-(<span class="fn">cifra-caracter</span> <span class="lit">#\z</span> <span class="lit">-1</span>)   <span class="cm">; => #\y</span>
-(<span class="fn">descifra-caracter</span> <span class="lit">#\d</span> <span class="lit">3</span>) <span class="cm">; => #\a</span>
-(<span class="fn">cifra-caracter</span> <span class="lit">#\D</span> <span class="lit">3</span>)    <span class="cm">; => #\G</span>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-num">4</div>
-        <div class="card-title">Función Menor de Tres</div>
-      </div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">
-        Encontrar el menor de tres números puede hacerse con <code>if</code> anidado, o componiendo una función auxiliar <code>menor</code>.
-      </div>
-      <div class="label">Explicación</div>
-      <div class="explanation">
-        Hay dos enfoques:
-        <ul>
-          <li><strong>Versión 1:</strong> usar <code>if</code> anidado: comparar el primero con el segundo, luego el resultado con el tercero</li>
-          <li><strong>Versión 2:</strong> definir una función <code>menor</code> que compara dos números, luego componer: <code>(menor n1 (menor n2 n3))</code></li>
-        </ul>
-        Ambas producen el mismo resultado, pero la versión 2 es más modular y reutilizable.
-      </div>
-      <div class="label">Expresiones clave</div>
-      <div class="code-block">
-(<span class="fn">menor-de-tres</span> <span class="lit">2</span> <span class="lit">8</span> <span class="lit">1</span>)   <span class="cm">; => 1</span>
-(<span class="fn">menor-de-tres</span> <span class="lit">3</span> <span class="lit">0</span> <span class="lit">3</span>)   <span class="cm">; => 0</span>
-(<span class="fn">menor-de-tres</span> <span class="lit">5</span> <span class="lit">5</span> <span class="lit">5</span>)   <span class="cm">; => 5</span>
-(<span class="fn">menor-de-tres</span> <span class="lit">10</span> <span class="lit">1</span> <span class="lit">100</span>) <span class="cm">; => 1</span>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <div class="card-num">5</div>
-        <div class="card-title">Clasificación de Manos de Cartas</div>
-      </div>
-      <div class="label">Concepto</div>
-      <div class="quote-block">
-        Una función que clasifica una mano de 3 cartas: trío (todas iguales), pareja (dos iguales), o nada.
-      </div>
-      <div class="label">Explicación</div>
-      <div class="explanation">
-        La función extrae el <strong>valor numérico</strong> de cada carta de baraja usando <code>valor-carta</code>, y luego:
-        <ul>
-          <li>Si los tres valores son iguales → <strong>trío</strong></li>
-          <li>Si dos valores son iguales → <strong>pareja</strong></li>
-          <li>Si todos diferentes → <strong>nada</strong></li>
-        </ul>
-        Los ases valen 1, figuras valen 10-12, y número vales su valor (2-9). Los palos no importan.
-      </div>
-      <div class="label">Expresiones clave</div>
-      <div class="code-block">
-(<span class="fn">jugada-mano</span> <span class="lit">'3♥</span> <span class="lit">'3♣</span> <span class="lit">'3♥</span>) <span class="cm">; => "trío de 3"</span>
-(<span class="fn">jugada-mano</span> <span class="lit">'K♦</span> <span class="lit">'7♠</span> <span class="lit">'K♥</span>) <span class="cm">; => "pareja de 12"</span>
-(<span class="fn">jugada-mano</span> <span class="lit">'5♣</span> <span class="lit">'4♣</span> <span class="lit">'6♣</span>) <span class="cm">; => "nada"</span>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <div class="explanation">
+            Implementación completa del cifrado César. Consiste en funciones auxiliares que trabajan juntas para cifrar y descifrar caracteres.
+          </div>
+
+          <div class="code-block"><span class="cm">;;; Devuelve el índice 0..25 de un carácter minúscula</span>
+(<span class="kw">define</span> (<span class="fn">encuentra-indice</span> <span class="lit">char</span>)
+  (<span class="fn">-</span> (<span class="fn">char->integer</span> <span class="lit">char</span>) (<span class="fn">char->integer</span> #\<span class="lit">a</span>)))
+
+<span class="cm">;;; Devuelve el carácter minúscula correspondiente al índice 0..25</span>
+(<span class="kw">define</span> (<span class="fn">encuentra-caracter</span> <span class="lit">indice</span>)
+  (<span class="fn">integer->char</span> (<span class="fn">+</span> <span class="lit">indice</span> (<span class="fn">char->integer</span> #\<span class="lit">a</span>))))
+
+<span class="cm">;;; Comprueba si un carácter está entre #\a y #\z</span>
+(<span class="kw">define</span> (<span class="fn">entre-az?</span> <span class="lit">char</span>)
+  (<span class="fn">and</span> (<span class="fn">char>=?</span> <span class="lit">char</span> #\<span class="lit">a</span>) (<span class="fn">char<=?</span> <span class="lit">char</span> #\<span class="lit">z</span>)))
+
+<span class="cm">;;; Rota un índice 0..25 aplicando el desplazamiento (puede ser negativo)</span>
+(<span class="kw">define</span> (<span class="fn">rota-indice</span> <span class="lit">indice desplazamiento</span>)
+  (<span class="fn">modulo</span> (<span class="fn">+</span> <span class="lit">indice desplazamiento</span>) <span class="lit">26</span>))
+
+<span class="cm">;;; Cifra un carácter minúscula con el desplazamiento dado</span>
+(<span class="kw">define</span> (<span class="fn">cifra-caracter-minuscula</span> <span class="lit">char desplazamiento</span>)
+  (<span class="fn">encuentra-caracter</span> (<span class="fn">rota-indice</span> (<span class="fn">encuentra-indice</span> <span class="lit">char</span>) <span class="lit">desplazamiento</span>)))</div>
+
+          <div class="explanation" style="margin-top: 20px;">
+            Cifra un carácter:
+            <ul style="margin-top: 8px; margin-left: 20px;">
+              <li>Si es minúscula: cifra directamente</li>
+              <li>Si es mayúscula: baja a minúscula, cifra y sube a mayúscula</li>
+              <li>Si no es letra inglesa: devuelve el carácter sin cambios</li>
+            </ul>
+          </div>
+
+          <div class="code-block">(<span class="kw">define</span> (<span class="fn">cifra-caracter</span> <span class="lit">char desplazamiento</span>)
+  (<span class="kw">cond</span>
+    ((<span class="fn">entre-az?</span> <span class="lit">char</span>)
+     (<span class="fn">cifra-caracter-minuscula</span> <span class="lit">char desplazamiento</span>))
+    ((<span class="fn">and</span> (<span class="fn">char-upper-case?</span> <span class="lit">char</span>) (<span class="fn">entre-az?</span> (<span class="fn">char-downcase</span> <span class="lit">char</span>)))
+     (<span class="fn">char-upcase</span> (<span class="fn">cifra-caracter-minuscula</span> (<span class="fn">char-downcase</span> <span class="lit">char</span>) <span class="lit">desplazamiento</span>)))
+    (<span class="kw">else</span> <span class="lit">char</span>)))
+
+<span class="cm">;;; Descifra: es cifrar con el desplazamiento negado</span>
+(<span class="kw">define</span> (<span class="fn">descifra-caracter</span> <span class="lit">char desplazamiento</span>)
+  (<span class="fn">cifra-caracter</span> <span class="lit">char</span> (<span class="fn">-</span> <span class="lit">desplazamiento</span>)))</div>
+
+        </div>
       </div>
     </div>
+
+    <!-- EJERCICIO 3 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 3 — Menor de tres</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <div class="explanation">
+            Dos formas de implementar la función que devuelve el menor de tres números: usando <span class="code-block" style="display: inline; padding: 2px 4px; background: #0d1117; border-radius: 3px;">if</span> anidado, o componiendo una función auxiliar.
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">Versión 1: usando if</div>
+            <div class="code-block">(<span class="kw">define</span> (<span class="fn">menor-de-tres</span> <span class="lit">n1 n2 n3</span>)
+  (<span class="fn">if</span> (<span class="fn"><</span> <span class="lit">n1 n2</span>)
+      (<span class="fn">if</span> (<span class="fn"><</span> <span class="lit">n1 n3</span>) <span class="lit">n1</span> <span class="lit">n3</span>)
+      (<span class="fn">if</span> (<span class="fn"><</span> <span class="lit">n2 n3</span>) <span class="lit">n2</span> <span class="lit">n3</span>)))
+
+(<span class="fn">menor-de-tres</span> <span class="lit">2 8 1</span>) <span class="cm">=> 1</span>
+(<span class="fn">menor-de-tres</span> <span class="lit">3 0 3</span>) <span class="cm">=> 0</span>
+(<span class="fn">menor-de-tres</span> <span class="lit">5 5 5</span>) <span class="cm">=> 5</span>
+(<span class="fn">menor-de-tres</span> <span class="lit">10 1 100</span>) <span class="cm">=> 1</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">Versión 2: composición de llamadas a menor</div>
+            <div class="code-block"><span class="cm">;;; Función auxiliar para la versión 2</span>
+(<span class="kw">define</span> (<span class="fn">menor</span> <span class="lit">x y</span>)
+  (<span class="fn">if</span> (<span class="fn"><</span> <span class="lit">x y</span>) <span class="lit">x y</span>))
+
+<span class="cm">;;; Versión 2: sin if en la función principal</span>
+(<span class="kw">define</span> (<span class="fn">menor-de-tres-v2</span> <span class="lit">n1 n2 n3</span>)
+  (<span class="fn">menor</span> <span class="lit">n1</span> (<span class="fn">menor</span> <span class="lit">n2 n3</span>)))
+
+(<span class="fn">menor-de-tres-v2</span> <span class="lit">2 8 1</span>) <span class="cm">=> 1</span>
+(<span class="fn">menor-de-tres-v2</span> <span class="lit">3 0 3</span>) <span class="cm">=> 0</span>
+(<span class="fn">menor-de-tres-v2</span> <span class="lit">5 5 5</span>) <span class="cm">=> 5</span>
+(<span class="fn">menor-de-tres-v2</span> <span class="lit">10 1 100</span>) <span class="cm">=> 1</span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO 4 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 4 — Modelo de sustitución</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a) Evaluación de (g (f (+ 2 1)) (+ 1 1))</div>
+            <div class="explanation">
+              Comparación entre orden aplicativo (evalúa argumentos antes de sustituir) y orden normal (sustituye primero, evalúa al final).
+              <br><br>
+              Considerando: (define (f x) (cons x 2)) y (define (g x y) (cons x y))
+            </div>
+
+            <div class="code-block"><span class="cm">---- ORDEN APLICATIVO (evalúa argumentos antes de sustituir) ----</span>
+
+(g (f (+ 2 1)) (+ 1 1))
+  =&gt; (g (f 3) (+ 1 1))          <span class="cm">; se evalúa (+ 2 1) => 3</span>
+  =&gt; (g (f 3) 2)                 <span class="cm">; se evalúa (+ 1 1) => 2</span>
+  =&gt; (g (cons 3 2) 2)            <span class="cm">; se evalúa (f 3) => (cons 3 2)</span>
+  =&gt; (cons (cons 3 2) 2)         <span class="cm">; se sustituye en g</span>
+  =&gt; ((3 . 2) . 2)               <span class="cm">; resultado final</span>
+
+<span class="cm">---- ORDEN NORMAL (sustituye primero, evalúa al final) ----</span>
+
+(g (f (+ 2 1)) (+ 1 1))
+  =&gt; (cons (f (+ 2 1)) (+ 1 1))  <span class="cm">; se expande g</span>
+  =&gt; (cons (cons (+ 2 1) 2) (+ 1 1)) <span class="cm">; se expande f</span>
+  =&gt; (cons (cons 3 2) (+ 1 1))   <span class="cm">; se evalúa (+ 2 1) => 3</span>
+  =&gt; (cons (cons 3 2) 2)          <span class="cm">; se evalúa (+ 1 1) => 2</span>
+  =&gt; ((3 . 2) . 2)                <span class="cm">; resultado final</span>
+
+Ambos órdenes producen el mismo resultado: '((3 . 2) . 2)</div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b) Evaluación de (func-2 0 (func-1 10))</div>
+            <div class="explanation">
+              Diferencia crítica entre órdenes de evaluación cuando hay efectos secundarios (errores).
+              <br><br>
+              Considerando: (define (func-1 x) (/ x 0)) y (define (func-2 x y) (if (= x 0) 0 y))
+            </div>
+
+            <div class="code-block"><span class="cm">---- ORDEN APLICATIVO ----</span>
+
+(func-2 0 (func-1 10))
+  =&gt; (func-2 0 (/ 10 0))    <span class="cm">; se evalúa (func-1 10)</span>
+  =&gt; ERROR: división por cero   <span class="cm">; (/ 10 0) provoca un error</span>
+El programa termina con error antes de poder evaluar func-2.
+
+<span class="cm">---- ORDEN NORMAL ----</span>
+
+(func-2 0 (func-1 10))
+  =&gt; (if (= 0 0) 0 (func-1 10))  <span class="cm">; se expande func-2</span>
+  =&gt; (if #t 0 (func-1 10))        <span class="cm">; se evalúa (= 0 0) => #t</span>
+  =&gt; 0                             <span class="cm">; la rama #t devuelve 0</span>
+(func-1 10) NUNCA se evalúa porque if cortocircuita.
+Resultado final: 0
+
+Conclusión: con orden normal el programa devuelve 0 sin error,
+con orden aplicativo produce un error de división por cero.</div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO 5 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 5 — cadenas-mayores</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+          <div class="explanation">
+            Función que recibe 2 listas de 3 cadenas y devuelve una lista con las cadenas de mayor longitud en cada posición. En caso de empate, gana lista1.
+          </div>
+          <div class="code-block">(<span class="kw">define</span> (<span class="fn">cadenas-mayores</span> <span class="lit">lista1 lista2</span>)
+  (<span class="fn">list</span> (<span class="fn">if</span> (<span class="fn">&gt;=</span> (<span class="fn">string-length</span> (<span class="fn">first</span> <span class="lit">lista1</span>))
+                (<span class="fn">string-length</span> (<span class="fn">first</span> <span class="lit">lista2</span>)))
+            (<span class="fn">first</span> <span class="lit">lista1</span>)
+            (<span class="fn">first</span> <span class="lit">lista2</span>))
+        (<span class="fn">if</span> (<span class="fn">&gt;=</span> (<span class="fn">string-length</span> (<span class="fn">second</span> <span class="lit">lista1</span>))
+                (<span class="fn">string-length</span> (<span class="fn">second</span> <span class="lit">lista2</span>)))
+            (<span class="fn">second</span> <span class="lit">lista1</span>)
+            (<span class="fn">second</span> <span class="lit">lista2</span>))
+        (<span class="fn">if</span> (<span class="fn">&gt;=</span> (<span class="fn">string-length</span> (<span class="fn">third</span> <span class="lit">lista1</span>))
+                (<span class="fn">string-length</span> (<span class="fn">third</span> <span class="lit">lista2</span>)))
+            (<span class="fn">third</span> <span class="lit">lista1</span>)
+            (<span class="fn">third</span> <span class="lit">lista2</span>))))
+
+(<span class="fn">cadenas-mayores</span> <span class="lit">'("hola" "que" "tal")</span>   <span class="lit">'("meme" "y" "adios")</span>)
+<span class="cm">=> '("hola" "que" "adios")</span>
+
+(<span class="fn">cadenas-mayores</span> <span class="lit">'("esto" "es" "lpp")</span>    <span class="lit">'("hoy" "hay" "clase")</span>)
+<span class="cm">=> '("esto" "hay" "clase")</span>
+
+(<span class="fn">cadenas-mayores</span> <span class="lit">'("aa" "bb" "cc")</span>        <span class="lit">'("aa" "bb" "cc")</span>)
+<span class="cm">=> '("aa" "bb" "cc")   ; empate => gana lista1</span>
+
+(<span class="fn">cadenas-mayores</span> <span class="lit">'("x" "y" "z")</span>           <span class="lit">'("abc" "def" "ghi")</span>)
+<span class="cm">=> '("abc" "def" "ghi")</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EJERCICIO 6 -->
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)">
+        <span>Ejercicio 6 — Cartas de baraja francesa</span>
+        <div class="accordion-toggle">›</div>
+      </div>
+      <div class="accordion-body">
+        <div class="accordion-content">
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">a) Representación de cartas de la baraja francesa</div>
+            <div class="explanation">
+              Funciones auxiliares para descomponer un símbolo de carta (como '3♠) en su valor y palo.
+            </div>
+
+            <div class="code-block"><span class="cm">;;; Devuelve el palo como símbolo dado el carácter del palo</span>
+(<span class="kw">define</span> (<span class="fn">obten-palo</span> <span class="lit">char</span>)
+  (<span class="kw">cond</span>
+    ((<span class="fn">equal?</span> <span class="lit">char</span> #\♠) <span class="lit">'Picas</span>)
+    ((<span class="fn">equal?</span> <span class="lit">char</span> #\♣) <span class="lit">'Tréboles</span>)
+    ((<span class="fn">equal?</span> <span class="lit">char</span> #\♥) <span class="lit">'Corazones</span>)
+    ((<span class="fn">equal?</span> <span class="lit">char</span> #\♦) <span class="lit">'Diamantes</span>)))
+
+<span class="cm">;;; Devuelve el valor numérico dado el carácter del número/figura</span>
+(<span class="kw">define</span> (<span class="fn">obten-valor</span> <span class="lit">char</span>)
+  (<span class="kw">cond</span>
+    ((<span class="fn">equal?</span> <span class="lit">char</span> #\A) <span class="lit">1</span>)
+    ((<span class="fn">equal?</span> <span class="lit">char</span> #\J) <span class="lit">10</span>)
+    ((<span class="fn">equal?</span> <span class="lit">char</span> #\Q) <span class="lit">11</span>)
+    ((<span class="fn">equal?</span> <span class="lit">char</span> #\K) <span class="lit">12</span>)
+    (<span class="kw">else</span> (<span class="fn">-</span> (<span class="fn">char->integer</span> <span class="lit">char</span>) (<span class="fn">char->integer</span> #\<span class="lit">0</span>)))))
+
+<span class="cm">;;; Devuelve una pareja (valor . palo) dado un símbolo de carta</span>
+(<span class="kw">define</span> (<span class="fn">carta</span> <span class="lit">simbolo</span>)
+  (<span class="fn">cons</span> (<span class="fn">obten-valor</span> (<span class="fn">string-ref</span> (<span class="fn">symbol->string</span> <span class="lit">simbolo</span>) <span class="lit">0</span>))
+        (<span class="fn">obten-palo</span>  (<span class="fn">string-ref</span> (<span class="fn">symbol->string</span> <span class="lit">simbolo</span>) <span class="lit">1</span>))))
+
+(<span class="kw">define</span> <span class="lit">tres-de-picas</span>    <span class="lit">'3♠</span>)
+(<span class="kw">define</span> <span class="lit">as-de-corazones</span>  <span class="lit">'A♥</span>)
+(<span class="kw">define</span> <span class="lit">jota-de-diamantes</span> <span class="lit">'J♦</span>)
+
+(<span class="fn">carta</span> <span class="lit">tres-de-picas</span>)      <span class="cm">=> '(3  . Picas)</span>
+(<span class="fn">carta</span> <span class="lit">as-de-corazones</span>)    <span class="cm">=> '(1  . Corazones)</span>
+(<span class="fn">carta</span> <span class="lit">jota-de-diamantes</span>)  <span class="cm">=> '(10 . Diamantes)</span>
+(<span class="fn">carta</span> <span class="lit">'K♣</span>)               <span class="cm">=> '(12 . Tréboles)</span>
+(<span class="fn">carta</span> <span class="lit">'Q♥</span>)               <span class="cm">=> '(11 . Corazones)</span></div>
+          </div>
+
+          <div class="sub-exercise">
+            <div class="sub-exercise-title">b) jugada-mano: clasifica una mano de 3 cartas</div>
+
+            <div class="code-block"><span class="cm">;;; Devuelve el valor numérico de un símbolo de carta</span>
+(<span class="kw">define</span> (<span class="fn">valor-carta</span> <span class="lit">simbolo</span>)
+  (<span class="fn">car</span> (<span class="fn">carta</span> <span class="lit">simbolo</span>)))
+
+(<span class="kw">define</span> (<span class="fn">jugada-mano</span> <span class="lit">carta1 carta2 carta3</span>)
+  (<span class="kw">cond</span>
+    ((<span class="fn">=</span> (<span class="fn">valor-carta</span> <span class="lit">carta1</span>) (<span class="fn">valor-carta</span> <span class="lit">carta2</span>) (<span class="fn">valor-carta</span> <span class="lit">carta3</span>))
+     (<span class="fn">string-append</span> <span class="lit">"trío de "</span> (<span class="fn">number->string</span> (<span class="fn">valor-carta</span> <span class="lit">carta1</span>))))
+    ((<span class="fn">=</span> (<span class="fn">valor-carta</span> <span class="lit">carta1</span>) (<span class="fn">valor-carta</span> <span class="lit">carta2</span>))
+     (<span class="fn">string-append</span> <span class="lit">"pareja de "</span> (<span class="fn">number->string</span> (<span class="fn">valor-carta</span> <span class="lit">carta1</span>))))
+    ((<span class="fn">=</span> (<span class="fn">valor-carta</span> <span class="lit">carta1</span>) (<span class="fn">valor-carta</span> <span class="lit">carta3</span>))
+     (<span class="fn">string-append</span> <span class="lit">"pareja de "</span> (<span class="fn">number->string</span> (<span class="fn">valor-carta</span> <span class="lit">carta1</span>))))
+    ((<span class="fn">=</span> (<span class="fn">valor-carta</span> <span class="lit">carta2</span>) (<span class="fn">valor-carta</span> <span class="lit">carta3</span>))
+     (<span class="fn">string-append</span> <span class="lit">"pareja de "</span> (<span class="fn">number->string</span> (<span class="fn">valor-carta</span> <span class="lit">carta2</span>))))
+    (<span class="kw">else</span> <span class="lit">"nada"</span>)))
+
+(<span class="fn">jugada-mano</span> <span class="lit">'3♥ '3♣ '3♥</span>) <span class="cm">=> "trío de 3"</span>
+(<span class="fn">jugada-mano</span> <span class="lit">'K♦ '7♠ 'K♥</span>) <span class="cm">=> "pareja de 12"</span>
+(<span class="fn">jugada-mano</span> <span class="lit">'5♣ '4♣ '6♣</span>) <span class="cm">=> "nada"</span>
+(<span class="fn">jugada-mano</span> <span class="lit">'A♠ 'A♦ '7♣</span>) <span class="cm">=> "pareja de 1"</span>
+(<span class="fn">jugada-mano</span> <span class="lit">'Q♠ 'Q♦ 'Q♣</span>) <span class="cm">=> "trío de 11"</span></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
   </div>
+
+  <script>
+    function toggleAccordion(header) {
+      const item = header.parentElement;
+      item.classList.toggle('active');
+    }
+  </script>
 </body>
 </html>

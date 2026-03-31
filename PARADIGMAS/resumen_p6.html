@@ -1,4 +1,210 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><title>Práctica 6 — LPP</title><link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" /><style>*{box-sizing:border-box;margin:0;padding:0}:root{--bg:#0d1117;--surface:#161b22;--border:#30363d;--text:#e6edf3;--text-muted:#8b949e;--text-body:#c9d1d9;--accent:#58a6ff;--accent-dim:#1f6feb;--quote-bg:#1c2333}html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text-body);font-family:'Lora',Georgia,serif;font-size:16px;line-height:1.7;min-height:100vh;padding:0 0 64px}.nav{padding:20px 24px 0;max-width:720px;margin:0 auto}.nav a{color:var(--text-muted);text-decoration:none;font-family:'JetBrains Mono',monospace;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:color .2s}.nav a:hover{color:var(--accent)}.header{max-width:720px;margin:0 auto;padding:32px 24px 28px}.header h1{font-family:'Lora',Georgia,serif;font-size:clamp(32px,7vw,46px);font-weight:700;color:var(--text);line-height:1.15;letter-spacing:-0.5px;margin-bottom:8px}.header .meta{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text-muted);display:flex;align-items:center;gap:16px}.header .meta .dot{color:var(--border)}.cards{max-width:720px;margin:0 auto;padding:0 24px;display:flex;flex-direction:column;gap:20px}.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px}.card-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px}.card-num{width:32px;height:32px;background:var(--accent-dim);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:13px;font-weight:600}.card-title{font-family:'Lora',Georgia,serif;font-size:19px;font-weight:700;color:var(--text);line-height:1.3}.label{font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}.quote-block{background:var(--quote-bg);border-left:3px solid var(--accent-dim);border-radius:0 8px 8px 0;padding:14px 16px;margin-bottom:20px;color:var(--text-body);font-size:15px;line-height:1.65}.code-block{background:var(--bg);border:1px solid #21262d;border-radius:8px;padding:14px 16px;margin-top:14px;margin-bottom:20px;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.7;overflow-x:auto;color:var(--text-body)}.fn{color:#58a6ff}.lit{color:#79c0ff}.cm{color:#8b949e}</style></head>
-<body><div class="nav"><a href="javascript:window.close()">← Volver al test</a></div><div class="header"><h1>Práctica 6: Procesos Recursivos e Iterativos</h1><div class="meta"><span>LPP · Práctica 6</span><span class="dot">·</span><span>5 conceptos clave</span></div></div><div class="cards"><div class="card"><div class="card-header"><div class="card-num">1</div><div class="card-title">Recursión vs Iteración</div></div><div class="label">Concepto</div><div class="quote-block">Una función es **tail-recursive** (recursión de cola) cuando la llamada recursiva es lo último que se ejecuta. Esto permite optimización iterativa.</div></div><div class="card"><div class="card-header"><div class="card-num">2</div><div class="card-title">concat-iter: Iterativo</div></div><div class="label">Concepto</div><div class="quote-block">Versión iterativa de concatena usando un acumulador que mantiene la cadena parcial.</div><div class="code-block">(<span class="fn">concat-iter</span> '(#<span class="lit">\H \o \l \a</span>) "") <span class="cm">; => "alopH"</span></div></div><div class="card"><div class="card-header"><div class="card-num">3</div><div class="card-title">min-max-iter: Dos valores acumulados</div></div><div class="label">Concepto</div><div class="quote-block">Mantener una pareja acumuladora (mínimo . máximo) durante la iteración.</div><div class="code-block">(<span class="fn">min-max-iter</span> '(2 5 9 12) '(2 . 2)) <span class="cm">; => (0 . 12)</span></div></div><div class="card"><div class="card-header"><div class="card-num">4</div><div class="card-title">mi-foldl: Fold iterativo</div></div><div class="label">Concepto</div><div class="quote-block">foldl (fold-left) es una función de orden superior que reduce una lista de izq a derecha, manteniendo un acumulador.</div><div class="code-block">(<span class="fn">mi-foldl</span> <span class="lit">cons '() '(1 2 3 4)</span>) <span class="cm">; => (4 3 2 1)</span></div></div><div class="card"><div class="card-header"><div class="card-num">5</div><div class="card-title">Eficiencia: Lineal vs Cuadrático</div></div><div class="label">Concepto</div><div class="quote-block">Una función recursiva que no es tail-recursive genera una pila de llamadas O(n). Con tail recursion se optimiza a O(1) de espacio (iterativo).</div></div></div></body></html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Práctica 6 — LPP</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --bg: #0d1117; --surface: #161b22; --border: #30363d; --text: #e6edf3; --text-muted: #8b949e; --text-body: #c9d1d9; --accent: #58a6ff; --accent-dim: #1f6feb; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text-body); font-family: 'Lora', Georgia, serif; font-size: 16px; line-height: 1.7; min-height: 100vh; padding: 0 0 64px; }
+    .nav { padding: 20px 24px 0; max-width: 920px; margin: 0 auto; }
+    .nav a { color: var(--text-muted); text-decoration: none; font-family: 'JetBrains Mono', monospace; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: color .2s; }
+    .nav a:hover { color: var(--accent); }
+    .header { max-width: 920px; margin: 0 auto; padding: 32px 24px 28px; }
+    .header h1 { font-family: 'Lora', Georgia, serif; font-size: clamp(32px, 7vw, 46px); font-weight: 700; color: var(--text); line-height: 1.15; letter-spacing: -0.5px; margin-bottom: 8px; }
+    .meta { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); }
+    .content { max-width: 920px; margin: 0 auto; padding: 0 24px; display: flex; flex-direction: column; gap: 12px; }
+    .accordion-item { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .accordion-header { padding: 18px 20px; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: background 0.2s; user-select: none; font-weight: 600; color: var(--text); font-size: 15px; }
+    .accordion-header:hover { background: #1c2128; }
+    .accordion-toggle { width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.3s; color: var(--accent); font-size: 14px; font-weight: 700; }
+    .accordion-item.active .accordion-toggle { transform: rotate(90deg); }
+    .accordion-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; padding: 0 20px; }
+    .accordion-item.active .accordion-body { max-height: 10000px; padding: 0 20px 20px 20px; }
+    .accordion-content { color: var(--text-body); line-height: 1.8; }
+    .explanation { margin-bottom: 20px; padding: 14px 16px; background: #0d1117; border-left: 3px solid var(--accent-dim); border-radius: 0 4px 4px 0; font-size: 14px; line-height: 1.7; color: var(--text-body); }
+    .code-block { background: #0d1117; border: 1px solid var(--border); border-radius: 6px; padding: 14px 16px; margin: 16px 0; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; overflow-x: auto; color: var(--text-body); white-space: pre; }
+    .code-block .kw { color: #ff7b72; }
+    .code-block .fn { color: #58a6ff; }
+    .code-block .lit { color: #79c0ff; }
+    .code-block .cm { color: #8b949e; }
+    .sub-exercise { margin-top: 18px; padding: 14px; background: #0d111722; border-left: 2px solid var(--accent); border-radius: 4px; }
+    .sub-exercise-title { color: var(--accent); font-weight: 600; margin-bottom: 8px; font-family: 'JetBrains Mono', monospace; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+  </style>
+  <script>
+    function toggleAccordion(header) { const item = header.closest('.accordion-item'); item.classList.toggle('active'); }
+  </script>
+</head>
+<body>
+  <div class="nav"><a href="javascript:window.close()">← Volver al test</a></div>
+  <div class="header">
+    <h1>Práctica 6: Procesos Recursivos e Iterativos</h1>
+    <div class="meta">LPP · Práctica 6 · Curso 2025-26</div>
+  </div>
+  <div class="content">
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 1 — Concatenación y min/max iterativos</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) concat-iter: concatenación de strings iterativa</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">concat-iter</span> lista resultado)
+  (<span class="kw">if</span> (<span class="fn">null?</span> lista)
+      resultado
+      (<span class="fn">concat-iter</span> (<span class="fn">rest</span> lista)
+                   (<span class="fn">string-append</span> resultado (<span class="fn">first</span> lista)))))
+
+(<span class="kw">define</span> (<span class="fn">concat</span> lista)
+  (<span class="fn">concat-iter</span> lista <span class="lit">""</span>))
+
+(<span class="fn">concat</span> <span class="lit">'("hola" "y" "adiós")</span>) <span class="cm">=> "holayadiós"</span>
+(<span class="fn">concat</span> <span class="lit">'()</span>) <span class="cm">=> ""</span>
+(<span class="fn">concat</span> <span class="lit">'("a" "b" "c" "d")</span>) <span class="cm">=> "abcd"</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) min-max-iter: mínimo y máximo con acumulador</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">min-max-iter</span> lista resultado)
+  (<span class="kw">if</span> (<span class="fn">null?</span> lista)
+      resultado
+      (<span class="fn">min-max-iter</span> (<span class="fn">rest</span> lista)
+                    (<span class="fn">cons</span> (<span class="fn">min</span> (<span class="fn">car</span> resultado) (<span class="fn">first</span> lista))
+                          (<span class="fn">max</span> (<span class="fn">cdr</span> resultado) (<span class="fn">first</span> lista))))))
+
+(<span class="kw">define</span> (<span class="fn">min-max</span> lista)
+  (<span class="fn">min-max-iter</span> (<span class="fn">rest</span> lista)
+                (<span class="fn">cons</span> (<span class="fn">first</span> lista) (<span class="fn">first</span> lista))))
+
+(<span class="fn">min-max</span> <span class="lit">'(2 5 9 12 5 0 4)</span>) <span class="cm">=> '(0 . 12)</span>
+(<span class="fn">min-max</span> <span class="lit">'(3 2 -8 4 10 0)</span>) <span class="cm">=> '(-8 . 10)</span>
+(<span class="fn">min-max</span> <span class="lit">'(7)</span>) <span class="cm">=> '(7 . 7)</span></div></div>
+      </div></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 2 — Expansión iterativa y rotación</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) expande-pareja-iter: repetición iterativa de parejas</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">expande-pareja-iter</span> par resultado)
+  (<span class="kw">if</span> (<span class="fn">=</span> (<span class="fn">cdr</span> par) 0)
+      resultado
+      (<span class="fn">expande-pareja-iter</span> (<span class="fn">cons</span> (<span class="fn">car</span> par) (<span class="fn">-</span> (<span class="fn">cdr</span> par) 1))
+                           (<span class="fn">cons</span> (<span class="fn">car</span> par) resultado))))
+
+(<span class="kw">define</span> (<span class="fn">expande-pareja</span> par)
+  (<span class="fn">expande-pareja-iter</span> par <span class="lit">'()</span>))
+
+(<span class="fn">expande-pareja</span> <span class="lit">'(a . 4)</span>) <span class="cm">=> '(a a a a)</span>
+(<span class="fn">expande-pareja</span> <span class="lit">'(x . 0)</span>) <span class="cm">=> '()</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) rotar: desplazamiento de elementos</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">rotar</span> k lista)
+  (<span class="kw">if</span> (<span class="fn">=</span> k 0)
+      lista
+      (<span class="fn">rotar</span> (<span class="fn">-</span> k 1)
+             (<span class="fn">append</span> (<span class="fn">rest</span> lista) (<span class="fn">list</span> (<span class="fn">first</span> lista))))))
+
+(<span class="fn">rotar</span> 4 <span class="lit">'(a b c d e f g)</span>) <span class="cm">=> '(e f g a b c d)</span>
+(<span class="fn">rotar</span> 2 <span class="lit">'(1 2 3 4 5)</span>) <span class="cm">=> '(3 4 5 1 2)</span>
+(<span class="fn">rotar</span> 0 <span class="lit">'(a b c d)</span>) <span class="cm">=> '(a b c d)</span></div></div>
+      </div></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 3 — Fold-left personalizado</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) mi-foldl: implementación de fold-left iterativo</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">mi-foldl</span> f resultado lista)
+  (<span class="kw">if</span> (<span class="fn">null?</span> lista)
+      resultado
+      (<span class="fn">mi-foldl</span> f
+                (<span class="fn">f</span> (<span class="fn">first</span> lista) resultado)
+                (<span class="fn">rest</span> lista))))
+
+(<span class="fn">mi-foldl</span> <span class="fn">string-append</span> <span class="lit">"****"</span> <span class="lit">'("hola" "que" "tal")</span>)
+<span class="cm">=> "talquehola****"</span>
+(<span class="fn">mi-foldl</span> <span class="fn">cons</span> <span class="lit">'()</span> <span class="lit">'(1 2 3 4)</span>) <span class="cm">=> '(4 3 2 1)</span>
+(<span class="fn">mi-foldl</span> <span class="fn">+</span> 0 <span class="lit">'(1 2 3 4 5)</span>) <span class="cm">=> 15</span></div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) binario-a-decimal-iter: conversión binaria iterativa</div><div class="code-block">(<span class="kw">define</span> (<span class="fn">binario-a-decimal-iter</span> lista-bits resultado)
+  (<span class="kw">if</span> (<span class="fn">null?</span> lista-bits)
+      resultado
+      (<span class="fn">binario-a-decimal-iter</span> (<span class="fn">rest</span> lista-bits)
+                              (<span class="fn">+</span> (<span class="fn">*</span> resultado 2) (<span class="fn">first</span> lista-bits)))))
+
+(<span class="kw">define</span> (<span class="fn">binario-a-decimal</span> lista-bits)
+  (<span class="fn">binario-a-decimal-iter</span> lista-bits 0))
+
+(<span class="fn">binario-a-decimal</span> <span class="lit">'(1 1 1 1)</span>) <span class="cm">=> 15</span>
+(<span class="fn">binario-a-decimal</span> <span class="lit">'(1 1 0)</span>) <span class="cm">=> 6</span>
+(<span class="fn">binario-a-decimal</span> <span class="lit">'(1 0 1 1)</span>) <span class="cm">=> 11</span></div></div>
+      </div></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 4 — Triángulo de Pascal con Memoization</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">pascal-memo: cálculo recursivo con caché</div><div class="explanation">
+El triángulo de Pascal se define como C(n,k) = C(n-1,k-1) + C(n-1,k) con casos base
+C(n,0) = 1 y C(n,n) = 1. La memoization almacena resultados previos para evitar
+recálculos redundantes usando un diccionario con claves (n . k).
+        </div><div class="code-block">(<span class="kw">define</span> diccionario (<span class="fn">make-dic</span>))
+
+(<span class="kw">define</span> (<span class="fn">pascal-memo</span> n k dic)
+  (<span class="kw">cond</span>
+    ((<span class="fn">or</span> (<span class="fn">=</span> k 0) (<span class="fn">=</span> k n)) 1)
+    ((<span class="fn">key-exists?</span> (<span class="fn">cons</span> n k) dic)
+     (<span class="fn">get</span> (<span class="fn">cons</span> n k) dic))
+    (<span class="kw">else</span>
+     (<span class="fn">put</span> (<span class="fn">cons</span> n k)
+          (<span class="fn">+</span> (<span class="fn">pascal-memo</span> (<span class="fn">-</span> n 1) (<span class="fn">-</span> k 1) dic)
+             (<span class="fn">pascal-memo</span> (<span class="fn">-</span> n 1) k       dic))
+          dic))))
+
+(<span class="fn">pascal-memo</span> 8  4 diccionario) <span class="cm">=> 70</span>
+(<span class="fn">pascal-memo</span> 40 20 diccionario) <span class="cm">=> 137846528820</span>
+(<span class="fn">pascal-memo</span> 5  2 diccionario) <span class="cm">=> 10</span></div></div>
+      </div></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 5 — Fractales de Koch</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">a) koch: curva de Koch recursiva</div><div class="explanation">
+La curva de Koch de nivel n y longitud l se construye uniendo cuatro versiones
+del nivel anterior (n-1, l/3). La estructura es: original, rotada -60°, rotada +60°,
+original. Se alinean en la parte inferior con beside/align "bottom".
+        </div><div class="code-block">(<span class="kw">define</span> (<span class="fn">koch</span> nivel trazo)
+  (<span class="kw">if</span> (<span class="fn">=</span> nivel 0)
+      (<span class="fn">rectangle</span> trazo 1 <span class="lit">"solid"</span> <span class="lit">"black"</span>)
+      (<span class="fn">beside/align</span> <span class="lit">"bottom"</span>
+                    (<span class="fn">koch</span> (<span class="fn">-</span> nivel 1) (<span class="fn">/</span> trazo 3))
+                    (<span class="fn">rotate</span> 60  (<span class="fn">koch</span> (<span class="fn">-</span> nivel 1) (<span class="fn">/</span> trazo 3)))
+                    (<span class="fn">rotate</span> -60 (<span class="fn">koch</span> (<span class="fn">-</span> nivel 1) (<span class="fn">/</span> trazo 3)))
+                    (<span class="fn">koch</span> (<span class="fn">-</span> nivel 1) (<span class="fn">/</span> trazo 3)))))</div></div>
+        <div class="sub-exercise"><div class="sub-exercise-title">b) copo-nieve: copo de nieve de Koch</div><div class="explanation">
+El copo de nieve se forma con tres curvas de Koch rotadas 120° entre sí para
+formar un triángulo equilátero.
+        </div><div class="code-block">(<span class="kw">define</span> (<span class="fn">copo-nieve</span> nivel trazo)
+  (<span class="fn">above</span>
+   (<span class="fn">beside/align</span> <span class="lit">"bottom"</span> (<span class="fn">rotate</span> 180 (<span class="fn">koch</span> nivel trazo)) (<span class="fn">rotate</span> 180 (<span class="fn">koch</span> nivel trazo)))
+   (<span class="fn">beside/align</span> <span class="lit">"top"</span>    (<span class="fn">koch</span> nivel trazo)               (<span class="fn">koch</span> nivel trazo))))</div></div>
+      </div></div>
+    </div>
+    <div class="accordion-item">
+      <div class="accordion-header" onclick="toggleAccordion(this)"><span>Ejercicio 6 — Alfombra de Sierpinski</span><div class="accordion-toggle">›</div></div>
+      <div class="accordion-body"><div class="accordion-content">
+        <div class="sub-exercise"><div class="sub-exercise-title">alfombra-sierpinski: fractal recursivo 3x3</div><div class="explanation">
+La alfombra de Sierpinski de tamaño tam se construye recursivamente usando 8
+alfombras de tamaño tam/3 alrededor de un cuadrado vacío central (blanco).
+La distribución 3x3 es: alfombras en los 8 bordes, hueco en el centro.
+        </div><div class="code-block">(<span class="kw">define</span> UMBRAL 20)
+
+(<span class="kw">define</span> (<span class="fn">fila-sierpinski-solida</span> tam)
+  (<span class="fn">beside</span> (<span class="fn">alfombra-sierpinski</span> (<span class="fn">/</span> tam 3))
+          (<span class="fn">alfombra-sierpinski</span> (<span class="fn">/</span> tam 3))
+          (<span class="fn">alfombra-sierpinski</span> (<span class="fn">/</span> tam 3))))
+
+(<span class="kw">define</span> (<span class="fn">fila-sierpinski-hueco</span> tam)
+  (<span class="fn">beside</span> (<span class="fn">alfombra-sierpinski</span> (<span class="fn">/</span> tam 3))
+          (<span class="fn">square</span> (<span class="fn">/</span> tam 3) <span class="lit">"solid"</span> <span class="lit">"white"</span>)
+          (<span class="fn">alfombra-sierpinski</span> (<span class="fn">/</span> tam 3))))
+
+(<span class="kw">define</span> (<span class="fn">alfombra-sierpinski</span> tam)
+  (<span class="kw">if</span> (<span class="fn">&lt;</span> tam UMBRAL)
+      (<span class="fn">circle</span> (<span class="fn">/</span> tam 2) <span class="lit">"outline"</span> <span class="lit">"black"</span>)
+      (<span class="fn">above</span> (<span class="fn">fila-sierpinski-solida</span> tam)
+             (<span class="fn">fila-sierpinski-hueco</span>  tam)
+             (<span class="fn">fila-sierpinski-solida</span> tam))))</div></div>
+      </div></div>
+    </div>
+  </div>
+</body>
+</html>
