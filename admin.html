@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin · Cuestionarios</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0d1117; font-family: 'Georgia', 'Times New Roman', serif; color: #c9d1d9; min-height: 100vh; }
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #161b22; }
+    ::-webkit-scrollbar-thumb { background: #30363d; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script>
+    const _supabase = supabase.createClient(
+      'https://zszibudwwftkngbzzgpd.supabase.co',
+      'sb_publishable_qB6_oEse-m0KdgeZx7HTcQ_pRSus3hf'
+    );
+  </script>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    /* ─── LOGIN ─── */
+    function LoginScreen({ onLogin }) {
+      const [email, setEmail] = useState('');
+      const [pass, setPass] = useState('');
+      const [error, setError] = useState('');
+      const [loading, setLoading] = useState(false);
+
+      const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
+        const { data, error: err } = await _supabase.auth.signInWithPassword({ email, password: pass });
+        setLoading(false);
+        if (err) { setError(err.message); return; }
+        onLogin(data.user);
+      };
+
+      return (
+        <div style={S.loginShell}>
+          <form onSubmit={handleLogin} style={S.loginCard}>
+            <div style={S.loginBadge}>Panel de Administración</div>
+            <h1 style={S.loginTitle}>Cuestionarios</h1>
+            {error && <div style={S.errorMsg}>{error}</div>}
+            <input style={S.input} type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required />
+            <input style={S.input} type="password" placeholder="Contraseña" value={pass} onChange={e => setPass(e.target.value)} required />
+            <button style={S.primaryBtn} type="submit" disabled={loading}>
+              {loading ? 'Entrando...' : 'Iniciar sesión'}
+            </button>
+          </form>
+        </div>
+      );
+    }
+
+    /* ─── DASHBOARD ─── */
+    function Dashboard({ user }) {
+      const [asignaturas, setAsignaturas] = useState([]);
+      const [selectedAsig, setSelectedAsig] = useState(null);
+      const [temas, setTemas] = useState([]);
+      const [selectedTema, setSelectedTema] = useState(null);
+      const [preguntas, setPreguntas] = useState([]);
+      const [view, setView] = useState('temas'); // temas | preguntas | editTema | editPregunta | newAsig
+      const [editItem, setEditItem] = useState(null);
+      const [loading, setLoading] = useState(true);
+      const [msg, setMsg] = useState('');
+
+      const showMsg = (text) => { setMsg(text); setTimeout(() => setMsg(''), 3000); };
+
+      // Cargar asignaturas al montar
+      useEffect(() => {
+        loadAsignaturas();
+      }, []);
+
+      const loadAsignaturas = async () => {
+        const { data } = await _supabase.from('temas').select('asignatura').order('asignatura');
+        const unique = [...new Set(data.map(d => d.asignatura))];
+        setAsignaturas(unique);
+        if (unique.length > 0 && !selectedAsig) setSelectedAsig(unique[0]);
+        setLoading(false);
+      };
+
+      // Cargar temas al seleccionar asignatura
+      useEffect(() => {
+        if (selectedAsig) loadTemas();
+      }, [selectedAsig]);
+
+      const loadTemas = async () => {
+        const { data } = await _supabase
+          .from('temas')
+          .select('*, preguntas(id)')
+          .eq('asignatura', selectedAsig)
+          .order('tema');
+        setTemas(data || []);
+        setView('temas');
+        setSelectedTema(null);
+      };
+
+      // Cargar preguntas al seleccionar tema
+      const loadPreguntas = async (tema) => {
+        setSelectedTema(tema);
+        const { data } = await _supabase
+          .from('preguntas')
+          .select('*')
+          .eq('tema_id', tema.id)
+          .order('concept_index');
+        setPreguntas(data || []);
+        setView('preguntas');
+      };
+
+      const handleLogout = async () => {
+        await _supabase.auth.signOut();
+        window.location.reload();
+      };
+
+      // ── CRUD Tema ──
+      const saveTema = async (formData) => {
+        if (editItem) {
+          const { error } = await _supabase.from('temas').update(formData).eq('id', editItem.id);
+          if (error) { showMsg('Error: ' + error.message); return; }
+          showMsg('Tema actualizado');
+        } else {
+          const { error } = await _supabase.from('temas').insert(formData);
+          if (error) { showMsg('Error: ' + error.message); return; }
+          showMsg('Tema creado');
+        }
+        setEditItem(null);
+        loadTemas();
+        loadAsignaturas();
+      };
+
+      const deleteTema = async (id) => {
+        if (!confirm('¿Eliminar este tema y todas sus preguntas?')) return;
+        await _supabase.from('preguntas').delete().eq('tema_id', id);
+        await _supabase.from('temas').delete().eq('id', id);
+        showMsg('Tema eliminado');
+        loadTemas();
+        loadAsignaturas();
+      };
+
+      // ── CRUD Pregunta ──
+      const savePregunta = async (formData) => {
+        if (editItem) {
+          const { error } = await _supabase.from('preguntas').update(formData).eq('id', editItem.id);
+          if (error) { showMsg('Error: ' + error.message); return; }
+          showMsg('Pregunta actualizada');
+        } else {
+          const { error } = await _supabase.from('preguntas').insert(formData);
+          if (error) { showMsg('Error: ' + error.message); return; }
+          showMsg('Pregunta creada');
+        }
+        setEditItem(null);
+        loadPreguntas(selectedTema);
+      };
+
+      const deletePregunta = async (id) => {
+        if (!confirm('¿Eliminar esta pregunta?')) return;
+        await _supabase.from('preguntas').delete().eq('id', id);
+        showMsg('Pregunta eliminada');
+        loadPreguntas(selectedTema);
+      };
+
+      if (loading) return <div style={{color:'#8b949e', padding:40, textAlign:'center'}}>Cargando...</div>;
+
+      return (
+        <div style={S.dashShell}>
+          {/* ── HEADER ── */}
+          <div style={S.header}>
+            <div style={S.headerLeft}>
+              <span style={S.headerTitle}>⚙ Admin</span>
+              <span style={S.headerUser}>{user.email}</span>
+            </div>
+            <div style={S.headerRight}>
+              <a href="index.html" style={S.headerLink}>← Inicio</a>
+              <button style={S.logoutBtn} onClick={handleLogout}>Cerrar sesión</button>
+            </div>
+          </div>
+
+          {/* ── TOAST ── */}
+          {msg && <div style={S.toast}>{msg}</div>}
+
+          {/* ── BODY ── */}
+          <div style={S.body}>
+            {/* Sidebar: Asignaturas */}
+            <div style={S.sidebar}>
+              <div style={S.sidebarLabel}>ASIGNATURAS</div>
+              {asignaturas.map(a => (
+                <button
+                  key={a}
+                  style={a === selectedAsig ? {...S.sidebarBtn, ...S.sidebarBtnActive} : S.sidebarBtn}
+                  onClick={() => { setSelectedAsig(a); setView('temas'); }}
+                >
+                  {a}
+                </button>
+              ))}
+              <button style={S.sidebarAdd} onClick={() => { setView('newAsig'); setEditItem(null); }}>
+                + Nueva asignatura
+              </button>
+            </div>
+
+            {/* Main content */}
+            <div style={S.main}>
+              {view === 'temas' && (
+                <TemasView
+                  temas={temas}
+                  asignatura={selectedAsig}
+                  onSelect={loadPreguntas}
+                  onEdit={(t) => { setEditItem(t); setView('editTema'); }}
+                  onDelete={deleteTema}
+                  onNew={() => { setEditItem(null); setView('editTema'); }}
+                />
+              )}
+              {view === 'preguntas' && selectedTema && (
+                <PreguntasView
+                  preguntas={preguntas}
+                  tema={selectedTema}
+                  onBack={() => setView('temas')}
+                  onEdit={(p) => { setEditItem(p); setView('editPregunta'); }}
+                  onDelete={deletePregunta}
+                  onNew={() => { setEditItem(null); setView('editPregunta'); }}
+                />
+              )}
+              {view === 'editTema' && (
+                <TemaForm
+                  tema={editItem}
+                  asignatura={selectedAsig}
+                  onSave={saveTema}
+                  onCancel={() => { setEditItem(null); setView('temas'); }}
+                />
+              )}
+              {view === 'editPregunta' && (
+                <PreguntaForm
+                  pregunta={editItem}
+                  temaId={selectedTema?.id}
+                  onSave={savePregunta}
+                  onCancel={() => { setEditItem(null); setView('preguntas'); }}
+                />
+              )}
+              {view === 'newAsig' && (
+                <TemaForm
+                  tema={null}
+                  asignatura=""
+                  isNewAsig={true}
+                  onSave={saveTema}
+                  onCancel={() => setView('temas')}
+                />
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    /* ─── TEMAS VIEW ─── */
+    function TemasView({ temas, asignatura, onSelect, onEdit, onDelete, onNew }) {
+      return (
+        <div>
+          <div style={S.viewHeader}>
+            <h2 style={S.viewTitle}>{asignatura}</h2>
+            <button style={S.primaryBtn} onClick={onNew}>+ Nuevo tema</button>
+          </div>
+          {temas.length === 0 && <div style={S.empty}>No hay temas. Crea el primero.</div>}
+          <div style={S.grid}>
+            {temas.map(t => (
+              <div key={t.id} style={S.temaCard}>
+                <div style={S.temaCardHeader}>
+                  <span style={S.temaNum}>Tema {t.tema}</span>
+                  <span style={S.temaCount}>{t.preguntas?.length || 0} preg.</span>
+                </div>
+                <div style={S.temaName}>{t.nombre}</div>
+                <div style={S.temaId}>id: {t.id}</div>
+                <div style={S.temaActions}>
+                  <button style={S.smallBtn} onClick={() => onSelect(t)}>Ver preguntas</button>
+                  <button style={S.smallBtnGhost} onClick={() => onEdit(t)}>Editar</button>
+                  <button style={S.smallBtnDanger} onClick={() => onDelete(t.id)}>Eliminar</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    /* ─── PREGUNTAS VIEW ─── */
+    function PreguntasView({ preguntas, tema, onBack, onEdit, onDelete, onNew }) {
+      const optLabel = ['A', 'B', 'C'];
+      return (
+        <div>
+          <div style={S.viewHeader}>
+            <div>
+              <button style={S.backLink} onClick={onBack}>← Volver a temas</button>
+              <h2 style={S.viewTitle}>Tema {tema.tema} · {tema.nombre}</h2>
+            </div>
+            <button style={S.primaryBtn} onClick={onNew}>+ Nueva pregunta</button>
+          </div>
+          {preguntas.length === 0 && <div style={S.empty}>No hay preguntas. Crea la primera.</div>}
+          {preguntas.map((p, i) => (
+            <div key={p.id} style={S.preguntaRow}>
+              <div style={S.preguntaTop}>
+                <span style={S.preguntaConcept}>{p.concept} (#{p.concept_index})</span>
+                <span style={S.preguntaCorrect}>Correcta: {optLabel[p.correct]}</span>
+              </div>
+              <div style={S.preguntaQ}>{p.question}</div>
+              <div style={S.preguntaOpts}>
+                {p.options.map((opt, j) => (
+                  <span key={j} style={j === p.correct ? S.optCorrect : S.optNormal}>
+                    {optLabel[j]}: {opt}
+                  </span>
+                ))}
+              </div>
+              <div style={S.preguntaActions}>
+                <button style={S.smallBtnGhost} onClick={() => onEdit(p)}>Editar</button>
+                <button style={S.smallBtnDanger} onClick={() => onDelete(p.id)}>Eliminar</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    /* ─── TEMA FORM ─── */
+    function TemaForm({ tema, asignatura, isNewAsig, onSave, onCancel }) {
+      const [id, setId] = useState(tema?.id || '');
+      const [nombre, setNombre] = useState(tema?.nombre || '');
+      const [temaNum, setTemaNum] = useState(tema?.tema || 1);
+      const [asig, setAsig] = useState(tema?.asignatura || asignatura || '');
+      const [resumenHtml, setResumenHtml] = useState(tema?.resumen_html || '');
+      const [showPreview, setShowPreview] = useState(false);
+      const iframeRef = useRef(null);
+
+      useEffect(() => {
+        if (showPreview && iframeRef.current && resumenHtml) {
+          const doc = iframeRef.current.contentDocument;
+          doc.open();
+          doc.write(resumenHtml);
+          doc.close();
+        }
+      }, [showPreview, resumenHtml]);
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave({
+          id: id.trim(),
+          nombre: nombre.trim(),
+          tema: parseInt(temaNum),
+          asignatura: asig.trim().toUpperCase(),
+          resumen_url: '../resumen.html?id=' + id.trim(),
+          resumen_html: resumenHtml || null
+        });
+      };
+
+      return (
+        <form onSubmit={handleSubmit} style={S.form}>
+          <button type="button" style={S.backLink} onClick={onCancel}>← Cancelar</button>
+          <h2 style={S.viewTitle}>{tema ? 'Editar tema' : isNewAsig ? 'Nueva asignatura + tema' : 'Nuevo tema'}</h2>
+
+          <label style={S.label}>Asignatura</label>
+          <input style={S.input} value={asig} onChange={e => setAsig(e.target.value)}
+            placeholder="Ej: ADA, PARADIGMAS" required disabled={!isNewAsig && !!asignatura} />
+
+          <label style={S.label}>ID (único, sin espacios)</label>
+          <input style={S.input} value={id} onChange={e => setId(e.target.value)}
+            placeholder="Ej: practica1, introduccion" required disabled={!!tema} />
+
+          <label style={S.label}>Nombre</label>
+          <input style={S.input} value={nombre} onChange={e => setNombre(e.target.value)}
+            placeholder="Ej: Seminario de Scheme" required />
+
+          <label style={S.label}>Número de tema</label>
+          <input style={S.input} type="number" min="1" value={temaNum}
+            onChange={e => setTemaNum(e.target.value)} required />
+
+          <label style={S.label}>
+            Resumen HTML
+            <button type="button" style={S.previewToggle}
+              onClick={() => setShowPreview(!showPreview)}>
+              {showPreview ? 'Ocultar vista previa' : 'Ver vista previa'}
+            </button>
+          </label>
+          <textarea style={S.textarea} value={resumenHtml}
+            onChange={e => setResumenHtml(e.target.value)}
+            placeholder="Pega aquí el HTML completo del resumen (incluyendo <html>, <style>, etc.)"
+            rows={12} />
+
+          {showPreview && (
+            <div style={S.previewBox}>
+              <iframe ref={iframeRef} style={S.previewIframe} title="Vista previa" />
+            </div>
+          )}
+
+          <div style={S.formActions}>
+            <button type="button" style={S.secondaryBtn} onClick={onCancel}>Cancelar</button>
+            <button type="submit" style={S.primaryBtn}>Guardar</button>
+          </div>
+        </form>
+      );
+    }
+
+    /* ─── PREGUNTA FORM ─── */
+    function PreguntaForm({ pregunta, temaId, onSave, onCancel }) {
+      const [concept, setConcept] = useState(pregunta?.concept || '');
+      const [conceptIndex, setConceptIndex] = useState(pregunta?.concept_index || 1);
+      const [question, setQuestion] = useState(pregunta?.question || '');
+      const [optA, setOptA] = useState(pregunta?.options?.[0] || '');
+      const [optB, setOptB] = useState(pregunta?.options?.[1] || '');
+      const [optC, setOptC] = useState(pregunta?.options?.[2] || '');
+      const [correct, setCorrect] = useState(pregunta?.correct ?? 0);
+
+      const handleSubmit = (e) => {
+        e.preventDefault();
+        onSave({
+          tema_id: temaId,
+          concept: concept.trim(),
+          concept_index: parseInt(conceptIndex),
+          question: question.trim(),
+          options: [optA.trim(), optB.trim(), optC.trim()],
+          correct: parseInt(correct)
+        });
+      };
+
+      return (
+        <form onSubmit={handleSubmit} style={S.form}>
+          <button type="button" style={S.backLink} onClick={onCancel}>← Cancelar</button>
+          <h2 style={S.viewTitle}>{pregunta ? 'Editar pregunta' : 'Nueva pregunta'}</h2>
+
+          <label style={S.label}>Concepto</label>
+          <input style={S.input} value={concept} onChange={e => setConcept(e.target.value)}
+            placeholder="Ej: Recursión básica" required />
+
+          <label style={S.label}>Índice de concepto</label>
+          <input style={S.input} type="number" min="1" value={conceptIndex}
+            onChange={e => setConceptIndex(e.target.value)} required />
+
+          <label style={S.label}>Pregunta</label>
+          <textarea style={{...S.input, minHeight: 80, resize: 'vertical'}} value={question}
+            onChange={e => setQuestion(e.target.value)}
+            placeholder="¿Qué devuelve ...?" required />
+
+          <label style={S.label}>Opción A</label>
+          <input style={S.input} value={optA} onChange={e => setOptA(e.target.value)} required />
+
+          <label style={S.label}>Opción B</label>
+          <input style={S.input} value={optB} onChange={e => setOptB(e.target.value)} required />
+
+          <label style={S.label}>Opción C</label>
+          <input style={S.input} value={optC} onChange={e => setOptC(e.target.value)} required />
+
+          <label style={S.label}>Respuesta correcta</label>
+          <div style={S.radioGroup}>
+            {['A', 'B', 'C'].map((lbl, i) => (
+              <label key={i} style={correct === i ? S.radioActive : S.radio}>
+                <input type="radio" name="correct" value={i}
+                  checked={correct === i} onChange={() => setCorrect(i)} style={{display:'none'}} />
+                {lbl}
+              </label>
+            ))}
+          </div>
+
+          <div style={S.formActions}>
+            <button type="button" style={S.secondaryBtn} onClick={onCancel}>Cancelar</button>
+            <button type="submit" style={S.primaryBtn}>Guardar</button>
+          </div>
+        </form>
+      );
+    }
+
+    /* ─── APP ROOT ─── */
+    function AdminApp() {
+      const [user, setUser] = useState(null);
+      const [checking, setChecking] = useState(true);
+
+      useEffect(() => {
+        _supabase.auth.getSession().then(({ data: { session } }) => {
+          setUser(session?.user || null);
+          setChecking(false);
+        });
+        const { data: { subscription } } = _supabase.auth.onAuthStateChange((_, session) => {
+          setUser(session?.user || null);
+        });
+        return () => subscription.unsubscribe();
+      }, []);
+
+      if (checking) return <div style={{color:'#8b949e', padding:40, textAlign:'center'}}>Verificando sesión...</div>;
+      if (!user) return <LoginScreen onLogin={setUser} />;
+      return <Dashboard user={user} />;
+    }
+
+    /* ─── STYLES ─── */
+    const S = {
+      // Login
+      loginShell: { minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 },
+      loginCard: { width: '100%', maxWidth: 400, background: '#161b22', border: '1px solid #30363d', borderRadius: 16, padding: 32, display: 'flex', flexDirection: 'column', gap: 14 },
+      loginBadge: { display: 'inline-block', background: '#21262d', border: '1px solid #30363d', color: '#8b949e', fontSize: 11, letterSpacing: 2, textTransform: 'uppercase', padding: '4px 10px', borderRadius: 20, marginBottom: 8, width: 'fit-content', fontFamily: 'monospace' },
+      loginTitle: { color: '#e6edf3', fontSize: 28, fontWeight: 700, marginBottom: 8 },
+      errorMsg: { background: '#2d1212', border: '1px solid #f85149', color: '#f85149', borderRadius: 8, padding: '8px 12px', fontSize: 13 },
+
+      // Dashboard
+      dashShell: { minHeight: '100vh', display: 'flex', flexDirection: 'column' },
+      header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 24px', background: '#161b22', borderBottom: '1px solid #30363d' },
+      headerLeft: { display: 'flex', alignItems: 'center', gap: 16 },
+      headerTitle: { color: '#e6edf3', fontSize: 16, fontWeight: 700 },
+      headerUser: { color: '#8b949e', fontSize: 12, fontFamily: 'monospace' },
+      headerRight: { display: 'flex', alignItems: 'center', gap: 12 },
+      headerLink: { color: '#8b949e', fontSize: 13, textDecoration: 'none', fontFamily: 'monospace' },
+      logoutBtn: { background: 'transparent', border: '1px solid #30363d', color: '#8b949e', borderRadius: 8, padding: '5px 12px', cursor: 'pointer', fontSize: 12, fontFamily: 'monospace' },
+
+      // Toast
+      toast: { position: 'fixed', top: 16, right: 16, background: '#1a3a2a', border: '1px solid #3fb950', color: '#3fb950', borderRadius: 8, padding: '10px 20px', fontSize: 13, fontFamily: 'monospace', zIndex: 999, animation: 'none' },
+
+      // Body
+      body: { display: 'flex', flex: 1 },
+      sidebar: { width: 220, background: '#161b22', borderRight: '1px solid #30363d', padding: '20px 12px', display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0 },
+      sidebarLabel: { color: '#8b949e', fontSize: 10, letterSpacing: 2, textTransform: 'uppercase', fontFamily: 'monospace', padding: '8px 12px', marginBottom: 4 },
+      sidebarBtn: { background: 'transparent', border: 'none', color: '#c9d1d9', textAlign: 'left', padding: '10px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontFamily: "'Georgia', serif", transition: 'background 0.15s' },
+      sidebarBtnActive: { background: '#1f6feb22', color: '#58a6ff' },
+      sidebarAdd: { background: 'transparent', border: '1px dashed #30363d', color: '#8b949e', textAlign: 'left', padding: '10px 12px', borderRadius: 8, cursor: 'pointer', fontSize: 12, fontFamily: 'monospace', marginTop: 8 },
+
+      // Main
+      main: { flex: 1, padding: 28, maxWidth: 960, overflowY: 'auto' },
+      viewHeader: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 20, gap: 16 },
+      viewTitle: { color: '#e6edf3', fontSize: 22, fontWeight: 700, marginTop: 4 },
+      empty: { color: '#8b949e', fontSize: 14, padding: 24, textAlign: 'center', background: '#161b22', border: '1px solid #30363d', borderRadius: 12 },
+
+      // Temas grid
+      grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 12 },
+      temaCard: { background: '#161b22', border: '1px solid #30363d', borderRadius: 12, padding: 16 },
+      temaCardHeader: { display: 'flex', justifyContent: 'space-between', marginBottom: 8 },
+      temaNum: { color: '#58a6ff', fontSize: 11, fontFamily: 'monospace', textTransform: 'uppercase', letterSpacing: 1 },
+      temaCount: { color: '#8b949e', fontSize: 11, fontFamily: 'monospace' },
+      temaName: { color: '#e6edf3', fontSize: 15, fontWeight: 600, marginBottom: 4 },
+      temaId: { color: '#484f58', fontSize: 11, fontFamily: 'monospace', marginBottom: 12 },
+      temaActions: { display: 'flex', gap: 8 },
+
+      // Preguntas list
+      preguntaRow: { background: '#161b22', border: '1px solid #30363d', borderRadius: 10, padding: 14, marginBottom: 8 },
+      preguntaTop: { display: 'flex', justifyContent: 'space-between', marginBottom: 6 },
+      preguntaConcept: { color: '#58a6ff', fontSize: 11, fontFamily: 'monospace', letterSpacing: 0.5 },
+      preguntaCorrect: { color: '#3fb950', fontSize: 11, fontFamily: 'monospace' },
+      preguntaQ: { color: '#e6edf3', fontSize: 14, lineHeight: 1.5, marginBottom: 8 },
+      preguntaOpts: { display: 'flex', flexDirection: 'column', gap: 3, marginBottom: 10 },
+      optNormal: { color: '#8b949e', fontSize: 12, fontFamily: 'monospace' },
+      optCorrect: { color: '#3fb950', fontSize: 12, fontFamily: 'monospace', fontWeight: 600 },
+      preguntaActions: { display: 'flex', gap: 8 },
+
+      // Forms
+      form: { maxWidth: 640, display: 'flex', flexDirection: 'column', gap: 10 },
+      label: { color: '#8b949e', fontSize: 12, fontFamily: 'monospace', letterSpacing: 0.5, display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 6 },
+      input: { background: '#0d1117', border: '1px solid #30363d', color: '#e6edf3', borderRadius: 8, padding: '10px 14px', fontSize: 14, fontFamily: "'Georgia', serif", outline: 'none', width: '100%' },
+      textarea: { background: '#0d1117', border: '1px solid #30363d', color: '#e6edf3', borderRadius: 8, padding: '10px 14px', fontSize: 12, fontFamily: "'JetBrains Mono', 'Consolas', monospace", outline: 'none', width: '100%', resize: 'vertical', lineHeight: 1.5 },
+      radioGroup: { display: 'flex', gap: 8 },
+      radio: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, background: '#21262d', border: '1px solid #30363d', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 700, color: '#8b949e' },
+      radioActive: { display: 'flex', alignItems: 'center', justifyContent: 'center', width: 40, height: 40, background: '#1f6feb', border: '1px solid #1f6feb', borderRadius: 8, cursor: 'pointer', fontSize: 14, fontWeight: 700, color: '#fff' },
+      formActions: { display: 'flex', gap: 10, marginTop: 12 },
+
+      // Preview
+      previewToggle: { background: 'transparent', border: '1px solid #30363d', color: '#58a6ff', borderRadius: 6, padding: '3px 10px', cursor: 'pointer', fontSize: 11, fontFamily: 'monospace' },
+      previewBox: { border: '1px solid #30363d', borderRadius: 8, overflow: 'hidden', marginTop: 4 },
+      previewIframe: { width: '100%', height: 400, border: 'none', background: '#0d1117' },
+
+      // Buttons
+      primaryBtn: { background: '#1f6feb', color: '#fff', border: 'none', borderRadius: 10, padding: '10px 20px', cursor: 'pointer', fontSize: 14, fontWeight: 600, fontFamily: "'Georgia', serif", flexShrink: 0 },
+      secondaryBtn: { background: 'transparent', color: '#8b949e', border: '1px solid #30363d', borderRadius: 10, padding: '10px 20px', cursor: 'pointer', fontSize: 14, fontFamily: "'Georgia', serif" },
+      smallBtn: { background: '#1f6feb', color: '#fff', border: 'none', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontSize: 12, fontFamily: 'monospace' },
+      smallBtnGhost: { background: 'transparent', color: '#8b949e', border: '1px solid #30363d', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontSize: 12, fontFamily: 'monospace' },
+      smallBtnDanger: { background: 'transparent', color: '#f85149', border: '1px solid #f8514933', borderRadius: 6, padding: '5px 12px', cursor: 'pointer', fontSize: 12, fontFamily: 'monospace' },
+      backLink: { background: 'transparent', border: 'none', color: '#8b949e', cursor: 'pointer', fontSize: 13, fontFamily: 'monospace', padding: 0, marginBottom: 8, display: 'inline-block' },
+    };
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<AdminApp />);
+  </script>
+</body>
+</html>

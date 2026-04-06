@@ -8,17 +8,16 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-  <!-- ── Añadir aquí un <script> por cada tema nuevo ── -->
-  <script src="preguntas_p1.js"></script>
-  <script src="preguntas_p2.js"></script>
-  <script src="preguntas_p3.js"></script>
-  <script src="preguntas_p4.js"></script>
-  <script src="preguntas_p5.js"></script>
-  <script src="preguntas_p6.js"></script>
-  <script src="preguntas_p7.js"></script>
-  <script src="preguntas_p8.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 
   <script src="../_historial/historial.js"></script>
+
+  <script>
+    const _supabase = supabase.createClient(
+      'https://zszibudwwftkngbzzgpd.supabase.co',
+      'sb_publishable_qB6_oEse-m0KdgeZx7HTcQ_pRSus3hf'
+    );
+  </script>
 
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,9 +31,35 @@
     const { useState } = React;
 
     const SUBJECT_KEY = "PARADIGMAS";
-    const temas = window.TEMAS_PARADIGMAS || [];
 
     function Quiz() {
+      const [temas, setTemas] = useState([]);
+      const [loading, setLoading] = useState(true);
+
+      React.useEffect(() => {
+        _supabase
+          .from('temas')
+          .select('*, preguntas(*)')
+          .eq('asignatura', 'PARADIGMAS')
+          .order('tema')
+          .then(({ data }) => {
+            const formateados = data.map(t => ({
+              id: t.id,
+              nombre: t.nombre,
+              tema: t.tema,
+              resumenUrl: t.resumen_url,
+              preguntas: t.preguntas.map(p => ({
+                concept: p.concept,
+                conceptIndex: p.concept_index,
+                question: p.question,
+                options: p.options,
+                correct: p.correct
+              }))
+            }));
+            setTemas(formateados);
+            setLoading(false);
+          });
+      }, []);
       const [activeTema, setActiveTema]     = useState(null);
       const [activeQuestions, setActiveQuestions] = useState([]);
       const [current, setCurrent]           = useState(0);
@@ -121,6 +146,8 @@
         ? Math.round((score / activeQuestions.length) * 100)
         : 0;
       const optionLabel = ["A", "B", "C"];
+
+      if (loading) return <div style={{color:'#8b949e', padding:'40px', textAlign:'center'}}>Cargando preguntas...</div>;
 
       // ── MENÚ ──
       if (!started) {

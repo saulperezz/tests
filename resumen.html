@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cargando resumen…</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <style>
+    body { background: #0d1117; color: #8b949e; font-family: 'Georgia', serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
+    .loader { text-align: center; }
+    .error { color: #f85149; }
+  </style>
+</head>
+<body>
+  <div class="loader" id="msg">Cargando resumen…</div>
+  <script>
+    (async () => {
+      const id = new URLSearchParams(window.location.search).get('id');
+      if (!id) { document.getElementById('msg').innerHTML = '<span class="error">No se especificó tema</span>'; return; }
+
+      const sb = supabase.createClient(
+        'https://zszibudwwftkngbzzgpd.supabase.co',
+        'sb_publishable_qB6_oEse-m0KdgeZx7HTcQ_pRSus3hf'
+      );
+
+      const { data, error } = await sb.from('temas').select('resumen_html').eq('id', id).single();
+
+      if (error || !data?.resumen_html) {
+        document.getElementById('msg').innerHTML = '<span class="error">Resumen no encontrado</span>';
+        return;
+      }
+
+      document.open();
+      document.write(data.resumen_html);
+      document.close();
+    })();
+  </script>
+</body>
+</html>
